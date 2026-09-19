@@ -21,7 +21,7 @@ npm run dev        # abre en http://localhost:8518
 | `npm run dev`     | servidor de desarrollo, se recarga solo al guardar          |
 | `npm run build`   | arma la versión para publicar en `dist/`                    |
 | `npm run preview` | sirve `dist/` para probar la versión final antes de subirla |
-| `npm test`        | tests de precios, carrito, pedido y búsqueda (Vitest)       |
+| `npm test`        | tests (Vitest): precios, carrito, pedido, búsqueda y rutas  |
 | `npm run lint`    | revisa el código con ESLint                                 |
 
 > Ya no se abre con doble clic en `index.html`: el navegador bloquea la
@@ -39,7 +39,8 @@ ya están configurados para que recargar `/cart` o `/product/...` no dé 404.
 index.html                 página base (Vite)
 src/
   main.jsx                 arranque: router + CartProvider
-  App.jsx                  rutas
+  App.jsx                  rutas (con su test: cada página va dentro del layout)
+  layouts/PublicLayout/    encabezado, pie y barra del carrito alrededor de cada página
   config.js                ← EL ARCHIVO PARA CAMBIAR PRECIOS Y DATOS DEL NEGOCIO
   index.css                colores (pastel claro/oscuro) y estilos generales
   context/                 carrito: CartContext + CartProvider + useCart
