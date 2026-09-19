@@ -1,0 +1,7 @@
+# Finales de línea LF en el repo, para que no cambien entre Windows y Linux
+# (Firebase Functions corre en Linux).
+* text=auto eol=lf
+
+*.jpg binary
+*.png binary
+*.xlsx binary

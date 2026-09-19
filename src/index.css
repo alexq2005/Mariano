@@ -1,0 +1,151 @@
+/* Estilos globales: tokens de color (claro/oscuro), base y botones.
+   Cada componente tiene su propio .css al lado del .jsx.
+
+   Paleta pastel: blancos, rosas y violetas. Los pasteles se usan como
+   RELLENO (fondos, botones, chips) con texto oscuro del mismo tono encima;
+   texto pastel sobre blanco no se lee. Rosa = precio por menor, violeta =
+   precio por mayor. Todos los pares texto/fondo verificados ≥ 4,5:1
+   (WCAG AA) en los dos temas. */
+
+:root {
+  color-scheme: light;
+  --ground: #FDF9FC; --surface: #FFFFFF; --sunken: #F7F0F8;
+  --line: #EEE4F1; --line-fuerte: #DDCDE6;
+  --texto: #2B2035; --tenue: #67587A; --debil: #7A6A8E;
+  --acento: #A3386F; --acento-suave: #FCE4EF;       /* rosa: texto / relleno */
+  --mayor: #6B46A6; --mayor-suave: #EFE6FA;         /* violeta: texto / relleno */
+  --boton: #F5BCD6; --sobre-boton: #4A1435;         /* botón rosa pastel */
+  --boton-ok: #CFB8F3; --sobre-ok: #2E1656;         /* botón lavanda (enviar) */
+  --ok: #5E3E96; --alerta: #8F4A12;
+  --degradado: linear-gradient(100deg, #FFFFFF 0%, #FDEEF5 55%, #F1E9FC 100%);
+  --sombra: 0 1px 2px rgba(107,70,166,.06), 0 4px 14px rgba(163,56,111,.07);
+  --r: 12px;
+  --serif: Fraunces, Georgia, serif;
+  /* Margen lateral: 16px, o más si hay notch (iPhone horizontal). */
+  --borde-izq: max(16px, env(safe-area-inset-left, 0px));
+  --borde-der: max(16px, env(safe-area-inset-right, 0px));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #1C1622; --surface: #251D2C; --sunken: #2E2536;
+    --line: #3A2F44; --line-fuerte: #4D4059;
+    --texto: #F7EFF8; --tenue: #C2B3CB; --debil: #A596B0;
+    --acento: #F4A9CB; --acento-suave: #3A2433;
+    --mayor: #CDB6F5; --mayor-suave: #2D2442;
+    --boton: #F4B3D1; --sobre-boton: #3D0F2C;
+    --boton-ok: #CDB6F5; --sobre-ok: #25104A;
+    --ok: #CDB6F5; --alerta: #F0B470;
+    --degradado: linear-gradient(100deg, #251D2C 0%, #2F2130 55%, #2A2338 100%);
+    --sombra: 0 1px 2px rgba(0,0,0,.45), 0 3px 12px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #1C1622; --surface: #251D2C; --sunken: #2E2536;
+  --line: #3A2F44; --line-fuerte: #4D4059;
+  --texto: #F7EFF8; --tenue: #C2B3CB; --debil: #A596B0;
+  --acento: #F4A9CB; --acento-suave: #3A2433;
+  --mayor: #CDB6F5; --mayor-suave: #2D2442;
+  --boton: #F4B3D1; --sobre-boton: #3D0F2C;
+  --boton-ok: #CDB6F5; --sobre-ok: #25104A;
+  --ok: #CDB6F5; --alerta: #F0B470;
+  --degradado: linear-gradient(100deg, #251D2C 0%, #2F2130 55%, #2A2338 100%);
+  --sombra: 0 1px 2px rgba(0,0,0,.45), 0 3px 12px rgba(0,0,0,.35);
+}
+
+* { box-sizing: border-box; }
+html {
+  -webkit-text-size-adjust: 100%;
+  /* Que el header fijo arriba y la barra del carrito abajo no tapen lo que
+     tiene el foco (WCAG 2.4.11). Las alturas las publican los componentes. */
+  scroll-padding-top: calc(var(--alto-header, 0px) + 8px);
+  scroll-padding-bottom: calc(var(--alto-barra, 0px) + 16px);
+}
+/* Pantallas bajas (celular horizontal, zoom al 400 %): el header y la barra
+   dejan de ser fijos; si no, entre los dos tapaban toda la pantalla. */
+@media (max-height: 500px) {
+  html { scroll-padding-top: 8px; scroll-padding-bottom: 16px; }
+  body { padding-bottom: 0 !important; }
+}
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--texto);
+  font-family: Archivo, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.45;
+  padding-bottom: var(--alto-barra, 0px);
+}
+#root { min-height: 100vh; display: flex; flex-direction: column; }
+img { display: block; max-width: 100%; }
+ul { list-style: none; margin: 0; padding: 0; }
+button { font: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; border-radius: 5px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+main {
+  flex: 1;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 16px var(--borde-der) 32px var(--borde-izq);
+}
+h1 {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.2;
+  margin: 4px 0 12px;
+}
+a { color: var(--acento); }
+.num { font-variant-numeric: tabular-nums; }
+
+/* Solo para lectores de pantalla (no display:none: eso no se anuncia). */
+.solo-lector {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ── Botones (mismo esquema que el repo del curso) ─────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 10px 18px;
+  border: 1px solid transparent; border-radius: var(--r);
+  font: inherit; font-weight: 600; font-size: 15px; line-height: 1.2;
+  text-decoration: none; text-align: center; cursor: pointer;
+  transition: filter .2s, background-color .2s;
+}
+.btn:hover { filter: brightness(.96) saturate(1.1); }
+.bg-primary { background: var(--boton); border-color: var(--boton); color: var(--sobre-boton); }
+.bg-success { background: var(--boton-ok); border-color: var(--boton-ok); color: var(--sobre-ok); }
+.bg-outline { background: var(--surface); border-color: var(--line-fuerte); color: var(--texto); }
+.btn-link {
+  background: none; border: none; padding: 10px 4px; min-height: 44px;
+  color: var(--tenue); text-decoration: underline; font-size: 14px;
+}
+.btn:disabled, .btn[aria-disabled="true"] {
+  background: var(--sunken); border-color: var(--line); color: var(--debil);
+  cursor: not-allowed; filter: none;
+}
+
+/* ── Mensajes de estado de página ──────────────────────────────────── */
+.aviso {
+  background: var(--mayor-suave); border: 1px solid var(--mayor); border-radius: var(--r);
+  padding: 11px 14px; font-size: 13.5px; margin: 0 0 16px;
+}
+.aviso b { color: var(--mayor); }
+.estado { text-align: center; padding: 48px 16px; color: var(--tenue); }
+.estado h1,
+.estado h2,
+.estado strong {
+  display: block; font-family: var(--serif); font-size: 21px; font-weight: 600;
+  color: var(--texto); margin: 0 0 6px;
+}
+.estado p { margin: 0 0 4px; }
+.estado .btn { margin-top: 16px; }
+/* Títulos que reciben el foco por código (tabIndex=-1): sin anillo, porque
+   no son controles; el lector igual los anuncia. */
+h1[tabindex="-1"]:focus { outline: none; }

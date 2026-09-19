@@ -1,0 +1,40 @@
+.cart-widget {
+  grid-area: carrito;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--line-fuerte);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--texto);
+  font-weight: 600;
+  text-decoration: none;
+}
+.cart-widget svg { color: var(--acento); }
+/* En celulares angostos queda solo el ícono y el contador; el nombre sigue
+   estando para lectores de pantalla (aria-label del link). */
+@media (max-width: 400px) {
+  .cart-widget { padding-inline: 12px; }
+  .cart-widget-texto {
+    position: absolute; width: 1px; height: 1px; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+}
+.cart-widget:hover { border-color: var(--acento); }
+
+/* Contador de productos (la clase viene del repo del curso). */
+.incart {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--boton);
+  color: var(--sobre-boton);
+  font-size: 12px;
+  font-weight: 700;
+}

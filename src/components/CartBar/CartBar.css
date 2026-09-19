@@ -1,0 +1,36 @@
+.cart-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  background: var(--surface);
+  border-top: 1px solid var(--line-fuerte);
+  padding: 10px var(--borde-der) calc(10px + env(safe-area-inset-bottom, 0px)) var(--borde-izq);
+  box-shadow: 0 -4px 18px rgba(107, 70, 166, .10);
+}
+/* En el carrito de escritorio ya está el resumen al costado. */
+@media (min-width: 900px) {
+  .cart-bar-en-carrito { display: none; }
+}
+/* Pantalla baja (celular horizontal, zoom al 400 %): deja de ser fija y
+   queda al final de la página; fija tapaba el contenido. */
+@media (max-height: 500px) {
+  .cart-bar { position: static; box-shadow: none; }
+}
+
+.cart-bar-int {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.cart-bar-resumen { flex: 1 1 auto; min-width: 0; }
+.cart-bar-conteo { font-size: 12px; color: var(--tenue); }
+/* Se achica en pantallas angostas para que un total largo no quede debajo
+   del botón. */
+.cart-bar-total { font-size: clamp(17px, 5.4vw, 21px); font-weight: 700; line-height: 1.2; }
+.cart-bar-nota { font-size: 11.5px; margin-top: 2px; font-weight: 600; color: var(--ok); }
+.cart-bar-nota.alerta { color: var(--alerta); }
+.cart-bar .btn { flex: 0 1 auto; max-width: 55%; }

@@ -1,0 +1,13 @@
+.detail-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.migas {
+  font-size: 13px;
+  color: var(--tenue);
+  margin: 0 0 12px;
+}
+.migas a { color: var(--mayor); }
+.detail-wrapper .add-to-cart,
+.detail-wrapper .add-to-cart-boton { margin-top: 16px; }
+.detail-wrapper .pista { font-size: 13px; }

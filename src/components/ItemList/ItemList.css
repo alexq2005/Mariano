@@ -1,0 +1,12 @@
+.products-container {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+}
+.products-container > li { display: flex; }
+
+.mas {
+  display: flex;
+  margin: 20px auto 0;
+  padding-inline: 26px;
+}

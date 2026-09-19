@@ -1,0 +1,25 @@
+.buscar {
+  grid-area: buscar;
+  position: relative;
+  min-width: 0;
+}
+.buscar input {
+  width: 100%;
+  min-height: 44px;
+  font: inherit;
+  font-size: 16px; /* con menos, iOS hace zoom al tocar el campo */
+  color: var(--texto);
+  padding: 10px 12px 10px 38px;
+  border: 1px solid var(--line-fuerte);
+  border-radius: 999px;
+  background: var(--surface);
+}
+.buscar input::placeholder { color: var(--debil); }
+.buscar svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--mayor);
+  pointer-events: none;
+}
