@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
-import { auth, db } from "../firebase/app";
+import { auth, db } from "../firebase/panel";
 import { AuthContext } from "./AuthContext";
 
 // Quién entró y qué puede hacer.

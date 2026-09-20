@@ -51,6 +51,17 @@ const escribir = async (ruta, campos) => {
 const texto = (v) => ({ stringValue: v });
 const bool = (v) => ({ booleanValue: v });
 
+// Convierte cualquier valor de JavaScript al formato que pide la API REST
+// de Firestore ({stringValue}, {mapValue}, {arrayValue}…).
+const aValor = (v) => {
+  if (v === null || v === undefined) return { nullValue: null };
+  if (typeof v === "string") return texto(v);
+  if (typeof v === "boolean") return bool(v);
+  if (typeof v === "number") return Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
+  if (Array.isArray(v)) return { arrayValue: { values: v.map(aValor) } };
+  return { mapValue: { fields: Object.fromEntries(Object.entries(v).map(([k, x]) => [k, aValor(x)])) } };
+};
+
 try {
   await fetch(`${AUTH}/accounts:signUp?key=demo-api-key`, { method: "OPTIONS" });
 } catch {
@@ -68,5 +79,18 @@ for (const cuenta of CUENTAS) {
   });
   console.log(`${cuenta.email} (${cuenta.clave}) → ${cuenta.rol}${cuenta.activo ? "" : " [dada de baja]"}`);
 }
+
+// El catálogo público: un solo documento, para que cada visita a la tienda
+// cueste UNA lectura. Sale del mismo archivo que genera npm run catalogo.
+const { readFileSync } = await import("node:fs");
+const { productos } = JSON.parse(readFileSync("public/data/catalogo.json", "utf8"));
+const { CONFIG } = await import("../src/config.js");
+
+await escribir("publico/catalogo", {
+  productos: aValor(productos),
+  config: aValor(CONFIG),
+  version: texto(new Date().toISOString()),
+});
+console.log(`\npublico/catalogo: ${productos.length} productos publicados en el emulador`);
 
 console.log("\nEntrá en http://localhost:8518/admin/login con cualquiera de esas cuentas.");

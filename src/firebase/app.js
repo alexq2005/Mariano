@@ -1,15 +1,19 @@
-// Conexión con Firebase.
+// Conexión con Firebase: SOLO la aplicación, sin Firestore ni Auth.
 //
-// En desarrollo (npm run dev) apunta a los EMULADORES que corren en esta
-// máquina: no toca datos reales ni gasta cuota. En producción usa el
-// proyecto de verdad, con los datos de .env.local (ver .env.example).
+// Se parte en tres archivos a propósito, porque el peso importa:
+//   app.js      esto (mínimo)
+//   publico.js  Firestore "lite" para la tienda: solo leer el catálogo
+//   panel.js    Firestore completo + Auth, únicamente para /admin
 //
-// La apiKey de Firebase es pública por diseño: identifica al proyecto, no
-// da permisos. Lo que protege los datos son firestore.rules.
+// Así una clienta que entra a ver productos no descarga el SDK de tiempo
+// real ni el de autenticación, que no le sirven de nada.
+//
+// En desarrollo apunta a los EMULADORES de esta máquina (npm run emu): no
+// toca datos reales ni gasta cuota. La apiKey es pública por diseño:
+// identifica al proyecto, no da permisos. Lo que protege los datos son las
+// reglas de firestore.rules.
 
 import { initializeApp } from "firebase/app";
-import { connectAuthEmulator, getAuth } from "firebase/auth";
-import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 
 const env = import.meta.env;
 
@@ -22,12 +26,6 @@ export const app = initializeApp({
   appId: env.VITE_FIREBASE_APP_ID,
 });
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-
 // Los puertos son los de firebase.json.
 export const usandoEmuladores = env.DEV && env.VITE_FIREBASE_EMULADORES !== "no";
-if (usandoEmuladores) {
-  connectAuthEmulator(auth, "http://127.0.0.1:8520", { disableWarnings: true });
-  connectFirestoreEmulator(db, "127.0.0.1", 8519);
-}
+export const EMULADOR = { host: "127.0.0.1", firestore: 8519, auth: 8520 };
