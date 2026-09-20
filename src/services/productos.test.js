@@ -49,6 +49,7 @@ describe("estado compartido del catálogo", () => {
     svc.cargarProductos();
     await esperar();
     expect(svc.estadoProductos().error).toMatch(/No se pudo cargar/);
+    expect(svc.estadoProductos().config).toEqual(CONFIG);
 
     svc.cargarProductos(); // reintento desde cualquier pantalla
     await esperar();
@@ -57,12 +58,15 @@ describe("estado compartido del catálogo", () => {
     expect(menu.mock.calls.length).toBe(carrito.mock.calls.length);
   });
 
+  // La config también va en el estado de error, y no es un detalle: el
+  // encabezado y el pie se dibujan igual con el catálogo caído, y es justo
+  // ahí donde la clienta necesita el nombre del negocio y el WhatsApp.
   it("respuesta HTTP de error o JSON con otra forma: error, no catálogo vacío", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
     vi.stubGlobal("fetch", vi.fn(() => Promise.resolve({ ok: false, status: 404 })));
     svc.cargarProductos();
     await esperar();
-    expect(svc.estadoProductos()).toMatchObject({ loading: false, productos: [] });
+    expect(svc.estadoProductos()).toMatchObject({ loading: false, productos: [], config: CONFIG });
     expect(svc.estadoProductos().error).toBeTruthy();
 
     vi.resetModules();
@@ -70,6 +74,7 @@ describe("estado compartido del catálogo", () => {
     vi.stubGlobal("fetch", vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve([]) })));
     svc.cargarProductos();
     await esperar();
+    expect(svc.estadoProductos()).toMatchObject({ loading: false, productos: [], config: CONFIG });
     expect(svc.estadoProductos().error).toBeTruthy();
   });
 

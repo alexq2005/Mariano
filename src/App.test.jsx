@@ -70,3 +70,36 @@ describe("catálogo (y config) que todavía no llegaron", () => {
     },
   );
 });
+
+// El otro extremo: el catálogo no cargó, pero la config igual viaja en ese
+// estado (services/productos.js la publica también al fallar). El encabezado
+// tiene que seguir con el nombre y el pie con el WhatsApp, que es justo lo
+// que la clienta necesita cuando la página no le anda.
+describe("catálogo que no cargó", () => {
+  // El número que trae config.js es el de ejemplo y el pie lo esconde a
+  // propósito; acá va uno con forma válida para ver el enlace.
+  const CONFIG_REAL = { ...CONFIG, whatsapp: "5491145678901" };
+
+  beforeEach(() => {
+    catalogo.estado = {
+      productos: [],
+      porId: new Map(),
+      config: CONFIG_REAL,
+      loading: false,
+      error: "No se pudo cargar el catálogo. Revisá tu conexión y probá de nuevo.",
+    };
+  });
+
+  it.each(["/", "/cart", "/checkout", "/product/ZMA-1"])(
+    "%s: el encabezado y el pie siguen mostrando los datos del negocio",
+    (ruta) => {
+      const { antes, main, despues } = partes(dibujar(ruta));
+      // Desde <header> y no todo "antes": el <title> que React 19 sube al
+      // principio también nombra el negocio y taparía un encabezado vacío.
+      expect(antes.slice(antes.indexOf("<header"))).toContain(CONFIG.nombre_negocio);
+      expect(despues).toContain(`https://wa.me/${CONFIG_REAL.whatsapp}`);
+      expect(despues).toContain(CONFIG.actualizado);
+      expect(main).toContain("No se pudo cargar el catálogo");
+    },
+  );
+});

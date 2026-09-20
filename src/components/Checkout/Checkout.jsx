@@ -25,7 +25,9 @@ const leerGuardados = () => {
   try {
     return JSON.parse(sessionStorage.getItem(CLAVE_DATOS) ?? "{}");
   } catch {
-    return DATOS_VACIOS;
+    // Copia, no la constante compartida: lo que sale de acá va al estado del
+    // componente, y DATOS_VACIOS lo usan también pedido.js y sus tests.
+    return { ...DATOS_VACIOS };
   }
 };
 
