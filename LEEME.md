@@ -22,6 +22,9 @@ npm run dev        # abre en http://localhost:8518
 | `npm run build`   | arma la versión para publicar en `dist/`                    |
 | `npm run preview` | sirve `dist/` para probar la versión final antes de subirla |
 | `npm run catalogo`| recalcula los precios y genera `public/data/catalogo.json`   |
+| `npm run emu`     | emuladores de Firebase en esta máquina (Firestore, Auth)    |
+| `npm run sembrar` | carga datos y cuentas de prueba en los emuladores           |
+| `npm run test:reglas` | prueba las reglas de seguridad (1182 casos)             |
 | `npm test`        | tests (Vitest): precios, carrito, pedido, búsqueda y rutas  |
 | `npm run lint`    | revisa el código con ESLint                                 |
 | `npm run check:dist` | avisa si algo privado se coló en lo que se publica       |
@@ -47,7 +50,11 @@ src/
   compartido/formula.js    la fórmula de precios (también la usará el servidor)
   index.css                colores (pastel claro/oscuro) y estilos generales
   context/                 carrito: CartContext + CartProvider + useCart (reparte la config)
-  services/productos.js    carga public/data/catalogo.json y publica la config (una sola vez)
+  services/productos.js    carga el catálogo (Firestore → caché → archivo)
+  services/firestoreRest.js lee Firestore con fetch, sin el SDK
+  firebase/                 app.js (mínimo) · publico/panel según quién lo use
+  admin/AdminArea.jsx       el panel, que se descarga aparte
+  layouts/AdminLayout/      encabezado y menú del panel
   hooks/useProductos.js
   utils/                   precios, armado del pedido, búsqueda (con sus tests)
   components/<Nombre>/     un componente por carpeta, con su .jsx y su .css
@@ -73,7 +80,39 @@ funciones de precios y de pedido la reciben por parámetro. Así, el día que
 la config y el catálogo vengan de otro lado, no hay que tocar los
 componentes: se cambia solo `services/productos.js`.
 
-### Rutas
+### El panel de administración
+
+En `/admin`. Se entra con una cuenta de Firebase y el rol sale de un
+documento en Firestore (`staff/{uid}`) que **solo el programador puede
+escribir**: cambiarlo desde el navegador no sirve de nada, porque las reglas
+del servidor rechazan lo que no corresponde.
+
+| Rol | Qué ve |
+|---|---|
+| `admin` | productos, stock y (pronto) pedidos |
+| `programador` | todo lo anterior más costos, dólar y márgenes |
+
+Si a alguien le dan de baja (`activo: false`), se le cierra la sesión en el
+momento y el login le explica por qué.
+
+Para trabajar en el panel hacen falta los emuladores:
+
+```
+npm run emu        # en una terminal: Firestore y Auth locales
+npm run sembrar    # una vez: cuentas de prueba y catálogo
+npm run dev        # en otra terminal
+```
+
+Cuentas de prueba (solo en los emuladores): `admin@aurora.test`,
+`programador@aurora.test` y `exempleada@aurora.test` (dada de baja), todas
+con la contraseña `aurora123`.
+
+Las reglas de seguridad están en `firestore.rules` y se prueban con
+`npm run test:reglas`: 1182 casos que verifican, actor por actor, qué puede
+leer cada uno. El navegador **nunca escribe** en Firestore; eso va a pasar
+por Cloud Functions.
+
+## Rutas
 
 | Ruta                   | Página                               |
 |------------------------|--------------------------------------|
@@ -82,8 +121,26 @@ componentes: se cambia solo `services/productos.js`.
 | `/product/:id`         | detalle de un producto               |
 | `/cart`                | el carrito                           |
 | `/checkout`            | datos de la clienta y envío por WhatsApp |
+| `/admin/login`         | ingreso al panel                     |
+| `/admin`               | panel: inicio y productos            |
 
 La búsqueda va en la URL (`/?q=labial`), así que se puede compartir.
+
+## De dónde salen los productos
+
+La tienda busca el catálogo en este orden:
+
+1. **Caché del navegador**: al volver a entrar se ve al instante lo de la
+   última visita, mientras se busca lo nuevo.
+2. **Firestore** (`publico/catalogo`): la fuente real. Es **un solo
+   documento** con los 266 productos y la config, así cada visita cuesta
+   **una lectura**. Se lee con un `fetch` a la API REST, sin el SDK: son
+   26 KB menos por visita.
+3. **`public/data/catalogo.json`**: red de seguridad. Si Firestore no
+   responde, la tienda sigue funcionando con el archivo.
+
+Mientras el panel no pueda editar productos, Firestore se carga con
+`npm run sembrar` (emuladores) desde ese mismo archivo.
 
 ## Cambiar los precios
 
