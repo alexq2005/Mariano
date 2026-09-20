@@ -4,16 +4,32 @@ import { useAuth } from "../../context/AuthContext";
 import { filtrarProductos, nombreRubro } from "../../utils/filtros";
 import { rutaImagen } from "../../services/productos";
 import { plata } from "../../utils/precios";
-import { CONFIG } from "../../config";
+import { llamarYRefrescar } from "../../services/panel";
 import "./AdminProducts.css";
 
-// Listado de productos del panel. Por ahora es de solo lectura: el alta, la
-// edición y la baja llegan cuando estén las Cloud Functions, porque toda
-// escritura pasa por el servidor (el navegador nunca escribe en Firestore).
+// Listado de productos del panel. Pausar y reactivar ya funcionan; el alta
+// y la edición llegan después. Toda escritura pasa por el servidor: el
+// navegador nunca escribe en Firestore.
 export const AdminProducts = () => {
-  const { productos, loading, error } = useProductos();
+  const { productos, config, loading, error } = useProductos();
   const { rol } = useAuth();
   const [texto, setTexto] = useState("");
+  // Id del producto que se está cambiando ahora mismo, y el último error.
+  const [trabajando, setTrabajando] = useState(null);
+  const [aviso, setAviso] = useState("");
+
+  const pausar = async (producto, pausar) => {
+    setTrabajando(producto.id);
+    setAviso("");
+    try {
+      await llamarYRefrescar("producto.pausar", { id: producto.id, pausar });
+      setAviso(`${producto.nom}: ${pausar ? "pausado, ya no se ve en la tienda" : "de vuelta en la tienda"}.`);
+    } catch (err) {
+      setAviso(err.message);
+    } finally {
+      setTrabajando(null);
+    }
+  };
 
   const filtrados = useMemo(() => filtrarProductos(productos, { texto }), [productos, texto]);
 
@@ -22,7 +38,7 @@ export const AdminProducts = () => {
 
   return (
     <section>
-      <title>{`Productos | ${CONFIG.nombre_negocio}`}</title>
+      <title>{`Productos | ${config.nombre_negocio}`}</title>
       <h1>Productos</h1>
 
       <div className="admin-herramientas">
@@ -42,8 +58,12 @@ export const AdminProducts = () => {
       </div>
 
       <p className="aviso">
-        Solo lectura por ahora. El alta, la edición y la baja llegan con el próximo paso; los precios se
-        recalculan con <code>npm run catalogo</code>.
+        Pausar saca el producto de la tienda sin borrarlo, y se puede reactivar cuando quieras. El alta y la
+        edición llegan en el próximo paso; los precios se recalculan con <code>npm run catalogo</code>.
+      </p>
+
+      <p className="admin-aviso-accion" role="status">
+        {aviso}
       </p>
 
       <div className="admin-tabla-marco">
@@ -54,8 +74,9 @@ export const AdminProducts = () => {
               <th scope="col">Producto</th>
               <th scope="col">Rubro</th>
               <th scope="col" className="der">Por menor</th>
-              <th scope="col" className="der">Desde {CONFIG.minimo_mayor} u.</th>
+              <th scope="col" className="der">Desde {config.minimo_mayor} u.</th>
               {rol === "programador" && <th scope="col" className="der">Diferencia</th>}
+              <th scope="col">En la tienda</th>
             </tr>
           </thead>
           <tbody>
@@ -74,6 +95,19 @@ export const AdminProducts = () => {
                 {rol === "programador" && (
                   <td className="der num admin-dif">−{plata(p.menor - p.mayor)}</td>
                 )}
+                <td className="admin-estado">
+                  <span className={`admin-pastilla ${p.activo === false ? "pausado" : "activo"}`}>
+                    {p.activo === false ? "Pausado" : "Se ve"}
+                  </span>
+                  <button
+                    type="button"
+                    className="btn bg-outline admin-boton-chico"
+                    onClick={() => pausar(p, p.activo !== false)}
+                    disabled={trabajando === p.id}
+                  >
+                    {trabajando === p.id ? "Guardando…" : p.activo === false ? "Reactivar" : "Pausar"}
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

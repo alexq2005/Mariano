@@ -1,0 +1,20 @@
+{
+  "name": "catalogo-aurora-functions",
+  "description": "Servidor de Aurora: todas las escrituras pasan por acá",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "firebase-admin": "14.4.0",
+    "firebase-functions": "7.4.0"
+  },
+  "devDependencies": {
+    "vitest": "5.0.1"
+  }
+}

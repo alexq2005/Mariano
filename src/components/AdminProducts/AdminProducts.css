@@ -62,3 +62,17 @@
 .admin-prod-cod { display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--debil); }
 .admin-dif { color: var(--mayor); font-weight: 600; }
 .admin-intro { color: var(--tenue); margin-top: -4px; }
+
+.admin-estado { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.admin-pastilla {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.admin-pastilla.activo { background: var(--mayor-suave); color: var(--mayor); }
+.admin-pastilla.pausado { background: var(--sunken); color: var(--tenue); }
+.admin-boton-chico { min-height: 36px; padding: 6px 12px; font-size: 13px; }
+.admin-aviso-accion { margin: 0 0 12px; min-height: 20px; font-size: 13.5px; font-weight: 600; color: var(--ok); }
+.admin-aviso-accion:empty { margin: 0; }

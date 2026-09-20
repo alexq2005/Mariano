@@ -5,15 +5,47 @@
   },
   "hosting": {
     "public": "dist",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "rewrites": [{ "source": "**", "destination": "/index.html" }]
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   },
   "emulators": {
-    "firestore": { "port": 8519 },
-    "auth": { "port": 8520 },
-    "ui": { "enabled": true, "port": 8521 },
-    "functions": { "port": 8522 },
-    "hosting": { "port": 8523 },
+    "firestore": {
+      "port": 8519
+    },
+    "auth": {
+      "port": 8520
+    },
+    "ui": {
+      "enabled": true,
+      "port": 8521
+    },
+    "functions": {
+      "port": 8522
+    },
+    "hosting": {
+      "port": 8523
+    },
     "singleProjectMode": true
-  }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "*.log",
+        "test"
+      ]
+    }
+  ]
 }

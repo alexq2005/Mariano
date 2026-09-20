@@ -11,10 +11,11 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "emu": "firebase emulators:start --project demo-aurora",
+    "emu": "node scripts/emuladores.mjs",
     "emu:cerrar": "node scripts/cerrar-emulador.mjs",
     "test:reglas": "firebase emulators:exec --only firestore --project demo-aurora \"node tests/reglas.cjs\"",
-    "sembrar": "node scripts/sembrar-emulador.mjs"
+    "sembrar": "node scripts/sembrar-emulador.mjs",
+    "test:funciones": "node scripts/probar-funciones.mjs"
   },
   "dependencies": {
     "firebase": "12.19.0",

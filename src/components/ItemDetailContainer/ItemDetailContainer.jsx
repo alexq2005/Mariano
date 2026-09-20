@@ -11,6 +11,20 @@ export const ItemDetailContainer = () => {
   if (error) return <CatalogError mensaje={error} />;
 
   const producto = porId.get(id);
+  // Pausado desde el panel: se responde como si ya no estuviera, pero con
+  // su propio texto, porque puede volver.
+  if (producto?.activo === false) {
+    return (
+      <div className="estado">
+        <title>{`${producto.nom} | ${config.nombre_negocio}`}</title>
+        <h1>Por ahora no está disponible</h1>
+        <p>{producto.nom} salió de la tienda. Puede volver en cualquier momento.</p>
+        <Link to="/" className="btn bg-primary">
+          Ver el catálogo
+        </Link>
+      </div>
+    );
+  }
   if (!producto) {
     return (
       <div className="estado">

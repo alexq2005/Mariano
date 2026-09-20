@@ -70,3 +70,24 @@
 }
 .cart-total small { color: var(--tenue); font-weight: 400; }
 .cart-total strong { font-size: 26px; }
+
+/* Productos que la tienda pausó y siguen en un carrito viejo */
+.cart-no-disponibles {
+  background: var(--sunken);
+  border: 1px solid var(--line-fuerte);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+.cart-no-disponibles p { margin: 0 0 8px; font-weight: 600; }
+.cart-no-disponibles ul { display: flex; flex-direction: column; gap: 6px; }
+.cart-no-disponibles li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 12px;
+  color: var(--tenue);
+}
+.cart-no-disponibles-nota { margin: 8px 0 0; font-weight: 400; color: var(--tenue); font-size: 12.5px; }

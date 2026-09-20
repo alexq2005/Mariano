@@ -15,8 +15,9 @@ export const ItemListContainer = () => {
   const texto = params.get("q") ?? "";
   const { productos, config, loading, error } = useProductos();
 
+  // Los productos pausados desde el panel no se muestran en la tienda.
   const filtrados = useMemo(
-    () => filtrarProductos(productos, { rubro: category, texto }),
+    () => filtrarProductos(productos.filter((p) => p.activo !== false), { rubro: category, texto }),
     [productos, category, texto],
   );
 

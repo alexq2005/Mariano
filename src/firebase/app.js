@@ -28,4 +28,4 @@ export const app = initializeApp({
 
 // Los puertos son los de firebase.json.
 export const usandoEmuladores = env.DEV && env.VITE_FIREBASE_EMULADORES !== "no";
-export const EMULADOR = { host: "127.0.0.1", firestore: 8519, auth: 8520 };
+export const EMULADOR = { host: "127.0.0.1", firestore: 8519, auth: 8520, functions: 8522 };

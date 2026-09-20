@@ -46,13 +46,19 @@ export const lineaDeCarrito = (p, cant, C) => {
 // del proveedor) se ignoran.
 export const resumirCarrito = (lista, porId, C) => {
   const items = [];
+  // Productos que la tienda pausó y que alguien ya tenía en el carrito: no
+  // se cobran, pero tampoco desaparecen sin decir nada.
+  const noDisponibles = [];
   for (const { id, cant } of lista) {
     const p = porId.get(id);
-    if (p && cant > 0) items.push(lineaDeCarrito(p, cant, C));
+    if (!p || cant <= 0) continue;
+    if (p.activo === false) noDisponibles.push({ p, cant });
+    else items.push(lineaDeCarrito(p, cant, C));
   }
   const total = items.reduce((a, i) => a + i.sub, 0);
   return {
     items,
+    noDisponibles,
     total,
     ahorro: items.reduce((a, i) => a + i.ahorro, 0),
     unidades: items.reduce((a, i) => a + i.cant, 0),

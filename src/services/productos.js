@@ -98,8 +98,10 @@ const desdeArchivo = async () => {
 };
 
 // Pide el catálogo si todavía no está, o reintenta si la última vez falló.
-export const cargarProductos = async () => {
-  if (cargando || (!estado.loading && !estado.error)) return;
+// Con `forzar` vuelve a leerlo aunque ya lo tenga: lo usa el panel después
+// de cambiar algo, para mostrar lo que quedó de verdad.
+export const cargarProductos = async ({ forzar = false } = {}) => {
+  if (cargando || (!forzar && !estado.loading && !estado.error)) return;
   cargando = true;
 
   // Lo de la última visita se muestra ya mismo, mientras se busca lo nuevo.
@@ -130,6 +132,8 @@ export const cargarProductos = async () => {
     cargando = false;
   }
 };
+
+export const recargarProductos = () => cargarProductos({ forzar: true });
 
 export const rutaImagen = (archivo) =>
   archivo ? `${import.meta.env.BASE_URL}img/${archivo}` : `${import.meta.env.BASE_URL}img/sin-foto.svg`;

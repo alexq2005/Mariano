@@ -126,6 +126,31 @@ export const Cart = () => {
         Precio por mayor desde <b>{config.minimo_mayor} u. del mismo producto</b>. No se suman productos distintos.
       </p>
 
+      {/* Si la tienda pausó algo que ya estaba en el carrito, se dice: no
+          se cobra, pero tampoco desaparece sin explicación. */}
+      {resumen.noDisponibles.length > 0 && (
+        <div className="cart-no-disponibles" role="status">
+          <p>
+            {resumen.noDisponibles.length === 1
+              ? "Un producto de tu carrito ya no está disponible:"
+              : `${resumen.noDisponibles.length} productos de tu carrito ya no están disponibles:`}
+          </p>
+          <ul>
+            {resumen.noDisponibles.map(({ p, cant }) => (
+              <li key={p.id}>
+                <span>
+                  {p.nom} ({plural(cant, "unidad", "unidades")})
+                </span>
+                <button type="button" className="btn-link" onClick={() => quitar(p.id)}>
+                  Quitar del carrito
+                </button>
+              </li>
+            ))}
+          </ul>
+          <p className="cart-no-disponibles-nota">No se cuentan en el total.</p>
+        </div>
+      )}
+
       <div className="cart-layout">
         <div>
           <ul className="cart-lista">
