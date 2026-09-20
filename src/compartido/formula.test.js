@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 import { calcularPrecios, redondearPrecio } from "./formula";
 
-const PRIVADA = { tipo_cambio: 1000, factor_importacion: 2.5, margen_menor: 2.5, margen_mayor: 1.8, redondeo: 100 };
+// Números inventados a propósito: los reales del negocio viven en
+// datos/config-privada.json, que no se commitea.
+const PRIVADA = { tipo_cambio: 1000, factor_importacion: 2, margen_menor: 3, margen_mayor: 2, redondeo: 100 };
 
 describe("calcularPrecios", () => {
-  it("aplica la fórmula y redondea (0,4 USD → 3.016 y 2.186,6 → 3.000 y 2.200)", () => {
-    expect(calcularPrecios(0.4, PRIVADA)).toEqual({ menor: 3000, mayor: 2200 });
+  it("aplica la fórmula y redondea (0,4 × 2 × 1000 = 800 → 2.400 y 1.600)", () => {
+    expect(calcularPrecios(0.4, PRIVADA)).toEqual({ menor: 2400, mayor: 1600 });
   });
 
   it("el precio por mayor nunca supera al de menor", () => {
@@ -21,7 +23,7 @@ describe("calcularPrecios", () => {
   });
 
   it("sin redondeo (paso 1) devuelve el entero", () => {
-    expect(calcularPrecios(1, { ...PRIVADA, redondeo: 1 })).toEqual({ menor: 7540, mayor: 5467 });
+    expect(calcularPrecios(1.234, { ...PRIVADA, redondeo: 1 })).toEqual({ menor: 7404, mayor: 4936 });
   });
 });
 

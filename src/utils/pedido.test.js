@@ -5,13 +5,8 @@ import { resumirCarrito } from "./precios";
 const C = {
   nombre_negocio: "Aurora",
   whatsapp: "5491145678901",
-  tipo_cambio: 1000,
-  factor_importacion: 2.5,
-  margen_menor: 2.5,
-  margen_mayor: 1.8,
   minimo_mayor: 12,
   pedido_minimo: 0,
-  redondeo: 100,
   actualizado: "septiembre 2026",
   formas_entrega: [
     { id: "retiro", nombre: "Retiro en persona", pide_direccion: false },
