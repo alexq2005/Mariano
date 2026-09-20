@@ -1,4 +1,5 @@
 import { CONFIG } from "../config";
+import { calcularPrecios } from "../compartido/formula";
 
 // Estado compartido del catálogo (public/data/productos.json). Todos los
 // componentes que usan useProductos ven EL MISMO estado: si una carga
@@ -21,6 +22,33 @@ const publicar = (nuevo) => {
   suscriptores.forEach((avisar) => avisar());
 };
 
+// Del producto del archivo sale el producto que ve la tienda: con los dos
+// precios ya calculados y SIN el costo en dólares ni el bulto del
+// proveedor. Los precios se calculan una sola vez acá, no en cada render.
+//
+// Paso siguiente: el archivo va a venir con los precios ya hechos y el
+// costo no va a viajar al navegador; esta función se queda sin fórmula.
+const aProductoDeTienda = (p) => {
+  const { menor, mayor } = calcularPrecios(p.costo, CONFIG);
+  return { id: p.id, cod: p.cod, nom: p.nom, desc: p.desc, rubro: p.rubro, img: p.img, menor, mayor };
+};
+
+// Un producto con el costo roto no puede tirar abajo el catálogo entero,
+// pero tampoco puede pasar en silencio: queda afuera y se avisa con su id.
+const prepararCatalogo = (crudos) => {
+  const productos = [];
+  const fallados = [];
+  for (const p of crudos) {
+    try {
+      productos.push(aProductoDeTienda(p));
+    } catch (err) {
+      fallados.push(`${p?.id ?? "(sin id)"}: ${err.message}`);
+    }
+  }
+  if (fallados.length) console.error(`Productos sin precio, quedan fuera del catálogo:\n- ${fallados.join("\n- ")}`);
+  return productos;
+};
+
 export const suscribirProductos = (avisar) => {
   suscriptores.add(avisar);
   return () => suscriptores.delete(avisar);
@@ -41,7 +69,7 @@ export const cargarProductos = () => {
     })
     .then((data) => {
       if (!Array.isArray(data?.productos)) throw new Error("formato inesperado");
-      publicar({ productos: data.productos, config: CONFIG, loading: false, error: null });
+      publicar({ productos: prepararCatalogo(data.productos), config: CONFIG, loading: false, error: null });
     })
     .catch((err) => {
       console.error("No se pudo cargar el catálogo:", err);

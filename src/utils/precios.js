@@ -1,31 +1,31 @@
-// El Excel trae el COSTO de fábrica en dólares. Los dos precios de venta
-// se calculan; el costo no se muestra nunca en pantalla.
+// Cuentas del carrito. Los precios de venta NO se calculan acá: cada
+// producto ya llega con `menor` y `mayor` hechos (ver compartido/formula.js
+// y services/productos.js). Así el precio que se muestra es exactamente el
+// que se guarda en el pedido, sin recalcular en cada render.
 //
 // La config llega siempre por parámetro y NO tiene valor por defecto: viaja
 // con el catálogo (useProductos().config) y mañana va a venir de la base.
-// Olvidarse de pasarla tiene que fallar fuerte, no calcular precios con una
-// config vieja escrita en el código.
-
-export const redondear = (n, C) => {
-  const paso = C.redondeo || 1;
-  return Math.max(paso, Math.round(n / paso) * paso);
-};
-
-const costoReal = (p, C) => p.costo * (C.factor_importacion || 1) * C.tipo_cambio;
-
-export const precioMenor = (p, C) => redondear(costoReal(p, C) * C.margen_menor, C);
-export const precioMayor = (p, C) => redondear(costoReal(p, C) * C.margen_mayor, C);
+// Olvidarse de pasarla tiene que fallar fuerte, no calcular con una config
+// vieja escrita en el código.
 
 export const plata = (n) => "$" + Math.round(n).toLocaleString("es-AR");
 
 export const plural = (n, uno, varios) => `${n} ${n === 1 ? uno : varios}`;
 
+const precioDe = (p, campo) => {
+  const valor = p?.[campo];
+  if (typeof valor !== "number" || !Number.isFinite(valor) || valor <= 0) {
+    throw new Error(`precios: el producto ${p?.id ?? "(sin id)"} no tiene precio "${campo}"`);
+  }
+  return valor;
+};
+
 // Una línea del carrito: qué precio le toca según la cantidad y cuánto le
 // falta (o cuánto ahorra) respecto del precio por mayor. El precio por
 // mayor es por producto: 12 u. del MISMO producto, no se suman distintos.
 export const lineaDeCarrito = (p, cant, C) => {
-  const menor = precioMenor(p, C);
-  const mayor = precioMayor(p, C);
+  const menor = precioDe(p, "menor");
+  const mayor = precioDe(p, "mayor");
   const esMayor = cant >= C.minimo_mayor;
   const unit = esMayor ? mayor : menor;
   return {

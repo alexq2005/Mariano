@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { plata, precioMayor, precioMenor } from "../../utils/precios";
+import { plata } from "../../utils/precios";
 import { rutaImagen } from "../../services/productos";
 import "./Item.css";
 
@@ -46,11 +46,11 @@ export const Item = ({ producto: p, cant = 0, config, detalle = false, children 
         <Titulo className="card-nombre">{detalle ? p.nom : <Link to={ruta}>{p.nom}</Link>}</Titulo>
         {p.desc && <p className="card-desc">{p.desc}</p>}
         <div className="tarifas">
-          <Tarifa tipo="menor" etiqueta="Por menor" precio={precioMenor(p, config)} activa={cant > 0 && !esMayor} />
+          <Tarifa tipo="menor" etiqueta="Por menor" precio={p.menor} activa={cant > 0 && !esMayor} />
           <Tarifa
             tipo="mayor"
             etiqueta={`Desde ${config.minimo_mayor} u.`}
-            precio={precioMayor(p, config)}
+            precio={p.mayor}
             activa={esMayor}
           />
         </div>

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useCart } from "../../context/CartContext";
 import { ItemCount } from "../ItemCount/ItemCount";
-import { plata, precioMayor, precioMenor } from "../../utils/precios";
+import { plata } from "../../utils/precios";
 import "./AddToCart.css";
 
 // "Agregar al carrito" y, una vez agregado, el contador conectado al
@@ -43,7 +43,7 @@ export const AddToCart = ({ producto: p }) => {
         onFijar={(n) => fijar(p.id, n)}
       />
       {faltan <= 0 ? (
-        <p className="pista ok num">Ahorrás {plata((precioMenor(p, config) - precioMayor(p, config)) * cant)} en este producto</p>
+        <p className="pista ok num">Ahorrás {plata((p.menor - p.mayor) * cant)} en este producto</p>
       ) : (
         <p className="pista num">
           {faltan === 1 ? "Te falta 1 u." : `Te faltan ${faltan} u.`} para el precio por mayor

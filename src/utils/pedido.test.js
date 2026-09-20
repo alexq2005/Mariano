@@ -19,9 +19,10 @@ const C = {
   ],
   formas_pago: ["Transferencia", "Efectivo", "A convenir"],
 };
+// Los productos llegan con los precios ya calculados (0,4 y 1,2 USD).
 const porId = new Map(Object.entries({
-  L1: { id: "L1", cod: "ZMA-20045", nom: "Lápiz labial /48", costo: 0.4 },
-  S1: { id: "S1", cod: "ZMA-CQK-5002", nom: "Sérum de seda", costo: 1.2 },
+  L1: { id: "L1", cod: "ZMA-20045", nom: "Lápiz labial /48", menor: 3000, mayor: 2200 },
+  S1: { id: "S1", cod: "ZMA-CQK-5002", nom: "Sérum de seda", menor: 9000, mayor: 6600 },
 }));
 const resumen = resumirCarrito([{ id: "L1", cant: 12 }, { id: "S1", cant: 1 }], porId, C);
 const completos = { ...DATOS_VACIOS, nombre: " Ana ", entrega: "envio", direccion: "Caballito", pago: "Transferencia" };
