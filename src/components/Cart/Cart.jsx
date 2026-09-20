@@ -5,11 +5,10 @@ import { useCart } from "../../context/CartContext";
 import { CartItem } from "../CartItem/CartItem";
 import { CatalogError } from "../CatalogError/CatalogError";
 import { plata, plural } from "../../utils/precios";
-import { CONFIG } from "../../config";
 import "./Cart.css";
 
 export const Cart = () => {
-  const { items, resumen, productosListos, errorProductos, quitar, reponer, vaciar, restaurar } = useCart();
+  const { items, resumen, config, productosListos, errorProductos, quitar, reponer, vaciar, restaurar } = useCart();
   // Lo último quitado, para "Deshacer" en el mismo lugar de la lista.
   const [quitado, setQuitado] = useState(null);
   // Lo que había antes de vaciar, para "Deshacer".
@@ -73,7 +72,7 @@ export const Cart = () => {
 
   const { total, ahorro, unidades, faltaMinimo } = resumen;
   const n = resumen.items.length;
-  const tituloPestana = <title>{`Carrito | ${CONFIG.nombre_negocio}`}</title>;
+  const tituloPestana = <title>{`Carrito | ${config.nombre_negocio}`}</title>;
 
   if (!n && !quitado) {
     return (
@@ -124,7 +123,7 @@ export const Cart = () => {
         Tu carrito
       </h1>
       <p className="aviso">
-        Precio por mayor desde <b>{CONFIG.minimo_mayor} u. del mismo producto</b>. No se suman productos distintos.
+        Precio por mayor desde <b>{config.minimo_mayor} u. del mismo producto</b>. No se suman productos distintos.
       </p>
 
       <div className="cart-layout">
@@ -191,7 +190,7 @@ export const Cart = () => {
           </p>
           {faltaMinimo > 0 && (
             <p className="cart-resumen-alerta num">
-              Te faltan {plata(faltaMinimo)} para el pedido mínimo de {plata(CONFIG.pedido_minimo)}.
+              Te faltan {plata(faltaMinimo)} para el pedido mínimo de {plata(config.pedido_minimo)}.
             </p>
           )}
           {continuar}

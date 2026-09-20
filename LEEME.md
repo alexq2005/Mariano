@@ -43,8 +43,8 @@ src/
   layouts/PublicLayout/    encabezado, pie y barra del carrito alrededor de cada página
   config.js                ← EL ARCHIVO PARA CAMBIAR PRECIOS Y DATOS DEL NEGOCIO
   index.css                colores (pastel claro/oscuro) y estilos generales
-  context/                 carrito: CartContext + CartProvider + useCart
-  services/productos.js    carga public/data/productos.json (una sola vez)
+  context/                 carrito: CartContext + CartProvider + useCart (reparte la config)
+  services/productos.js    carga public/data/productos.json y publica la config (una sola vez)
   hooks/useProductos.js
   utils/                   precios, armado del pedido, búsqueda (con sus tests)
   components/<Nombre>/     un componente por carpeta, con su .jsx y su .css
@@ -53,6 +53,12 @@ public/
   img/                     266 fotos de producto
 extraer.py                 regenera public/data/productos.json y public/img/
 ```
+
+Ninguna pantalla importa `config.js`: la config del negocio viaja con el
+catálogo (`useProductos().config`, y de ahí al contexto del carrito) y las
+funciones de precios y de pedido la reciben por parámetro. Así, el día que
+la config y el catálogo vengan de otro lado, no hay que tocar los
+componentes: se cambia solo `services/productos.js`.
 
 ### Rutas
 

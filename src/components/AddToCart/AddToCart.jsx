@@ -2,13 +2,12 @@ import { useEffect, useRef } from "react";
 import { useCart } from "../../context/CartContext";
 import { ItemCount } from "../ItemCount/ItemCount";
 import { plata, precioMayor, precioMenor } from "../../utils/precios";
-import { CONFIG } from "../../config";
 import "./AddToCart.css";
 
 // "Agregar al carrito" y, una vez agregado, el contador conectado al
 // carrito: lo que se cambia acá se ve al instante en el carrito y viceversa.
 export const AddToCart = ({ producto: p }) => {
-  const { cantidadDe, agregar, cambiar, fijar } = useCart();
+  const { cantidadDe, agregar, cambiar, fijar, config } = useCart();
   const cant = cantidadDe(p.id);
   const boton = useRef(null);
   const sumar = useRef(null);
@@ -33,7 +32,7 @@ export const AddToCart = ({ producto: p }) => {
     );
   }
 
-  const faltan = CONFIG.minimo_mayor - cant;
+  const faltan = config.minimo_mayor - cant;
   return (
     <div className="add-to-cart">
       <ItemCount
@@ -44,7 +43,7 @@ export const AddToCart = ({ producto: p }) => {
         onFijar={(n) => fijar(p.id, n)}
       />
       {faltan <= 0 ? (
-        <p className="pista ok num">Ahorrás {plata((precioMenor(p) - precioMayor(p)) * cant)} en este producto</p>
+        <p className="pista ok num">Ahorrás {plata((precioMenor(p, config) - precioMayor(p, config)) * cant)} en este producto</p>
       ) : (
         <p className="pista num">
           {faltan === 1 ? "Te falta 1 u." : `Te faltan ${faltan} u.`} para el precio por mayor

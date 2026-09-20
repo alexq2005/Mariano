@@ -9,7 +9,7 @@ import "./ItemList.css";
 // mucho para un celular.
 const POR_TANDA = 60;
 
-export const ItemList = ({ productos, total }) => {
+export const ItemList = ({ productos, total, config }) => {
   const [mostrando, setMostrando] = useState(POR_TANDA);
   const { cantidadDe } = useCart();
   const lista = useRef(null);
@@ -45,7 +45,7 @@ export const ItemList = ({ productos, total }) => {
       <ul ref={lista} className="products-container">
         {visibles.map((p) => (
           <li key={p.id}>
-            <Item producto={p} cant={cantidadDe(p.id)}>
+            <Item producto={p} cant={cantidadDe(p.id)} config={config}>
               <AddToCart producto={p} />
             </Item>
           </li>

@@ -3,13 +3,16 @@ import { CartContext } from "./CartContext";
 import { CLAVE, cantidadEn, cargarCarrito, carritoReducer, guardarCarrito, leerGuardado } from "./carrito";
 import { useProductos } from "../hooks/useProductos";
 import { plural, resumirCarrito } from "../utils/precios";
-import { CONFIG } from "../config";
 
 const ESPACIO_DURO = String.fromCharCode(160);
 
+// Sin config no hay con qué calcular precios: el carrito queda en cero hasta
+// que llega (viaja con el catálogo), en vez de mostrar "$NaN".
+const SIN_RESUMEN = { items: [], total: 0, ahorro: 0, unidades: 0, faltaMinimo: 0 };
+
 export const CartProvider = ({ children }) => {
   const [items, dispatch] = useReducer(carritoReducer, undefined, () => cargarCarrito());
-  const { productos, porId, loading, error } = useProductos();
+  const { productos, porId, config, loading, error } = useProductos();
   const [aviso, setAviso] = useState("");
   const temporizador = useRef(null);
 
@@ -58,10 +61,12 @@ export const CartProvider = ({ children }) => {
   const avisarCantidad = useCallback(
     (id, cant) => {
       if (cant <= 0) return anunciar(`Quitaste ${nombre(id)} del carrito.`);
-      const mayor = cant >= CONFIG.minimo_mayor ? ", precio por mayor" : "";
+      const mayor = cant >= config.minimo_mayor ? ", precio por mayor" : "";
       anunciarLuego(`${nombre(id)}: ${plural(cant, "unidad", "unidades")}${mayor}.`);
     },
-    [anunciar, anunciarLuego, nombre],
+    // config sin `?.` a propósito: solo se puede cambiar una cantidad desde
+    // pantallas que ya tienen el catálogo cargado (y con él, la config).
+    [anunciar, anunciarLuego, nombre, config],
   );
 
   const agregar = useCallback(
@@ -123,10 +128,13 @@ export const CartProvider = ({ children }) => {
   );
 
   const valor = useMemo(() => {
-    const resumen = resumirCarrito(items, porId);
+    const resumen = config ? resumirCarrito(items, porId, config) : SIN_RESUMEN;
     return {
       items,
       resumen,
+      // La config pública viaja con el catálogo y se reparte desde acá: los
+      // componentes no importan src/config.js.
+      config,
       productosListos: !loading,
       // Sin esto, un catálogo que no cargó se vería como "carrito vacío".
       errorProductos: error,
@@ -142,7 +150,7 @@ export const CartProvider = ({ children }) => {
       vaciar,
       restaurar,
     };
-  }, [items, porId, loading, error, agregar, cambiar, fijar, quitar, reponer, vaciar, restaurar]);
+  }, [items, porId, config, loading, error, agregar, cambiar, fijar, quitar, reponer, vaciar, restaurar]);
 
   return (
     <CartContext.Provider value={valor}>

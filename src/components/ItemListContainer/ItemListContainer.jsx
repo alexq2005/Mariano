@@ -4,7 +4,6 @@ import { useProductos } from "../../hooks/useProductos";
 import { filtrarProductos, nombreRubro } from "../../utils/filtros";
 import { ItemList } from "../ItemList/ItemList";
 import { CatalogError } from "../CatalogError/CatalogError";
-import { CONFIG } from "../../config";
 import "./ItemListContainer.css";
 
 const describirResultado = (n) =>
@@ -14,7 +13,7 @@ export const ItemListContainer = () => {
   const { category } = useParams();
   const [params] = useSearchParams();
   const texto = params.get("q") ?? "";
-  const { productos, loading, error } = useProductos();
+  const { productos, config, loading, error } = useProductos();
 
   const filtrados = useMemo(
     () => filtrarProductos(productos, { rubro: category, texto }),
@@ -44,15 +43,15 @@ export const ItemListContainer = () => {
 
   return (
     <section>
-      <title>{`${titulo} | ${CONFIG.nombre_negocio}`}</title>
+      <title>{`${titulo} | ${config.nombre_negocio}`}</title>
       <h1>{titulo}</h1>
       <p className="aviso">
-        Llevando <b>{CONFIG.minimo_mayor} unidades o más del mismo producto</b> pagás <b>precio por mayor</b>. No
+        Llevando <b>{config.minimo_mayor} unidades o más del mismo producto</b> pagás <b>precio por mayor</b>. No
         se suman productos distintos. El precio se ajusta solo cuando cargás la cantidad.
       </p>
       {region}
       {/* key: al cambiar rubro o búsqueda, la paginación vuelve a empezar */}
-      <ItemList key={`${category}|${texto}`} productos={filtrados} total={productos.length} />
+      <ItemList key={`${category}|${texto}`} productos={filtrados} total={productos.length} config={config} />
     </section>
   );
 };

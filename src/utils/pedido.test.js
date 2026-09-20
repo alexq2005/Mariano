@@ -50,6 +50,16 @@ describe("validarDatos", () => {
   });
 });
 
+describe("la config llega por parámetro", () => {
+  // Las formas de entrega y de pago vigentes salen de la config que viaja con
+  // el catálogo: sin ella tiene que fallar, no validar contra una lista vieja.
+  it("sin config falla en vez de usar una escrita en el código", () => {
+    expect(() => validarDatos(completos)).toThrow();
+    expect(() => armarMensaje(resumen, completos)).toThrow();
+    expect(() => sanearDatos(completos)).toThrow();
+  });
+});
+
 describe("armarMensaje", () => {
   const m = armarMensaje(resumen, { ...completos, comentarios: "Tocar timbre 2B" }, C);
 

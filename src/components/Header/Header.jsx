@@ -1,12 +1,13 @@
 import { useLayoutEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { CONFIG } from "../../config";
+import { useCart } from "../../context/CartContext";
 import { Nav } from "../Nav/Nav";
 import { SearchBar } from "../SearchBar/SearchBar";
 import { CartWidget } from "../CartWidget/CartWidget";
 import "./Header.css";
 
 export const Header = () => {
+  const { config } = useCart();
   const header = useRef(null);
 
   // La altura real del header fijo (cambia con el ancho) se publica en
@@ -25,7 +26,9 @@ export const Header = () => {
     <header ref={header} className="header">
       <div className="header-barra">
         <Link to="/" className="marca">
-          {CONFIG.nombre_negocio}
+          {/* El nombre sale de la config, que viaja con el catálogo: hasta
+              que llega no se dibuja (mejor vacío que "undefined"). */}
+          {config?.nombre_negocio}
           <small>Cosmética por mayor y menor</small>
         </Link>
         <SearchBar />

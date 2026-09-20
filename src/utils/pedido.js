@@ -1,4 +1,3 @@
-import { CONFIG } from "../config";
 import { plata } from "./precios";
 
 // El número de ejemplo que viene en config.js: si sigue puesto, los
@@ -14,12 +13,12 @@ export const URL_LARGA = 2000;
 
 export const DATOS_VACIOS = { nombre: "", entrega: "", direccion: "", pago: "", comentarios: "" };
 
-export const formaDeEntrega = (id, C = CONFIG) => C.formas_entrega.find((f) => f.id === id);
+export const formaDeEntrega = (id, C) => C.formas_entrega.find((f) => f.id === id);
 
 // Datos del formulario que vienen guardados (sessionStorage): solo las
 // claves conocidas, solo texto, y sin opciones que ya no están en config
 // (si se quitó una forma de pago, no puede seguir apareciendo elegida).
-export const sanearDatos = (g, C = CONFIG) => {
+export const sanearDatos = (g, C) => {
   const d = Object.fromEntries(
     Object.keys(DATOS_VACIOS).map((k) => [k, typeof g?.[k] === "string" ? g[k] : ""]),
   );
@@ -29,7 +28,7 @@ export const sanearDatos = (g, C = CONFIG) => {
 };
 
 // Devuelve {campo: mensaje} con los errores; vacío si está todo bien.
-export const validarDatos = (d, C = CONFIG) => {
+export const validarDatos = (d, C) => {
   const e = {};
   if (!d.nombre.trim()) e.nombre = "Escribí tu nombre.";
   const entrega = formaDeEntrega(d.entrega, C);
@@ -43,7 +42,7 @@ export const validarDatos = (d, C = CONFIG) => {
 // Mensaje que le llega al comercio. Separadores ASCII a propósito: "•" o
 // "—" ocupan 9 caracteres cada uno dentro de la URL y la alargan de más.
 // *texto* es negrita en WhatsApp.
-export const armarMensaje = (resumen, d, C = CONFIG) => {
+export const armarMensaje = (resumen, d, C) => {
   const l = [`Hola ${C.nombre_negocio}! Te hago este pedido:`, ""];
 
   resumen.items.forEach((i, n) => {
@@ -67,5 +66,5 @@ export const armarMensaje = (resumen, d, C = CONFIG) => {
   return l.join("\n");
 };
 
-export const urlWhatsApp = (mensaje, C = CONFIG) =>
+export const urlWhatsApp = (mensaje, C) =>
   `https://wa.me/${C.whatsapp}?text=${encodeURIComponent(mensaje)}`;

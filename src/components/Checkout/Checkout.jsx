@@ -13,16 +13,17 @@ import {
   urlWhatsApp,
   validarDatos,
 } from "../../utils/pedido";
-import { CONFIG } from "../../config";
 import { CatalogError } from "../CatalogError/CatalogError";
 import "./Checkout.css";
 
 // Los datos del formulario sobreviven a ir y volver del carrito (solo en
-// esta pestaña: sessionStorage se borra al cerrarla).
+// esta pestaña: sessionStorage se borra al cerrarla). Se leen tal cual y se
+// sanean más abajo, cuando ya está la config: las formas de entrega y de
+// pago vigentes salen de ella, y puede llegar después que el formulario.
 const CLAVE_DATOS = "aurora.checkout.v1";
-const leerDatos = () => {
+const leerGuardados = () => {
   try {
-    return sanearDatos(JSON.parse(sessionStorage.getItem(CLAVE_DATOS) ?? "{}"));
+    return JSON.parse(sessionStorage.getItem(CLAVE_DATOS) ?? "{}");
   } catch {
     return DATOS_VACIOS;
   }
@@ -32,8 +33,8 @@ const ORDEN_CAMPOS = ["nombre", "entrega", "direccion", "pago"];
 const ESPACIO_DURO = String.fromCharCode(160);
 
 export const Checkout = () => {
-  const { resumen, productosListos, errorProductos, vaciar } = useCart();
-  const [datos, setDatos] = useState(leerDatos);
+  const { resumen, config, productosListos, errorProductos, vaciar } = useCart();
+  const [guardados, setDatos] = useState(leerGuardados);
   const [intentado, setIntentado] = useState(false);
   const [copiado, setCopiado] = useState("");
   const [enviado, setEnviado] = useState(false);
@@ -47,13 +48,18 @@ export const Checkout = () => {
 
   useEffect(() => {
     try {
-      sessionStorage.setItem(CLAVE_DATOS, JSON.stringify(datos));
+      sessionStorage.setItem(CLAVE_DATOS, JSON.stringify(guardados));
     } catch {
       /* sin almacenamiento: el formulario funciona igual */
     }
-  }, [datos]);
+  }, [guardados]);
 
-  const titulo = <title>{`Finalizar pedido | ${CONFIG.nombre_negocio}`}</title>;
+  if (!productosListos) return <p className="estado">Cargando…</p>;
+  if (errorProductos) return <CatalogError mensaje={errorProductos} />;
+
+  // De acá para abajo la config ya llegó: viaja junto con el catálogo.
+  const titulo = <title>{`Finalizar pedido | ${config.nombre_negocio}`}</title>;
+  const datos = sanearDatos(guardados, config);
 
   if (terminado) {
     return (
@@ -69,8 +75,6 @@ export const Checkout = () => {
       </section>
     );
   }
-  if (!productosListos) return <p className="estado">Cargando…</p>;
-  if (errorProductos) return <CatalogError mensaje={errorProductos} />;
   if (!resumen.items.length) {
     return (
       <section className="estado">
@@ -89,7 +93,7 @@ export const Checkout = () => {
         {titulo}
         <h1>Todavía no llegás al pedido mínimo</h1>
         <p>
-          Te faltan {plata(resumen.faltaMinimo)} para el mínimo de {plata(CONFIG.pedido_minimo)}.
+          Te faltan {plata(resumen.faltaMinimo)} para el mínimo de {plata(config.pedido_minimo)}.
         </p>
         <Link to="/cart" className="btn bg-primary">
           Volver al carrito
@@ -98,11 +102,11 @@ export const Checkout = () => {
     );
   }
 
-  const errores = validarDatos(datos);
+  const errores = validarDatos(datos, config);
   const valido = Object.keys(errores).length === 0;
-  const mensaje = armarMensaje(resumen, datos);
-  const url = urlWhatsApp(mensaje);
-  const entrega = formaDeEntrega(datos.entrega);
+  const mensaje = armarMensaje(resumen, datos, config);
+  const url = urlWhatsApp(mensaje, config);
+  const entrega = formaDeEntrega(datos.entrega, config);
   const error = (campo) => (intentado ? errores[campo] : undefined);
   const cambiar = (campo) => (e) => setDatos({ ...datos, [campo]: e.target.value });
 
@@ -150,7 +154,7 @@ export const Checkout = () => {
       {titulo}
       <h1>Finalizar pedido</h1>
 
-      {!numeroWhatsAppValido(CONFIG.whatsapp) && (
+      {!numeroWhatsAppValido(config.whatsapp) && (
         <p className="checkout-config" role="note">
           ⚠️ El número de WhatsApp de la tienda todavía es el de ejemplo (en <code>src/config.js</code>): los
           pedidos no van a llegar a nadie.
@@ -182,7 +186,7 @@ export const Checkout = () => {
             <legend>
               ¿Cómo lo recibís? <span className="req">(obligatorio)</span>
             </legend>
-            {CONFIG.formas_entrega.map((f, i) => (
+            {config.formas_entrega.map((f, i) => (
               <label key={f.id} className="opcion">
                 <input
                   ref={i === 0 ? refEntrega : undefined}
@@ -223,7 +227,7 @@ export const Checkout = () => {
             <legend>
               ¿Cómo pagás? <span className="req">(obligatorio)</span>
             </legend>
-            {CONFIG.formas_pago.map((f, i) => (
+            {config.formas_pago.map((f, i) => (
               <label key={f} className="opcion">
                 <input
                   ref={i === 0 ? refPago : undefined}

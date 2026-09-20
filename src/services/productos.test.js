@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { CONFIG } from "../config";
 
 // El módulo guarda estado propio: se reimporta limpio en cada test.
 let svc;
@@ -23,7 +24,17 @@ describe("estado compartido del catálogo", () => {
     await esperar();
     svc.cargarProductos();
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(svc.estadoProductos()).toEqual({ productos: [{ id: "A" }], loading: false, error: null });
+    expect(svc.estadoProductos()).toEqual({ productos: [{ id: "A" }], config: CONFIG, loading: false, error: null });
+  });
+
+  // La config pública viaja con el catálogo (mañana, en el mismo documento):
+  // los componentes la leen de acá y no importan src/config.js.
+  it("publica la config junto con los productos", async () => {
+    vi.stubGlobal("fetch", vi.fn(() => respuesta([{ id: "A" }])));
+    expect(svc.estadoProductos().config).toEqual(CONFIG);
+    svc.cargarProductos();
+    await esperar();
+    expect(svc.estadoProductos().config).toEqual(CONFIG);
   });
 
   it("si falla, un reintento exitoso actualiza a TODOS los suscriptores", async () => {

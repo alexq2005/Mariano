@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { plata, precioMayor, precioMenor } from "../../utils/precios";
 import { rutaImagen } from "../../services/productos";
-import { CONFIG } from "../../config";
 import "./Item.css";
 
 const Tarifa = ({ tipo, etiqueta, precio, activa }) => (
@@ -12,9 +11,11 @@ const Tarifa = ({ tipo, etiqueta, precio, activa }) => (
 );
 
 // Tarjeta de producto. Como en el repo del curso, las acciones llegan por
-// `children`: la misma tarjeta sirve en el listado y en el detalle.
-export const Item = ({ producto: p, cant = 0, detalle = false, children }) => {
-  const esMayor = cant >= CONFIG.minimo_mayor;
+// `children`: la misma tarjeta sirve en el listado y en el detalle. Es
+// presentacional: la config (mínimo por mayor y los factores del precio) se
+// la pasa quien la dibuja.
+export const Item = ({ producto: p, cant = 0, config, detalle = false, children }) => {
+  const esMayor = cant >= config.minimo_mayor;
   const ruta = `/product/${p.id}`;
   const Titulo = detalle ? "h1" : "h2";
   const foto = (
@@ -45,8 +46,13 @@ export const Item = ({ producto: p, cant = 0, detalle = false, children }) => {
         <Titulo className="card-nombre">{detalle ? p.nom : <Link to={ruta}>{p.nom}</Link>}</Titulo>
         {p.desc && <p className="card-desc">{p.desc}</p>}
         <div className="tarifas">
-          <Tarifa tipo="menor" etiqueta="Por menor" precio={precioMenor(p)} activa={cant > 0 && !esMayor} />
-          <Tarifa tipo="mayor" etiqueta={`Desde ${CONFIG.minimo_mayor} u.`} precio={precioMayor(p)} activa={esMayor} />
+          <Tarifa tipo="menor" etiqueta="Por menor" precio={precioMenor(p, config)} activa={cant > 0 && !esMayor} />
+          <Tarifa
+            tipo="mayor"
+            etiqueta={`Desde ${config.minimo_mayor} u.`}
+            precio={precioMayor(p, config)}
+            activa={esMayor}
+          />
         </div>
         {children}
       </div>

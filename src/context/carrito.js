@@ -1,6 +1,6 @@
 // Lógica del carrito, sin React: el estado es una lista [{id, cant}] en el
 // orden en que se fueron agregando los productos. Se guardan SOLO ids y
-// cantidades; los precios se recalculan siempre desde config.js, así un
+// cantidades; los precios se recalculan siempre con la config vigente, así un
 // carrito guardado nunca queda con precios viejos si cambia el dólar.
 
 // Tope de cordura por producto (no es regla de negocio): evita que un

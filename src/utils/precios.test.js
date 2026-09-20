@@ -39,6 +39,13 @@ describe("precios", () => {
     expect(plural(1, "unidad", "unidades")).toBe("1 unidad");
     expect(plural(2, "unidad", "unidades")).toBe("2 unidades");
   });
+
+  // La config llega con el catálogo y se pasa siempre a mano: sin valor por
+  // defecto, olvidarse revienta acá y no vende a cualquier precio.
+  it("sin config falla en vez de calcular con valores viejos", () => {
+    expect(() => precioMenor(labial)).toThrow();
+    expect(() => resumirCarrito([{ id: "L1", cant: 1 }], porId)).toThrow();
+  });
 });
 
 describe("lineaDeCarrito", () => {

@@ -1,13 +1,17 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { renderToString } from "react-dom/server";
 import { MemoryRouter } from "react-router-dom";
 import App from "./App";
 import { CartProvider } from "./context/CartProvider";
+import { CONFIG } from "./config";
 
-// Sin red ni navegador: el catálogo se simula ya cargado (y vacío).
-vi.mock("./hooks/useProductos", () => {
-  const estado = { productos: [], porId: new Map(), loading: false, error: null };
-  return { useProductos: () => estado };
+// Sin red ni navegador: el catálogo se simula ya cargado (y vacío). La config
+// pública viaja con él, igual que en services/productos.js.
+const catalogo = vi.hoisted(() => ({ estado: null }));
+vi.mock("./hooks/useProductos", () => ({ useProductos: () => catalogo.estado }));
+
+beforeEach(() => {
+  catalogo.estado = { productos: [], porId: new Map(), config: CONFIG, loading: false, error: null };
 });
 
 const dibujar = (ruta) =>
@@ -47,4 +51,22 @@ describe("rutas de la tienda dentro de PublicLayout", () => {
     expect(html.split("<footer").length - 1).toBe(1);
     expect(html.split("<main>").length - 1).toBe(1);
   });
+});
+
+// La config viaja con el catálogo: cuando venga de la base va a tardar lo que
+// tarde la red, y mientras tanto ninguna pantalla puede mostrar basura.
+describe("catálogo (y config) que todavía no llegaron", () => {
+  beforeEach(() => {
+    catalogo.estado = { productos: [], porId: new Map(), config: null, loading: true, error: null };
+  });
+
+  it.each(["/", "/cart", "/checkout", "/product/ZMA-1", "/ruta/que-no-existe"])(
+    "%s: se dibuja sin 'undefined' ni 'NaN'",
+    (ruta) => {
+      const html = dibujar(ruta);
+      expect(html).not.toMatch(/undefined|NaN/);
+      expect(html).toContain('<header class="header"');
+      expect(html).toContain('<footer class="footer"');
+    },
+  );
 });

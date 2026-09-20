@@ -2,11 +2,10 @@ import { Link, useParams } from "react-router-dom";
 import { useProductos } from "../../hooks/useProductos";
 import { ItemDetail } from "../ItemDetail/ItemDetail";
 import { CatalogError } from "../CatalogError/CatalogError";
-import { CONFIG } from "../../config";
 
 export const ItemDetailContainer = () => {
   const { id } = useParams();
-  const { porId, loading, error } = useProductos();
+  const { porId, config, loading, error } = useProductos();
 
   if (loading) return <p className="estado">Cargando…</p>;
   if (error) return <CatalogError mensaje={error} />;
@@ -15,7 +14,7 @@ export const ItemDetailContainer = () => {
   if (!producto) {
     return (
       <div className="estado">
-        <title>{`Producto no encontrado | ${CONFIG.nombre_negocio}`}</title>
+        <title>{`Producto no encontrado | ${config.nombre_negocio}`}</title>
         <h1>Producto no encontrado</h1>
         <p>Puede que ya no esté en la lista.</p>
         <Link to="/" className="btn bg-primary">
@@ -25,5 +24,5 @@ export const ItemDetailContainer = () => {
     );
   }
 
-  return <ItemDetail producto={producto} />;
+  return <ItemDetail producto={producto} config={config} />;
 };

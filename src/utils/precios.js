@@ -1,20 +1,20 @@
-import { CONFIG } from "../config";
-
 // El Excel trae el COSTO de fábrica en dólares. Los dos precios de venta
 // se calculan; el costo no se muestra nunca en pantalla.
 //
-// Todas las funciones reciben la config como último parámetro (con la
-// real por defecto) para poder probarlas con números controlados.
+// La config llega siempre por parámetro y NO tiene valor por defecto: viaja
+// con el catálogo (useProductos().config) y mañana va a venir de la base.
+// Olvidarse de pasarla tiene que fallar fuerte, no calcular precios con una
+// config vieja escrita en el código.
 
-export const redondear = (n, C = CONFIG) => {
+export const redondear = (n, C) => {
   const paso = C.redondeo || 1;
   return Math.max(paso, Math.round(n / paso) * paso);
 };
 
 const costoReal = (p, C) => p.costo * (C.factor_importacion || 1) * C.tipo_cambio;
 
-export const precioMenor = (p, C = CONFIG) => redondear(costoReal(p, C) * C.margen_menor, C);
-export const precioMayor = (p, C = CONFIG) => redondear(costoReal(p, C) * C.margen_mayor, C);
+export const precioMenor = (p, C) => redondear(costoReal(p, C) * C.margen_menor, C);
+export const precioMayor = (p, C) => redondear(costoReal(p, C) * C.margen_mayor, C);
 
 export const plata = (n) => "$" + Math.round(n).toLocaleString("es-AR");
 
@@ -23,7 +23,7 @@ export const plural = (n, uno, varios) => `${n} ${n === 1 ? uno : varios}`;
 // Una línea del carrito: qué precio le toca según la cantidad y cuánto le
 // falta (o cuánto ahorra) respecto del precio por mayor. El precio por
 // mayor es por producto: 12 u. del MISMO producto, no se suman distintos.
-export const lineaDeCarrito = (p, cant, C = CONFIG) => {
+export const lineaDeCarrito = (p, cant, C) => {
   const menor = precioMenor(p, C);
   const mayor = precioMayor(p, C);
   const esMayor = cant >= C.minimo_mayor;
@@ -44,7 +44,7 @@ export const lineaDeCarrito = (p, cant, C = CONFIG) => {
 // Todo el carrito resumido. `lista` es [{id, cant}] en el orden en que se
 // fueron agregando; los ids que ya no existen en el catálogo (lista nueva
 // del proveedor) se ignoran.
-export const resumirCarrito = (lista, porId, C = CONFIG) => {
+export const resumirCarrito = (lista, porId, C) => {
   const items = [];
   for (const { id, cant } of lista) {
     const p = porId.get(id);
