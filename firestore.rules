@@ -1,0 +1,123 @@
+rules_version = '2';
+
+// Aurora — firestore.rules (especificación final, síntesis de los 3 diseños).
+//
+// PRINCIPIO: el navegador SOLO LEE. Toda escritura la hacen Cloud Functions con el
+// Admin SDK (que no evalúa estas reglas): validan con el mismo código compartido que
+// el front, recalculan precios, mueven stock y escriben la auditoría y el outbox en
+// la MISMA transacción. Por eso ningún match tiene `allow write` y el catch-all final
+// lo deja explícito: ni la clienta, ni el admin, ni el programador escriben directo.
+//
+//   publico/catalogo          lectura pública (1 lectura por visita, con caché local)
+//   privado/{costos|config|respaldo}   costos USD, dólar, factor, márgenes — solo programador
+//   interno/{stock|tablero|config}     stock, contadores en vivo, datos de cobro — staff
+//   pedidos/{id}              pedido completo con datos personales — staff
+//   seguimiento/{token}       vista mínima de la clienta — quien tenga el link, hasta que vence
+//   clientas/{id}             ficha + total comprado — staff (Ley 25.326)
+//   stats/{AAAA-MM}           ventas por día y por producto — staff
+//   auditoria/{id}            historial inalterable — programador todo; admin solo nivel 'general'
+//   salida/{id}               outbox de emails/push — misma visibilidad que la auditoría
+//   arrepentimientos/{id}     solicitudes del botón — staff
+//   staff/{uid}               {rol, activo, email, nombre} — cada uno la suya; programador todas
+//   contadores, limites, importaciones, staff/*/dispositivos — solo Functions
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function rutaStaff() {
+      return /databases/$(database)/documents/staff/$(request.auth.uid);
+    }
+
+    // 'admin' | 'programador' | 'ninguno'. exists()+get() del mismo documento se
+    // factura como UNA lectura por request. Exige cuenta email/contraseña (una cuenta
+    // anónima o de Google con ficha no alcanza) y ficha activa: la baja es activo:false
+    // y corta al instante aunque el ID token siga vigente.
+    function rol() {
+      return request.auth != null
+          && request.auth.token.firebase.sign_in_provider == 'password'
+          && exists(rutaStaff())
+          && get(rutaStaff()).data.get('activo', false) == true
+        ? get(rutaStaff()).data.get('rol', 'ninguno')
+        : 'ninguno';
+    }
+    function esProgramador() { return rol() == 'programador'; }
+    function esStaff() { return rol() in ['admin', 'programador']; }
+
+    // Toda consulta (list) lleva limit(): un bug del panel no puede leer 20.000 pedidos.
+    function acotada(max) {
+      return request.query.limit != null && request.query.limit <= max;
+    }
+
+    // Lo 'sensible' (dólar, factor, márgenes, costos, CBU/alias, equipo) no lo ve el admin.
+    // Las Functions marcan cada entrada; la consulta del admin TIENE que filtrar
+    // where('nivel','==','general') porque las reglas no son filtros.
+    function veNivel() {
+      return esProgramador() || (rol() == 'admin' && resource.data.nivel == 'general');
+    }
+
+    match /publico/catalogo {
+      allow get: if true;
+    }
+
+    match /privado/{doc} {
+      allow get: if esProgramador();
+    }
+
+    match /interno/{doc} {
+      allow get: if doc in ['stock', 'tablero', 'config'] && esStaff();
+    }
+
+    match /pedidos/{id} {
+      allow get: if esStaff();
+      allow list: if acotada(100) && esStaff();
+    }
+
+    // El token (128 bits al azar) ES la llave: get sí, list nunca para anónimos.
+    match /seguimiento/{token} {
+      allow get: if resource.data.expira > request.time;
+      // Fase 2 (cuenta de clienta): "Mis pedidos". El uid lo pone solo el servidor
+      // y solo con email verificado.
+      allow list: if request.auth != null && acotada(50)
+                  && resource.data.uid == request.auth.uid;
+    }
+
+    match /clientas/{id} {
+      allow get: if esStaff();
+      allow list: if acotada(100) && esStaff();
+    }
+
+    match /stats/{mes} {
+      allow get: if esStaff();
+      allow list: if acotada(24) && esStaff();
+    }
+
+    match /arrepentimientos/{id} {
+      allow get: if esStaff();
+      allow list: if acotada(100) && esStaff();
+    }
+
+    match /auditoria/{id} {
+      allow get: if veNivel();
+      allow list: if acotada(100) && veNivel();
+    }
+
+    // Outbox: el detalle del pedido muestra "Email de confirmación: enviado 14:32 / falló".
+    // Las alertas de seguridad (cambio de dólar o de CBU) van con nivel 'sensible'.
+    match /salida/{id} {
+      allow get: if veNivel();
+      allow list: if acotada(50) && veNivel();
+    }
+
+    match /staff/{uid} {
+      allow get: if request.auth != null && request.auth.uid == uid;
+      allow get: if esProgramador();
+      allow list: if acotada(50) && esProgramador();
+      // staff/{uid}/dispositivos/{fid}: sin regla → solo Functions.
+    }
+
+    // contadores/*, limites/*, importaciones/* y todo lo no listado: nadie desde un cliente.
+    match /{ruta=**} {
+      allow read, write: if false;
+    }
+  }
+}

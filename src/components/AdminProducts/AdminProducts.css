@@ -1,0 +1,64 @@
+.admin-herramientas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  margin-bottom: 14px;
+}
+.admin-buscar {
+  flex: 1 1 260px;
+  min-height: 44px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--texto);
+  padding: 10px 14px;
+  border: 1px solid var(--line-fuerte);
+  border-radius: 999px;
+  background: var(--surface);
+}
+.admin-conteo { margin: 0; font-size: 13px; color: var(--tenue); }
+
+/* La tabla scrollea sola en celular en vez de desbordar la página. */
+.admin-tabla-marco {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--sombra);
+}
+.admin-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.admin-tabla th,
+.admin-tabla td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); }
+.admin-tabla thead th {
+  position: sticky;
+  top: 0;
+  background: var(--sunken);
+  font-size: 12.5px;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--tenue);
+}
+.admin-tabla tbody tr:last-child th,
+.admin-tabla tbody tr:last-child td { border-bottom: none; }
+.admin-tabla tbody tr:hover { background: var(--acento-suave); }
+.admin-tabla .der { text-align: right; }
+
+.admin-prod { display: flex; align-items: center; gap: 10px; font-weight: 400; }
+.admin-prod img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 2px;
+  flex: 0 0 auto;
+}
+.admin-prod-nom { display: block; font-weight: 600; }
+.admin-prod-cod { display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--debil); }
+.admin-dif { color: var(--mayor); font-weight: 600; }
+.admin-intro { color: var(--tenue); margin-top: -4px; }

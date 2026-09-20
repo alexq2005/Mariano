@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import { PublicLayout } from "./layouts/PublicLayout/PublicLayout";
 import { ItemListContainer } from "./components/ItemListContainer/ItemListContainer";
@@ -6,6 +7,9 @@ import { Cart } from "./components/Cart/Cart";
 import { Checkout } from "./components/Checkout/Checkout";
 import { ScrollToTop } from "./components/ScrollToTop/ScrollToTop";
 import { useProductos } from "./hooks/useProductos";
+
+// El panel se descarga aparte, solo cuando alguien entra a /admin.
+const AdminArea = lazy(() => import("./admin/AdminArea"));
 
 function App() {
   // El nombre del negocio para el <title> del 404 sale de la config, que
@@ -18,6 +22,14 @@ function App() {
           la navegación, no de cómo se ve la tienda. */}
       <ScrollToTop />
       <Routes>
+        <Route
+          path="/admin/*"
+          element={
+            <Suspense fallback={<p className="estado">Cargando el panel…</p>}>
+              <AdminArea />
+            </Suspense>
+          }
+        />
         <Route element={<PublicLayout />}>
           <Route path="/" element={<ItemListContainer />} />
           <Route path="/category/:category" element={<ItemListContainer />} />
