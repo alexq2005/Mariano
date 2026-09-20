@@ -1,5 +1,4 @@
-import { doc, getDoc } from "firebase/firestore/lite";
-import { dbPublico } from "../firebase/publico";
+import { leerDocumentoPublico } from "./firestoreRest";
 import { CONFIG } from "../config";
 
 // Estado compartido del catálogo. Todos los componentes que usan
@@ -10,7 +9,8 @@ import { CONFIG } from "../config";
 // De dónde salen los datos, en orden:
 //   1. Caché del navegador: se pinta al instante lo de la última visita.
 //   2. Firestore (publico/catalogo): la fuente real. UNA lectura por visita,
-//      así el plan gratis alcanza para muchísimas visitas.
+//      leída con un fetch a su API REST: sin el SDK, que pesaba 27 KB
+//      comprimidos en cada visita para leer un solo documento.
 //   3. public/data/catalogo.json: red de seguridad si Firestore no responde.
 //      Es el archivo que genera npm run catalogo, así que sirve igual.
 //
@@ -86,9 +86,7 @@ const guardarCache = (productos, config) => {
 // ── Carga ───────────────────────────────────────────────────────────
 
 const desdeFirestore = async () => {
-  const snap = await getDoc(doc(dbPublico, "publico", "catalogo"));
-  if (!snap.exists()) throw new Error("todavía no se publicó el catálogo");
-  const datos = snap.data();
+  const datos = await leerDocumentoPublico("publico/catalogo");
   return { productos: prepararCatalogo(datos.productos), config: prepararConfig(datos.config) };
 };
 
