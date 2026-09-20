@@ -1,26 +1,19 @@
 /* ─────────────────────────────────────────────────────────────────────
-   CONFIG — el único archivo que se toca para cambiar precios.
+   CONFIG PÚBLICA — lo que la tienda muestra y cualquiera puede leer.
 
-   Los precios NO están escritos en ningún lado: se calculan a partir del
-   costo en dólares que vino en el Excel del proveedor. La cuenta es:
+   Acá NO van el costo de los productos, el dólar al que se compró, el
+   factor de importación ni los márgenes: eso vive en
+   datos/config-privada.json, que queda fuera del repositorio y NUNCA
+   llega al navegador. Con esos números, cualquiera que mire el código de
+   la página publicada calcula exactamente cuánto gana el negocio.
 
-       precio = costo_USD × factor_importacion × tipo_cambio × margen
+   Para cambiar precios se edita datos/config-privada.json y se corre:
 
-   Eso significa que cuando se mueve el dólar, se cambia UN número acá
-   y los 266 productos quedan actualizados. No hay que tocar la página.
+       npm run catalogo
 
-   ⚠️  LO MÁS IMPORTANTE, LEER ANTES DE PUBLICAR PRECIOS  ⚠️
-
-   El precio del Excel es el de FÁBRICA (FOB). NO incluye flete, aduana,
-   impuestos, ni ningún costo local. Poner precio de venta sobre ese
-   número es vender a pérdida.
-
-   `factor_importacion` es lo que convierte el precio de fábrica en tu
-   costo real puesto en el depósito. El 2.6 de abajo es una SUPOSICIÓN
-   para que el catálogo arranque: hay que reemplazarlo por el número que
-   salga de la primera importación real, dividiendo lo que pagaste en
-   total (mercadería + flete + aduana + impuestos + despachante) por lo
-   que suma la mercadería sola.
+   que vuelve a generar public/data/catalogo.json con los precios ya
+   calculados. El build después verifica (npm run check:dist) que nada
+   privado se haya colado en lo que se publica.
    ───────────────────────────────────────────────────────────────────── */
 
 export const CONFIG = {
@@ -33,24 +26,6 @@ export const CONFIG = {
   // Mientras quede el de ejemplo, el checkout muestra un aviso.
   whatsapp: "5491100000000",
 
-  // ── Costos ─────────────────────────────────────────────────────────
-
-  // Cuántos pesos vale un dólar PARA VOS: el que efectivamente pagaste
-  // al importar, no el que sale en el diario. Es el número que más se
-  // desactualiza, y por eso el mantenimiento de esto es mensual.
-  tipo_cambio: 1000,
-
-  // Cuánto multiplica el precio de fábrica hasta tenerlo en tu depósito.
-  // 2.6 significa "me sale 2,6 veces lo que dice el Excel". SUPOSICIÓN:
-  // cambiar por el número real de la primera importación.
-  factor_importacion: 2.5,
-
-  // ── Márgenes ───────────────────────────────────────────────────────
-  // Se aplican sobre el costo real (ya con factor_importacion adentro).
-
-  margen_menor: 2.5,   // venta de a poco: 2.0 = el doble del costo
-  margen_mayor: 1.8,  // venta por cantidad: menos margen, más volumen
-
   // A partir de cuántas unidades del MISMO producto entra el precio por
   // mayor. La página lo aplica sola y le muestra a la clienta cuánto
   // ahorra. Ojo: esto NO es el bulto del proveedor (que puede ser de
@@ -59,10 +34,6 @@ export const CONFIG = {
 
   // Monto mínimo para poder cerrar un pedido. 0 = sin mínimo.
   pedido_minimo: 0,
-
-  // Redondeo del precio final, para que no queden números raros.
-  // 100 = termina en $00. Poner 1 para no redondear.
-  redondeo: 100,
 
   // ── Pedido por WhatsApp ────────────────────────────────────────────
   // Opciones que ve la clienta en el formulario antes de mandar el

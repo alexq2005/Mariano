@@ -13,28 +13,26 @@ afterEach(() => {
 });
 
 const respuesta = (productos) => Promise.resolve({ ok: true, json: () => Promise.resolve({ productos }) });
-// Los productos del archivo traen el costo en dólares; el catálogo que se
-// publica trae los precios calculados y NO el costo.
-const crudo = { id: "A", cod: "ZMA-A", nom: "Labial", desc: "", rubro: "labios", img: "a.jpg", bulto: 100, costo: 0.4 };
-const deTienda = { id: "A", cod: "ZMA-A", nom: "Labial", desc: "", rubro: "labios", img: "a.jpg", menor: 3000, mayor: 2200 };
+// El archivo publicado ya trae los precios calculados y ningún costo.
+const producto = { id: "A", cod: "ZMA-A", nom: "Labial", desc: "", rubro: "labios", img: "a.jpg", menor: 3000, mayor: 2200 };
 const esperar = () => new Promise((r) => setTimeout(r, 0));
 
 describe("estado compartido del catálogo", () => {
   it("carga una sola vez aunque lo pidan varios componentes", async () => {
-    const fetch = vi.fn(() => respuesta([crudo]));
+    const fetch = vi.fn(() => respuesta([producto]));
     vi.stubGlobal("fetch", fetch);
     svc.cargarProductos();
     svc.cargarProductos();
     await esperar();
     svc.cargarProductos();
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(svc.estadoProductos()).toEqual({ productos: [deTienda], config: CONFIG, loading: false, error: null });
+    expect(svc.estadoProductos()).toEqual({ productos: [producto], config: CONFIG, loading: false, error: null });
   });
 
   // La config pública viaja con el catálogo (mañana, en el mismo documento):
   // los componentes la leen de acá y no importan src/config.js.
   it("publica la config junto con los productos", async () => {
-    vi.stubGlobal("fetch", vi.fn(() => respuesta([crudo])));
+    vi.stubGlobal("fetch", vi.fn(() => respuesta([producto])));
     expect(svc.estadoProductos().config).toEqual(CONFIG);
     svc.cargarProductos();
     await esperar();
@@ -43,7 +41,7 @@ describe("estado compartido del catálogo", () => {
 
   it("si falla, un reintento exitoso actualiza a TODOS los suscriptores", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
-    const fetch = vi.fn().mockReturnValueOnce(Promise.reject(new Error("sin red"))).mockReturnValueOnce(respuesta([crudo]));
+    const fetch = vi.fn().mockReturnValueOnce(Promise.reject(new Error("sin red"))).mockReturnValueOnce(respuesta([producto]));
     vi.stubGlobal("fetch", fetch);
     const carrito = vi.fn();
     const menu = vi.fn();
@@ -57,7 +55,7 @@ describe("estado compartido del catálogo", () => {
 
     svc.cargarProductos(); // reintento desde cualquier pantalla
     await esperar();
-    expect(svc.estadoProductos().productos).toEqual([deTienda]);
+    expect(svc.estadoProductos().productos).toEqual([producto]);
     expect(carrito.mock.calls.length).toBeGreaterThanOrEqual(2);
     expect(menu.mock.calls.length).toBe(carrito.mock.calls.length);
   });
@@ -82,27 +80,30 @@ describe("estado compartido del catálogo", () => {
     expect(svc.estadoProductos().error).toBeTruthy();
   });
 
-  // Un costo roto no puede tirar abajo el catálogo entero, pero tampoco
-  // puede pasar en silencio: el producto queda afuera y se avisa con su id.
-  it("un producto con el costo roto queda fuera y se avisa; el resto entra", async () => {
+  // Un producto con datos rotos no puede tirar abajo el catálogo entero,
+  // pero tampoco puede pasar en silencio: queda afuera y se avisa con su id.
+  it("un producto sin precios o sin datos queda fuera y se avisa; el resto entra", async () => {
     const error = vi.spyOn(console, "error").mockImplementation(() => {});
-    vi.stubGlobal("fetch", vi.fn(() => respuesta([crudo, { ...crudo, id: "B", costo: 0 }, { ...crudo, id: "C", costo: undefined }])));
+    const rotos = [
+      { ...producto, id: "B", menor: 0 },
+      { ...producto, id: "C", mayor: undefined },
+      { ...producto, id: "D", nom: "" },
+      { ...producto, id: "E", menor: "3000" },
+    ];
+    vi.stubGlobal("fetch", vi.fn(() => respuesta([producto, ...rotos])));
     svc.cargarProductos();
     await esperar();
     expect(svc.estadoProductos().productos.map((p) => p.id)).toEqual(["A"]);
-    expect(error.mock.calls[0][0]).toContain("B: ");
-    expect(error.mock.calls[0][0]).toContain("C: ");
-    expect(error.mock.calls[0][0]).toMatch(/costo/);
+    for (const id of ["B", "C", "D", "E"]) expect(error.mock.calls[0][0]).toContain(id);
   });
 
-  it("el catálogo publicado no lleva el costo en dólares ni el bulto", async () => {
-    vi.stubGlobal("fetch", vi.fn(() => respuesta([crudo])));
+  it("publica los productos tal como vienen, sin agregar ni calcular nada", async () => {
+    vi.stubGlobal("fetch", vi.fn(() => respuesta([producto])));
     svc.cargarProductos();
     await esperar();
     const [p] = svc.estadoProductos().productos;
+    expect(p).toEqual(producto);
     expect(p).not.toHaveProperty("costo");
-    expect(p).not.toHaveProperty("bulto");
-    expect(JSON.stringify(svc.estadoProductos().productos)).not.toContain("0.4");
   });
 
   it("desuscribirse deja de recibir avisos", async () => {

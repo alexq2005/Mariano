@@ -1,7 +1,6 @@
 import { CONFIG } from "../config";
-import { calcularPrecios } from "../compartido/formula";
 
-// Estado compartido del catálogo (public/data/productos.json). Todos los
+// Estado compartido del catálogo (public/data/catalogo.json). Todos los
 // componentes que usan useProductos ven EL MISMO estado: si una carga
 // falla y después un reintento funciona (desde cualquier pantalla), se
 // actualizan todos juntos — el carrito, el menú de rubros y el listado.
@@ -22,30 +21,22 @@ const publicar = (nuevo) => {
   suscriptores.forEach((avisar) => avisar());
 };
 
-// Del producto del archivo sale el producto que ve la tienda: con los dos
-// precios ya calculados y SIN el costo en dólares ni el bulto del
-// proveedor. Los precios se calculan una sola vez acá, no en cada render.
-//
-// Paso siguiente: el archivo va a venir con los precios ya hechos y el
-// costo no va a viajar al navegador; esta función se queda sin fórmula.
-const aProductoDeTienda = (p) => {
-  const { menor, mayor } = calcularPrecios(p.costo, CONFIG);
-  return { id: p.id, cod: p.cod, nom: p.nom, desc: p.desc, rubro: p.rubro, img: p.img, menor, mayor };
-};
+// El catálogo ya viene con los precios calculados (scripts/armar-catalogo.mjs)
+// y sin el costo en dólares: la fórmula y los márgenes no llegan al
+// navegador. Acá solo se valida lo que llegó.
+const CAMPOS = ["id", "cod", "nom", "rubro", "img"];
+const esProductoValido = (p) =>
+  CAMPOS.every((c) => typeof p?.[c] === "string" && p[c].length > 0) &&
+  [p.menor, p.mayor].every((n) => typeof n === "number" && Number.isFinite(n) && n > 0);
 
-// Un producto con el costo roto no puede tirar abajo el catálogo entero,
+// Un producto con datos rotos no puede tirar abajo el catálogo entero,
 // pero tampoco puede pasar en silencio: queda afuera y se avisa con su id.
 const prepararCatalogo = (crudos) => {
-  const productos = [];
-  const fallados = [];
-  for (const p of crudos) {
-    try {
-      productos.push(aProductoDeTienda(p));
-    } catch (err) {
-      fallados.push(`${p?.id ?? "(sin id)"}: ${err.message}`);
-    }
+  const productos = crudos.filter(esProductoValido);
+  const fallados = crudos.filter((p) => !esProductoValido(p)).map((p) => p?.id ?? "(sin id)");
+  if (fallados.length) {
+    console.error(`Productos con datos incompletos, quedan fuera del catálogo: ${fallados.join(", ")}`);
   }
-  if (fallados.length) console.error(`Productos sin precio, quedan fuera del catálogo:\n- ${fallados.join("\n- ")}`);
   return productos;
 };
 
@@ -62,7 +53,7 @@ export const cargarProductos = () => {
   if (cargando || (!estado.loading && !estado.error)) return;
   cargando = true;
   if (estado.error) publicar(INICIAL);
-  fetch(`${import.meta.env.BASE_URL}data/productos.json`)
+  fetch(`${import.meta.env.BASE_URL}data/catalogo.json`)
     .then((res) => {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return res.json();

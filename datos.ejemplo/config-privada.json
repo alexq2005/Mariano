@@ -1,0 +1,7 @@
+{
+  "tipo_cambio": 1000,
+  "factor_importacion": 2.5,
+  "margen_menor": 2,
+  "margen_mayor": 1.5,
+  "redondeo": 100
+}

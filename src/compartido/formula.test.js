@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { calcularPrecios, redondearPrecio } from "./formula";
-import { CONFIG } from "../config";
 
 const PRIVADA = { tipo_cambio: 1000, factor_importacion: 2.5, margen_menor: 2.5, margen_mayor: 1.8, redondeo: 100 };
 
@@ -59,34 +58,51 @@ describe("redondearPrecio", () => {
   });
 });
 
-// Red de seguridad del refactor: la fórmula nueva tiene que dar EXACTAMENTE
-// los mismos precios que la vieja para los 266 productos reales. Si alguno
-// cambiara un peso, es un producto que se vende a otro precio.
-describe("paridad con la fórmula anterior (266 productos reales)", () => {
-  const anterior = (p, C) => {
-    const paso = C.redondeo || 1;
-    const redondear = (n) => Math.max(paso, Math.round(n / paso) * paso);
-    const costoReal = p.costo * (C.factor_importacion || 1) * C.tipo_cambio;
-    return { menor: redondear(costoReal * C.margen_menor), mayor: redondear(costoReal * C.margen_mayor) };
-  };
+// Lo que se publica no puede traer el costo de fábrica: con eso y el precio
+// de venta, cualquiera saca el margen del negocio.
+describe("catálogo publicado", () => {
+  const texto = readFileSync("public/data/catalogo.json", "utf8");
+  const { productos } = JSON.parse(texto);
 
-  it("mismos precios, producto por producto", () => {
-    const { productos } = JSON.parse(readFileSync("public/data/productos.json", "utf8"));
+  it("266 productos con id único y los dos precios", () => {
     expect(productos).toHaveLength(266);
-    const distintos = productos.filter((p) => {
-      const viejo = anterior(p, CONFIG);
-      const nuevo = calcularPrecios(p.costo, CONFIG);
-      return viejo.menor !== nuevo.menor || viejo.mayor !== nuevo.mayor;
+    expect(new Set(productos.map((p) => p.id)).size).toBe(266);
+    for (const p of productos) {
+      expect(p.menor, p.id).toBeGreaterThan(0);
+      expect(p.mayor, p.id).toBeLessThanOrEqual(p.menor);
+    }
+  });
+
+  it("no lleva costo, bulto ni el nombre del Excel del proveedor", () => {
+    for (const rastro of ['"costo"', '"bulto"', "generado_de", ".xlsx"]) {
+      expect(texto, rastro).not.toContain(rastro);
+    }
+  });
+});
+
+// Con los datos del proveedor a mano (no están en el repositorio: traen el
+// costo), se verifica que los precios publicados salgan EXACTAMENTE de la
+// fórmula. Si alguno cambiara un peso, es un producto que se vende a otro
+// precio. En una copia recién clonada, sin datos/, este bloque no corre.
+const hayDatosPrivados = existsSync("datos/proveedor.json") && existsSync("datos/config-privada.json");
+describe.skipIf(!hayDatosPrivados)("precios publicados vs. datos del proveedor", () => {
+  it("cada precio del catálogo sale de la fórmula con la config privada", () => {
+    const privada = JSON.parse(readFileSync("datos/config-privada.json", "utf8"));
+    const { productos: crudos } = JSON.parse(readFileSync("datos/proveedor.json", "utf8"));
+    const publicados = new Map(
+      JSON.parse(readFileSync("public/data/catalogo.json", "utf8")).productos.map((p) => [p.id, p]),
+    );
+    const distintos = crudos.filter((p) => {
+      const esperado = calcularPrecios(p.costo, privada);
+      const real = publicados.get(p.id);
+      return !real || real.menor !== esperado.menor || real.mayor !== esperado.mayor;
     });
     expect(distintos.map((p) => p.id)).toEqual([]);
   });
 
-  it("los costos reales del catálogo no rompen la fórmula estricta", () => {
-    const { productos } = JSON.parse(readFileSync("public/data/productos.json", "utf8"));
-    for (const p of productos) {
-      const { menor, mayor } = calcularPrecios(p.costo, CONFIG);
-      expect(menor, p.id).toBeGreaterThan(0);
-      expect(mayor, p.id).toBeLessThanOrEqual(menor);
-    }
+  it("la fórmula estricta aguanta los 266 costos reales", () => {
+    const privada = JSON.parse(readFileSync("datos/config-privada.json", "utf8"));
+    const { productos } = JSON.parse(readFileSync("datos/proveedor.json", "utf8"));
+    for (const p of productos) expect(() => calcularPrecios(p.costo, privada), p.id).not.toThrow();
   });
 });

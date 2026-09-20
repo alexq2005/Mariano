@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && npm run check:dist",
+    "catalogo": "node scripts/armar-catalogo.mjs",
+    "check:dist": "node scripts/check-dist.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run"

@@ -21,8 +21,10 @@ npm run dev        # abre en http://localhost:8518
 | `npm run dev`     | servidor de desarrollo, se recarga solo al guardar          |
 | `npm run build`   | arma la versión para publicar en `dist/`                    |
 | `npm run preview` | sirve `dist/` para probar la versión final antes de subirla |
+| `npm run catalogo`| recalcula los precios y genera `public/data/catalogo.json`   |
 | `npm test`        | tests (Vitest): precios, carrito, pedido, búsqueda y rutas  |
 | `npm run lint`    | revisa el código con ESLint                                 |
+| `npm run check:dist` | avisa si algo privado se coló en lo que se publica       |
 
 > Ya no se abre con doble clic en `index.html`: el navegador bloquea la
 > carga de módulos desde `file://`. Para compartirlo hay que publicarlo.
@@ -41,18 +43,29 @@ src/
   main.jsx                 arranque: router + CartProvider
   App.jsx                  rutas (con su test: cada página va dentro del layout)
   layouts/PublicLayout/    encabezado, pie y barra del carrito alrededor de cada página
-  config.js                ← EL ARCHIVO PARA CAMBIAR PRECIOS Y DATOS DEL NEGOCIO
+  config.js                datos públicos del negocio (nombre, WhatsApp, mínimos)
+  compartido/formula.js    la fórmula de precios (también la usará el servidor)
   index.css                colores (pastel claro/oscuro) y estilos generales
   context/                 carrito: CartContext + CartProvider + useCart (reparte la config)
-  services/productos.js    carga public/data/productos.json y publica la config (una sola vez)
+  services/productos.js    carga public/data/catalogo.json y publica la config (una sola vez)
   hooks/useProductos.js
   utils/                   precios, armado del pedido, búsqueda (con sus tests)
   components/<Nombre>/     un componente por carpeta, con su .jsx y su .css
 public/
-  data/productos.json      los 266 productos (generado, no editar a mano)
+  data/catalogo.json       los 266 productos CON PRECIOS y sin costos (generado)
   img/                     266 fotos de producto
-extraer.py                 regenera public/data/productos.json y public/img/
+datos/                     ← PRIVADO, fuera del repositorio
+  proveedor.json           la lista del proveedor, con el costo en dólares
+  config-privada.json      ← EL ARCHIVO PARA CAMBIAR PRECIOS (dólar, márgenes)
+scripts/
+  armar-catalogo.mjs       datos/ + fórmula → public/data/catalogo.json
+  check-dist.mjs           falla el build si algo privado llegó a dist/
+extraer.py                 Excel del proveedor → datos/proveedor.json + public/img/
 ```
+
+`datos/` no está en el repositorio (ver `.gitignore`). Si clonás el proyecto
+en otra máquina, copiá `datos.ejemplo/config-privada.json` a `datos/`, poné
+tus valores y corré `npm run catalogo`.
 
 Ninguna pantalla importa `config.js`: la config del negocio viaja con el
 catálogo (`useProductos().config`, y de ahí al contexto del carrito) y las
@@ -80,8 +93,16 @@ Los precios **no están escritos** en ningún lado. Se calculan:
 precio = costo_USD × factor_importacion × tipo_cambio × margen
 ```
 
-Para actualizar los 266 productos se abre `src/config.js`, se cambia
-`tipo_cambio`, se guarda y se vuelve a publicar.
+Para actualizar los 266 productos se abre **`datos/config-privada.json`**,
+se cambia `tipo_cambio`, y se corre:
+
+```
+npm run catalogo     # recalcula los 266 precios
+npm run build        # y verifica que no se publique nada privado
+```
+
+Ese archivo **no está en el repositorio**: el dólar al que comprás, el
+factor de importación y tus márgenes no viajan al navegador de nadie.
 
 Hay dos márgenes: `margen_menor` y `margen_mayor`. La clienta que lleva
 `minimo_mayor` unidades o más **del mismo producto** paga el precio por
@@ -131,8 +152,9 @@ Las formas de entrega y de pago se configuran en `src/config.js`
 python extraer.py "lista-nueva.xlsx"
 ```
 
-Regenera `public/data/productos.json` y las fotos en `public/img/`.
-`src/config.js` no se toca. Necesita `pip install openpyxl Pillow`.
+Regenera `datos/proveedor.json` (privado, con los costos) y las fotos en
+`public/img/`. Después hay que correr `npm run catalogo` para recalcular los
+precios publicados. Necesita `pip install openpyxl Pillow`.
 
 - Cada producto recibe un `id` único aunque el proveedor repita el código
   (pasa con `ZMA-CQK-5002` y `ZMA-RS-8003`). El `id` es la clave del
@@ -146,12 +168,10 @@ Regenera `public/data/productos.json` y las fotos en `public/img/`.
 
 - **No cobra.** Los pedidos llegan por WhatsApp y el pago se arregla
   hablando. Así queda fuera la única parte con plata real circulando.
-- **No muestra el costo en dólares.** Está en `productos.json` porque
-  hace falta para la cuenta, pero no aparece en pantalla, ni en el
-  carrito guardado, ni en el mensaje. Ojo: quien sepa mirar el código
-  fuente de la página publicada **sí puede verlo**. Si eso importa, la
-  solución es que `extraer.py` escriba los precios ya calculados en vez
-  del costo.
+- **No publica el costo en dólares.** Los costos, el dólar y los márgenes
+  viven en `datos/`, que no se sube ni se commitea: a la página solo llegan
+  los precios de venta ya calculados. `npm run build` corre `check:dist` y
+  **falla** si algo privado se coló en lo que se publica.
 
 ## Pendientes conocidos
 

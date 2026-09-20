@@ -4,14 +4,19 @@
 extraer.py - convierte el XLSX del proveedor en los datos del catalogo web.
 
 Lee el Excel (productos + fotos embebidas), saca miniaturas y escribe
-public/data/productos.json y public/img/, que es lo que la pagina carga.
-Cuando el proveedor manda una lista nueva, se vuelve a correr esto y listo.
+datos/proveedor.json (PRIVADO: incluye el costo en dolares) y las fotos en
+public/img/. Despues hay que correr:
+
+    npm run catalogo
+
+que calcula los precios y genera public/data/catalogo.json, que es lo que
+carga la pagina. El costo NUNCA se publica.
 
 Las fotos van dentro del XLSX como dibujos anclados a una celda. openpyxl
 no las expone, asi que el anclaje se lee del XML: xdr:from/xdr:row da la
 fila, y r:embed apunta al archivo en xl/media/.
 
-    python extraer.py <archivo.xlsx> [salida/]     (salida por defecto: public/)
+    python extraer.py <archivo.xlsx> [salida/]     (salida por defecto: la raiz del proyecto)
 """
 
 import os
@@ -96,9 +101,11 @@ def main():
         raise SystemExit(f"Uso: python {os.path.basename(sys.argv[0])} <archivo.xlsx> [salida/]")
 
     xlsx = sys.argv[1]
-    salida = sys.argv[2] if len(sys.argv) > 2 else "public"
-    carpeta_img = os.path.join(salida, "img")
-    carpeta_datos = os.path.join(salida, "data")
+    salida = sys.argv[2] if len(sys.argv) > 2 else "."
+    # Las fotos son publicas; los datos con el costo, no: van a datos/,
+    # que esta fuera del repositorio.
+    carpeta_img = os.path.join(salida, "public", "img")
+    carpeta_datos = os.path.join(salida, "datos")
     os.makedirs(carpeta_img, exist_ok=True)
     os.makedirs(carpeta_datos, exist_ok=True)
 
@@ -178,7 +185,7 @@ def main():
         "generado_de": os.path.basename(xlsx),
         "productos": productos,
     }
-    js = os.path.join(carpeta_datos, "productos.json")
+    js = os.path.join(carpeta_datos, "proveedor.json")
     with open(js, "w", encoding="utf-8") as fh:
         json.dump(datos, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
@@ -198,6 +205,9 @@ def main():
     print("\nPor rubro:")
     for r, n in sorted(rubros.items(), key=lambda x: -x[1]):
         print(f"  {r:<12s} {n:>4d}")
+
+    print("\nFalta un paso: npm run catalogo  (calcula los precios y genera")
+    print("public/data/catalogo.json, que es lo que carga la pagina).")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,2664 @@
+{
+  "productos": [
+    {
+      "id": "ZMA-1310-07L",
+      "cod": "ZMA-1310-07L",
+      "nom": "Mascarilla de ácido kójico /50",
+      "desc": "Mascarilla de ácido kójico",
+      "rubro": "cuidado",
+      "img": "ZMA-1310-07L.jpg",
+      "menor": 3000,
+      "mayor": 2200
+    },
+    {
+      "id": "ZMA-137286",
+      "cod": "ZMA-137286",
+      "nom": "Exfoliante corporal 500 ml",
+      "desc": "Palta",
+      "rubro": "cuidado",
+      "img": "ZMA-137286.jpg",
+      "menor": 18900,
+      "mayor": 13700
+    },
+    {
+      "id": "ZMA-72796",
+      "cod": "ZMA-72796",
+      "nom": "Exfoliante de frutilla 500 g (STRAWBERRY SCRUB)",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-72796.jpg",
+      "menor": 18900,
+      "mayor": 13700
+    },
+    {
+      "id": "ZMA-72847",
+      "cod": "ZMA-72847",
+      "nom": "Exfoliante de rosa 500 g (ROSE SCRUB)",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-72847.jpg",
+      "menor": 18900,
+      "mayor": 13700
+    },
+    {
+      "id": "ZMA-20015-1",
+      "cod": "ZMA-20015-1",
+      "nom": "Lápiz de cejas /36",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-20015-1.jpg",
+      "menor": 4100,
+      "mayor": 3000
+    },
+    {
+      "id": "ZMA-20045",
+      "cod": "ZMA-20045",
+      "nom": "Lápiz labial /48",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-20045.jpg",
+      "menor": 4900,
+      "mayor": 3600
+    },
+    {
+      "id": "ZMA-20046",
+      "cod": "ZMA-20046",
+      "nom": "Delineador de ojos negro /48",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-20046.jpg",
+      "menor": 4900,
+      "mayor": 3600
+    },
+    {
+      "id": "ZMA-59219-03",
+      "cod": "ZMA-59219-03",
+      "nom": "Lápiz de cejas de 4 puntas y delineador /36",
+      "desc": "Lápiz de cejas de 4 puntas y delineador",
+      "rubro": "ojos",
+      "img": "ZMA-59219-03.jpg",
+      "menor": 9800,
+      "mayor": 7100
+    },
+    {
+      "id": "ZMA-59231-03",
+      "cod": "ZMA-59231-03",
+      "nom": "Lápiz de cejas de 4 puntas /48",
+      "desc": "Lápiz de cejas de 4 puntas",
+      "rubro": "ojos",
+      "img": "ZMA-59231-03.jpg",
+      "menor": 7200,
+      "mayor": 5200
+    },
+    {
+      "id": "ZMA-Q108-2",
+      "cod": "ZMA-Q108-2",
+      "nom": "Sombras de ojos, 24 unid./caja",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-Q108-2.jpg",
+      "menor": 10600,
+      "mayor": 7700
+    },
+    {
+      "id": "ZMA-77019",
+      "cod": "ZMA-77019",
+      "nom": "Gel fijador de cejas /24",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-77019.jpg",
+      "menor": 3800,
+      "mayor": 2700
+    },
+    {
+      "id": "ZMA-77062",
+      "cod": "ZMA-77062",
+      "nom": "Bálsamo labial /24",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-77062.jpg",
+      "menor": 6000,
+      "mayor": 4400
+    },
+    {
+      "id": "ZMA-8108",
+      "cod": "ZMA-8108",
+      "nom": "Máscara de pestañas /24 unid.",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-8108.jpg",
+      "menor": 3400,
+      "mayor": 2500
+    },
+    {
+      "id": "ZMA-81692-47",
+      "cod": "ZMA-81692-47",
+      "nom": "Polvo compacto /24",
+      "desc": "Polvo compacto",
+      "rubro": "rostro",
+      "img": "ZMA-81692-47.jpg",
+      "menor": 12100,
+      "mayor": 8700
+    },
+    {
+      "id": "ZMA-LC-8170",
+      "cod": "ZMA-LC-8170",
+      "nom": "Brillo labial /24 unid.",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-LC-8170.jpg",
+      "menor": 3800,
+      "mayor": 2700
+    },
+    {
+      "id": "ZMA-85066-47",
+      "cod": "ZMA-85066-47",
+      "nom": "Polvo suelto fijador /12",
+      "desc": "Polvo fijador",
+      "rubro": "rostro",
+      "img": "ZMA-85066-47.jpg",
+      "menor": 14700,
+      "mayor": 10700
+    },
+    {
+      "id": "ZMA-96019",
+      "cod": "ZMA-96019",
+      "nom": "Gel fijador de cejas /24",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-96019.jpg",
+      "menor": 3800,
+      "mayor": 2700
+    },
+    {
+      "id": "ZMA-96041",
+      "cod": "ZMA-96041",
+      "nom": "Gel fijador de cejas /24",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-96041.jpg",
+      "menor": 3800,
+      "mayor": 2700
+    },
+    {
+      "id": "ZMA-96163",
+      "cod": "ZMA-96163",
+      "nom": "Gel fijador de cejas /24",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-96163.jpg",
+      "menor": 3800,
+      "mayor": 2700
+    },
+    {
+      "id": "ZMA-9879",
+      "cod": "ZMA-9879",
+      "nom": "Aceite labial que cambia de color /24 unid.",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-9879.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-9889",
+      "cod": "ZMA-9889",
+      "nom": "Aceite labial que cambia de color /24 unid.",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-9889.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-9895",
+      "cod": "ZMA-9895",
+      "nom": "Aceite labial que cambia de color /24 unid.",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-9895.jpg",
+      "menor": 6400,
+      "mayor": 4600
+    },
+    {
+      "id": "ZMA-B747",
+      "cod": "ZMA-B747",
+      "nom": "Maquillaje en barra para línea del cabello /24",
+      "desc": "",
+      "rubro": "cabello",
+      "img": "ZMA-B747.jpg",
+      "menor": 4900,
+      "mayor": 3600
+    },
+    {
+      "id": "ZMA-CQK-3749",
+      "cod": "ZMA-CQK-3749",
+      "nom": "Crema de manos de arroz /24 unid.",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-CQK-3749.jpg",
+      "menor": 4900,
+      "mayor": 3600
+    },
+    {
+      "id": "ZMA-CQK-4999",
+      "cod": "ZMA-CQK-4999",
+      "nom": "Sérum de seda de aloe vera /12 unid.",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-CQK-4999.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-CQK-5002",
+      "cod": "ZMA-CQK-5002",
+      "nom": "Sérum de seda con oro 24K /12 unid.",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-CQK-5002.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-CQK-5026",
+      "cod": "ZMA-CQK-5026",
+      "nom": "Sérum de seda con ácido hialurónico /12 unid.",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-CQK-5026.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-CQK-5033",
+      "cod": "ZMA-CQK-5033",
+      "nom": "Sérum de seda de palta /12 unid.",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-CQK-5033.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-CQK-5040",
+      "cod": "ZMA-CQK-5040",
+      "nom": "Sérum de seda de rosa /12 unid.",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-CQK-5040.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-CQK-5057",
+      "cod": "ZMA-CQK-5057",
+      "nom": "Sérum de seda con colágeno /12 unid.",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-CQK-5057.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-CQK-8386",
+      "cod": "ZMA-CQK-8386",
+      "nom": "Crema de ojos con hexapéptido (líneas, ojeras y bolsas) /24 unid.",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-CQK-8386.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-CQK-8393",
+      "cod": "ZMA-CQK-8393",
+      "nom": "Crema de ojos de arroz (líneas, ojeras y bolsas) /24 unid.",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-CQK-8393.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-E1559",
+      "cod": "ZMA-E1559",
+      "nom": "Tinte para cejas 4 colores /24",
+      "desc": "Tinte para cejas en 4 colores",
+      "rubro": "ojos",
+      "img": "ZMA-E1559.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-E6236",
+      "cod": "ZMA-E6236",
+      "nom": "Máscara de pestañas /24 unid.",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-E6236.jpg",
+      "menor": 4500,
+      "mayor": 3300
+    },
+    {
+      "id": "ZMA-EYE-1209",
+      "cod": "ZMA-EYE-1209",
+      "nom": "Sombras de ojos 12 colores /12",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-EYE-1209.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-EYE-1210",
+      "cod": "ZMA-EYE-1210",
+      "nom": "Sombras de ojos 12 colores /12",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-EYE-1210.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-EYE-1303",
+      "cod": "ZMA-EYE-1303",
+      "nom": "Sombras de ojos 13 colores /12",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-EYE-1303.jpg",
+      "menor": 19600,
+      "mayor": 14200
+    },
+    {
+      "id": "ZMA-F9335",
+      "cod": "ZMA-F9335",
+      "nom": "Base líquida /24",
+      "desc": "Base líquida en 3 tonos",
+      "rubro": "rostro",
+      "img": "ZMA-F9335.jpg",
+      "menor": 4900,
+      "mayor": 3600
+    },
+    {
+      "id": "ZMA-F9349",
+      "cod": "ZMA-F9349",
+      "nom": "Base líquida /24",
+      "desc": "Base líquida en 3 tonos",
+      "rubro": "rostro",
+      "img": "ZMA-F9349.jpg",
+      "menor": 4900,
+      "mayor": 3600
+    },
+    {
+      "id": "ZMA-FC608B",
+      "cod": "ZMA-FC608B",
+      "nom": "Polvo compacto /24",
+      "desc": "Polvo compacto",
+      "rubro": "rostro",
+      "img": "ZMA-FC608B.jpg",
+      "menor": 10200,
+      "mayor": 7400
+    },
+    {
+      "id": "ZMA-FC648B",
+      "cod": "ZMA-FC648B",
+      "nom": "Polvo compacto /24",
+      "desc": "Polvo compacto",
+      "rubro": "rostro",
+      "img": "ZMA-FC648B.jpg",
+      "menor": 13600,
+      "mayor": 9800
+    },
+    {
+      "id": "ZMA-H034-1",
+      "cod": "ZMA-H034-1",
+      "nom": "SADOER crema iluminadora e hidratante con vitamina C (versión en idioma extranjero) 100 g",
+      "desc": "NO.SD40480",
+      "rubro": "rostro",
+      "img": "ZMA-H034-1.jpg",
+      "menor": 13600,
+      "mayor": 9800
+    },
+    {
+      "id": "ZMA-H034-3",
+      "cod": "ZMA-H034-3",
+      "nom": "SADOER crema hidratante de palta (versión en idioma extranjero) (nuevo) 140 g",
+      "desc": "NO.SD38500",
+      "rubro": "cuidado",
+      "img": "ZMA-H034-3.jpg",
+      "menor": 10600,
+      "mayor": 7700
+    },
+    {
+      "id": "ZMA-H034-5",
+      "cod": "ZMA-H034-5",
+      "nom": "BIOAQUA crema nutritiva Strawberry Cake (versión en idioma extranjero) 100 g",
+      "desc": "NO.BQY48318",
+      "rubro": "cuidado",
+      "img": "ZMA-H034-5.jpg",
+      "menor": 13600,
+      "mayor": 9800
+    },
+    {
+      "id": "ZMA-H035-6",
+      "cod": "ZMA-H035-6",
+      "nom": "SADOER tónico antiacné y aclarante con ácido salicílico, niacinamida y árbol de té (versión en idioma extranjero) 130 ml",
+      "desc": "NO.SD84101",
+      "rubro": "otros",
+      "img": "ZMA-H035-6.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-H036-1",
+      "cod": "ZMA-H036-1",
+      "nom": "BIOAQUA sérum antiarrugas de hinojo marino y ácido hialurónico (versión en idioma extranjero) (nuevo) 30 ml",
+      "desc": "NO.BQY56075",
+      "rubro": "cuidado",
+      "img": "ZMA-H036-1.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-H036-2",
+      "cod": "ZMA-H036-2",
+      "nom": "BIOAQUA sérum de vitamina E y miel (versión en idioma extranjero) (nuevo) 30 ml",
+      "desc": "NO.BQY15914",
+      "rubro": "cuidado",
+      "img": "ZMA-H036-2.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-H036-7",
+      "cod": "ZMA-H036-7",
+      "nom": "SADOER sérum reafirmante antiarrugas con colágeno tipo III (versión en idioma extranjero) 30 ml",
+      "desc": "NO.SD50519",
+      "rubro": "cuidado",
+      "img": "ZMA-H036-7.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-HB5784B",
+      "cod": "ZMA-HB5784B",
+      "nom": "Lápiz labial /24",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-HB5784B.jpg",
+      "menor": 4100,
+      "mayor": 3000
+    },
+    {
+      "id": "ZMA-HB5814",
+      "cod": "ZMA-HB5814",
+      "nom": "Lápiz labial /24",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-HB5814.jpg",
+      "menor": 4100,
+      "mayor": 3000
+    },
+    {
+      "id": "ZMA-HB5823",
+      "cod": "ZMA-HB5823",
+      "nom": "Lápiz labial /24",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-HB5823.jpg",
+      "menor": 4100,
+      "mayor": 3000
+    },
+    {
+      "id": "ZMA-MM97-11",
+      "cod": "ZMA-MM97-11",
+      "nom": "KORMESIC mascarilla ampolla de ácido hialurónico (versión en idioma extranjero) 25 ml «oferta» /90",
+      "desc": "NO.KMC53923",
+      "rubro": "cuidado",
+      "img": "ZMA-MM97-11.jpg",
+      "menor": 2000,
+      "mayor": 1400
+    },
+    {
+      "id": "ZMA-MM97-12",
+      "cod": "ZMA-MM97-12",
+      "nom": "KORMESIC mascarilla ampolla de centella asiática (versión en idioma extranjero) 25 ml «oferta» /90",
+      "desc": "NO.KMC53947",
+      "rubro": "cuidado",
+      "img": "ZMA-MM97-12.jpg",
+      "menor": 2000,
+      "mayor": 1400
+    },
+    {
+      "id": "ZMA-MM97-13",
+      "cod": "ZMA-MM97-13",
+      "nom": "KORMESIC mascarilla ampolla de aloe vera (versión en idioma extranjero) 25 ml «oferta» /90",
+      "desc": "NO.KMC54104",
+      "rubro": "cuidado",
+      "img": "ZMA-MM97-13.jpg",
+      "menor": 2000,
+      "mayor": 1400
+    },
+    {
+      "id": "ZMA-MM97-14",
+      "cod": "ZMA-MM97-14",
+      "nom": "KORMESIC mascarilla ampolla de colágeno (versión en idioma extranjero) 25 ml «oferta» /90",
+      "desc": "NO.KMC53930",
+      "rubro": "cuidado",
+      "img": "ZMA-MM97-14.jpg",
+      "menor": 2000,
+      "mayor": 1400
+    },
+    {
+      "id": "ZMA-MM97-15",
+      "cod": "ZMA-MM97-15",
+      "nom": "KORMESIC mascarilla ampolla de vitamina C (versión en idioma extranjero) 25 ml «oferta» /90",
+      "desc": "NO.KMC53954",
+      "rubro": "cuidado",
+      "img": "ZMA-MM97-15.jpg",
+      "menor": 2000,
+      "mayor": 1400
+    },
+    {
+      "id": "ZMA-MM97-18",
+      "cod": "ZMA-MM97-18",
+      "nom": "KORMESIC mascarilla reafirmante de colágeno (versión en idioma extranjero) 25 ml /90",
+      "desc": "NO.KMC59703",
+      "rubro": "cuidado",
+      "img": "ZMA-MM97-18.jpg",
+      "menor": 2000,
+      "mayor": 1400
+    },
+    {
+      "id": "ZMA-MM97-32",
+      "cod": "ZMA-MM97-32",
+      "nom": "KORMESIC mascarilla reafirmante y reparadora de péptido de cobre azul (versión en idioma extranjero) 25 ml «oferta» /90",
+      "desc": "NO.KMC32331",
+      "rubro": "cuidado",
+      "img": "ZMA-MM97-32.jpg",
+      "menor": 2000,
+      "mayor": 1400
+    },
+    {
+      "id": "ZMA-MM97-33",
+      "cod": "ZMA-MM97-33",
+      "nom": "KORMESIC mascarilla hidratante y calmante de fermento bífido (versión en idioma extranjero) 25 ml «oferta» /90",
+      "desc": "NO.KMC32348",
+      "rubro": "cuidado",
+      "img": "ZMA-MM97-33.jpg",
+      "menor": 2000,
+      "mayor": 1400
+    },
+    {
+      "id": "ZMA-MM97-4",
+      "cod": "ZMA-MM97-4",
+      "nom": "KORMESIC mascarilla antiedad de colágeno (versión en idioma extranjero) 25 ml «oferta» /90",
+      "desc": "NO.KMC63380",
+      "rubro": "cuidado",
+      "img": "ZMA-MM97-4.jpg",
+      "menor": 2000,
+      "mayor": 1400
+    },
+    {
+      "id": "ZMA-MM97-77",
+      "cod": "ZMA-MM97-77",
+      "nom": "KORMESIC mascarilla crystal antiedad en cápsulas de oro 24K KR (versión en idioma extranjero) 35 ml «oferta» /60",
+      "desc": "NO.KMC10311",
+      "rubro": "cuidado",
+      "img": "ZMA-MM97-77.jpg",
+      "menor": 3400,
+      "mayor": 2500
+    },
+    {
+      "id": "ZMA-70600-47",
+      "cod": "ZMA-70600-47",
+      "nom": "Brillo labial voluminizador",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-70600-47.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-MM97-83",
+      "cod": "ZMA-MM97-83",
+      "nom": "KORMESIC mascarilla limpiadora seborreguladora (versión en idioma extranjero) 25 ml /90",
+      "desc": "NO.KMC28785",
+      "rubro": "cuidado",
+      "img": "ZMA-MM97-83.jpg",
+      "menor": 2000,
+      "mayor": 1400
+    },
+    {
+      "id": "ZMA-MM97-84",
+      "cod": "ZMA-MM97-84",
+      "nom": "KORMESIC mascarilla calmante (versión en idioma extranjero) 25 ml /90",
+      "desc": "NO.KMC28778",
+      "rubro": "cuidado",
+      "img": "ZMA-MM97-84.jpg",
+      "menor": 2000,
+      "mayor": 1400
+    },
+    {
+      "id": "ZMA-MM97-89",
+      "cod": "ZMA-MM97-89",
+      "nom": "KORMESIC mascarilla crystal de centella asiática y colágeno (mascarilla crystal de colágeno UKGB) «reposición rápida» (versión en idioma extranjero) 30 g /50",
+      "desc": "NO.KMC505678",
+      "rubro": "cuidado",
+      "img": "ZMA-MM97-89.jpg",
+      "menor": 4100,
+      "mayor": 3000
+    },
+    {
+      "id": "ZMA-MM97-90",
+      "cod": "ZMA-MM97-90",
+      "nom": "KORMESIC mascarilla iluminadora de rosa (versión en idioma extranjero) 25 ml /50",
+      "desc": "NO.KMC64165",
+      "rubro": "rostro",
+      "img": "ZMA-MM97-90.jpg",
+      "menor": 4100,
+      "mayor": 3000
+    },
+    {
+      "id": "ZMA-MM97-91",
+      "cod": "ZMA-MM97-91",
+      "nom": "KORMESIC mascarilla blanqueadora e iluminadora (versión en idioma extranjero) 25 ml /50",
+      "desc": "NO.KMC28808",
+      "rubro": "rostro",
+      "img": "ZMA-MM97-91.jpg",
+      "menor": 2000,
+      "mayor": 1400
+    },
+    {
+      "id": "ZMA-PD-018",
+      "cod": "ZMA-PD-018",
+      "nom": "Polvo compacto /24 unid.",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-PD-018.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-PD-8052",
+      "cod": "ZMA-PD-8052",
+      "nom": "Polvo compacto /24 unid.",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-PD-8052.jpg",
+      "menor": 6800,
+      "mayor": 4900
+    },
+    {
+      "id": "ZMA-R1933",
+      "cod": "ZMA-R1933",
+      "nom": "R1933 /48",
+      "desc": "Delineador de labios",
+      "rubro": "labios",
+      "img": "ZMA-R1933.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-RS-8003",
+      "cod": "ZMA-RS-8003",
+      "nom": "Iluminador en polvo /12 unid.",
+      "desc": "Blanco",
+      "rubro": "rostro",
+      "img": "ZMA-RS-8003.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-W210",
+      "cod": "ZMA-W210",
+      "nom": "Máscara de pestañas /24",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-W210.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-1003-1",
+      "cod": "ZMA-1003-1",
+      "nom": "Gel fijador, color rosa",
+      "desc": "3",
+      "rubro": "otros",
+      "img": "ZMA-1003-1.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-1346-07C",
+      "cod": "ZMA-1346-07C",
+      "nom": "Kit de cuidado de pies en 4 pasos: sales de baño, exfoliante, mascarilla y loción",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-1346-07C.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-1346-07D",
+      "cod": "ZMA-1346-07D",
+      "nom": "Kit de cuidado de pies en 4 pasos: sales de baño, exfoliante, mascarilla y loción",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-1346-07D.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-1599",
+      "cod": "ZMA-1599",
+      "nom": "Lápiz de cejas / delineador en gel",
+      "desc": "2 negros y 1 marrón",
+      "rubro": "ojos",
+      "img": "ZMA-1599.jpg",
+      "menor": 18100,
+      "mayor": 13100
+    },
+    {
+      "id": "ZMA-2019c",
+      "cod": "ZMA-2019c",
+      "nom": "Sombras de ojos",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-2019c.jpg",
+      "menor": 12800,
+      "mayor": 9300
+    },
+    {
+      "id": "ZMA-2025d",
+      "cod": "ZMA-2025d",
+      "nom": "Sombras de ojos con soporte para celular",
+      "desc": "24",
+      "rubro": "ojos",
+      "img": "ZMA-2025d.jpg",
+      "menor": 9800,
+      "mayor": 7100
+    },
+    {
+      "id": "ZMA-23108-03",
+      "cod": "ZMA-23108-03",
+      "nom": "Iluminador en polvo",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-23108-03.jpg",
+      "menor": 8300,
+      "mayor": 6000
+    },
+    {
+      "id": "ZMA-2600",
+      "cod": "ZMA-2600",
+      "nom": "Corrector",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-2600.jpg",
+      "menor": 5700,
+      "mayor": 4100
+    },
+    {
+      "id": "ZMA-26-45",
+      "cod": "ZMA-26-45",
+      "nom": "Aceite labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-26-45.jpg",
+      "menor": 12100,
+      "mayor": 8700
+    },
+    {
+      "id": "ZMA-30064",
+      "cod": "ZMA-30064",
+      "nom": "Bálsamo labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-30064.jpg",
+      "menor": 6000,
+      "mayor": 4400
+    },
+    {
+      "id": "ZMA-48C",
+      "cod": "ZMA-48C",
+      "nom": "Aceite capilar",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-48C.jpg",
+      "menor": 33900,
+      "mayor": 24600
+    },
+    {
+      "id": "ZMA-5595A",
+      "cod": "ZMA-5595A",
+      "nom": "Lápiz labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-5595A.jpg",
+      "menor": 4900,
+      "mayor": 3600
+    },
+    {
+      "id": "ZMA-5596",
+      "cod": "ZMA-5596",
+      "nom": "Lápiz labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-5596.jpg",
+      "menor": 4900,
+      "mayor": 3600
+    },
+    {
+      "id": "ZMA-57754-03",
+      "cod": "ZMA-57754-03",
+      "nom": "Delineador líquido",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-57754-03.jpg",
+      "menor": 7200,
+      "mayor": 5200
+    },
+    {
+      "id": "ZMA-57771-03",
+      "cod": "ZMA-57771-03",
+      "nom": "Delineador líquido",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-57771-03.jpg",
+      "menor": 7200,
+      "mayor": 5200
+    },
+    {
+      "id": "ZMA-584-3",
+      "cod": "ZMA-584-3",
+      "nom": "Exfoliante corporal 350 ml",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-584-3.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-584-4",
+      "cod": "ZMA-584-4",
+      "nom": "Exfoliante corporal 350 ml",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-584-4.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-584-6",
+      "cod": "ZMA-584-6",
+      "nom": "Exfoliante corporal 350 ml",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-584-6.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-5890-3",
+      "cod": "ZMA-5890-3",
+      "nom": "Máscara de pestañas",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-5890-3.jpg",
+      "menor": 5700,
+      "mayor": 4100
+    },
+    {
+      "id": "ZMA-59285-03",
+      "cod": "ZMA-59285-03",
+      "nom": "Lápiz de cejas de 4 puntas",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-59285-03.jpg",
+      "menor": 6800,
+      "mayor": 4900
+    },
+    {
+      "id": "ZMA-6002",
+      "cod": "ZMA-6002",
+      "nom": "Aceite labial que cambia de color",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-6002.jpg",
+      "menor": 4900,
+      "mayor": 3600
+    },
+    {
+      "id": "ZMA-66042-03",
+      "cod": "ZMA-66042-03",
+      "nom": "Máscara de pestañas",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-66042-03.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-81962-47A",
+      "cod": "ZMA-81962-47A",
+      "nom": "Polvo compacto",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-81962-47A.jpg",
+      "menor": 14300,
+      "mayor": 10400
+    },
+    {
+      "id": "ZMA-8793",
+      "cod": "ZMA-8793",
+      "nom": "Cera en barra para el cabello",
+      "desc": "",
+      "rubro": "cabello",
+      "img": "ZMA-8793.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-89057-47",
+      "cod": "ZMA-89057-47",
+      "nom": "Sombra + gel para cejas",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-89057-47.jpg",
+      "menor": 13600,
+      "mayor": 9800
+    },
+    {
+      "id": "ZMA-974B",
+      "cod": "ZMA-974B",
+      "nom": "Sombra para cejas",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-974B.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-974C",
+      "cod": "ZMA-974C",
+      "nom": "Sombra para cejas",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-974C.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-A1332",
+      "cod": "ZMA-A1332",
+      "nom": "Aceite labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-A1332.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-A16-2",
+      "cod": "ZMA-A16-2",
+      "nom": "Polvo suelto banana",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-A16-2.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-AB028",
+      "cod": "ZMA-AB028",
+      "nom": "Bálsamo labial",
+      "desc": "24 unid.",
+      "rubro": "labios",
+      "img": "ZMA-AB028.jpg",
+      "menor": 4500,
+      "mayor": 3300
+    },
+    {
+      "id": "ZMA-AB-G5010",
+      "cod": "ZMA-AB-G5010",
+      "nom": "G5010 bálsamo labial (Kuromi)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-AB-G5010.jpg",
+      "menor": 6800,
+      "mayor": 4900
+    },
+    {
+      "id": "ZMA-AB-G5011",
+      "cod": "ZMA-AB-G5011",
+      "nom": "G5011 bálsamo labial (My Melody)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-AB-G5011.jpg",
+      "menor": 6800,
+      "mayor": 4900
+    },
+    {
+      "id": "ZMA-AB-G5016",
+      "cod": "ZMA-AB-G5016",
+      "nom": "G5016 bálsamo labial (Hello Kitty)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-AB-G5016.jpg",
+      "menor": 6800,
+      "mayor": 4900
+    },
+    {
+      "id": "ZMA-AL064",
+      "cod": "ZMA-AL064",
+      "nom": "Labial líquido",
+      "desc": "24 unid.",
+      "rubro": "labios",
+      "img": "ZMA-AL064.jpg",
+      "menor": 5700,
+      "mayor": 4100
+    },
+    {
+      "id": "ZMA-B041-1",
+      "cod": "ZMA-B041-1",
+      "nom": "Mascarillas comprimidas, 50 unid.",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-B041-1.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-B20012",
+      "cod": "ZMA-B20012",
+      "nom": "Gel para cejas (GEL EYEBROW)",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-B20012.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-B50024",
+      "cod": "ZMA-B50024",
+      "nom": "Spray fijador de maquillaje (MAKEUP SETTING SPRAY)",
+      "desc": "Spray fijador",
+      "rubro": "accesorios",
+      "img": "ZMA-B50024.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-B60012-A",
+      "cod": "ZMA-B60012-A",
+      "nom": "Glitter roll-on (Rolling Glitter)",
+      "desc": "10 g",
+      "rubro": "otros",
+      "img": "ZMA-B60012-A.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-B70031",
+      "cod": "ZMA-B70031",
+      "nom": "Rubor líquido (Liquid Blusher)",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-B70031.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-B70034",
+      "cod": "ZMA-B70034",
+      "nom": "Rubor líquido (Liquid Blusher)",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-B70034.jpg",
+      "menor": 8300,
+      "mayor": 6000
+    },
+    {
+      "id": "ZMA-B70043-A",
+      "cod": "ZMA-B70043-A",
+      "nom": "Corrector líquido (Liquid Concealer)",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-B70043-A.jpg",
+      "menor": 6800,
+      "mayor": 4900
+    },
+    {
+      "id": "ZMA-B70043-B",
+      "cod": "ZMA-B70043-B",
+      "nom": "Corrector líquido (Liquid Concealer)",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-B70043-B.jpg",
+      "menor": 6800,
+      "mayor": 4900
+    },
+    {
+      "id": "ZMA-B70059",
+      "cod": "ZMA-B70059",
+      "nom": "Rubor + iluminador (blush & highlighter)",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-B70059.jpg",
+      "menor": 10600,
+      "mayor": 7700
+    },
+    {
+      "id": "ZMA-B70060",
+      "cod": "ZMA-B70060",
+      "nom": "Lip mud + bálsamo labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-B70060.jpg",
+      "menor": 10600,
+      "mayor": 7700
+    },
+    {
+      "id": "ZMA-B80015",
+      "cod": "ZMA-B80015",
+      "nom": "Aceite labial con glitter",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-B80015.jpg",
+      "menor": 6000,
+      "mayor": 4400
+    },
+    {
+      "id": "ZMA-B80016",
+      "cod": "ZMA-B80016",
+      "nom": "Brillo labial que cambia de color (MAGIC LIP GLOSS)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-B80016.jpg",
+      "menor": 6000,
+      "mayor": 4400
+    },
+    {
+      "id": "ZMA-B80018",
+      "cod": "ZMA-B80018",
+      "nom": "Mascarilla labial (Lip Care Mask)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-B80018.jpg",
+      "menor": 6800,
+      "mayor": 4900
+    },
+    {
+      "id": "ZMA-B80019",
+      "cod": "ZMA-B80019",
+      "nom": "Lip mud / rubor en crema (2 en 1)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-B80019.jpg",
+      "menor": 6800,
+      "mayor": 4900
+    },
+    {
+      "id": "ZMA-B80020",
+      "cod": "ZMA-B80020",
+      "nom": "Exfoliante labial (Lip Scrub)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-B80020.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-B80025",
+      "cod": "ZMA-B80025",
+      "nom": "Aceite labial con glitter que cambia de color",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-B80025.jpg",
+      "menor": 8300,
+      "mayor": 6000
+    },
+    {
+      "id": "ZMA-B80027",
+      "cod": "ZMA-B80027",
+      "nom": "Brillo labial efecto mármol (Marble glow lip oil)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-B80027.jpg",
+      "menor": 6800,
+      "mayor": 4900
+    },
+    {
+      "id": "ZMA-B80029",
+      "cod": "ZMA-B80029",
+      "nom": "Labial magnético que cambia de color",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-B80029.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-B80030",
+      "cod": "ZMA-B80030",
+      "nom": "Aceite labial con glitter + tinta labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-B80030.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-B80031",
+      "cod": "ZMA-B80031",
+      "nom": "Aceite labial voluminizador + tinta labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-B80031.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-B80037",
+      "cod": "ZMA-B80037",
+      "nom": "Brillo labial (LIP GLOSS)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-B80037.jpg",
+      "menor": 6000,
+      "mayor": 4400
+    },
+    {
+      "id": "ZMA-B80054",
+      "cod": "ZMA-B80054",
+      "nom": "Aceite labial tipo jelly (JELLY LIP OIL)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-B80054.jpg",
+      "menor": 6800,
+      "mayor": 4900
+    },
+    {
+      "id": "ZMA-CC-39",
+      "cod": "ZMA-CC-39",
+      "nom": "Labial líquido mate (MATTE LIP GLOSS)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-CC-39.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-CM33-4",
+      "cod": "ZMA-CM33-4",
+      "nom": "Mascarilla labial Kakaziyan 7 g",
+      "desc": "24 unid.",
+      "rubro": "labios",
+      "img": "ZMA-CM33-4.jpg",
+      "menor": 2300,
+      "mayor": 1600
+    },
+    {
+      "id": "ZMA-CM33-5",
+      "cod": "ZMA-CM33-5",
+      "nom": "Mascarilla labial Kakaziyan 7 g",
+      "desc": "24 unid.",
+      "rubro": "labios",
+      "img": "ZMA-CM33-5.jpg",
+      "menor": 2300,
+      "mayor": 1600
+    },
+    {
+      "id": "ZMA-CQK-00640",
+      "cod": "ZMA-CQK-00640",
+      "nom": "Parches para ojos bicolor de vitamina C y frutilla",
+      "desc": "30 unid. por estuche; 72 estuches por bulto",
+      "rubro": "otros",
+      "img": "ZMA-CQK-00640.jpg",
+      "menor": 1700,
+      "mayor": 1200
+    },
+    {
+      "id": "ZMA-CQK-00664",
+      "cod": "ZMA-CQK-00664",
+      "nom": "Parches para ojos bicolor de rosa y palta",
+      "desc": "30 unid. por estuche; 72 estuches por bulto",
+      "rubro": "otros",
+      "img": "ZMA-CQK-00664.jpg",
+      "menor": 1700,
+      "mayor": 1200
+    },
+    {
+      "id": "ZMA-CQK-5002-134",
+      "cod": "ZMA-CQK-5002",
+      "nom": "Sérum de seda con oro 24K",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-CQK-5002-134.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-DL2503",
+      "cod": "ZMA-DL2503",
+      "nom": "Exfoliante corporal 350 ml",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-DL2503.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-DL2504",
+      "cod": "ZMA-DL2504",
+      "nom": "Exfoliante corporal 350 ml",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-DL2504.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-DL2509",
+      "cod": "ZMA-DL2509",
+      "nom": "Exfoliante corporal 350 ml",
+      "desc": "",
+      "rubro": "cuidado",
+      "img": "ZMA-DL2509.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-DS-236072",
+      "cod": "ZMA-DS-236072",
+      "nom": "Stick de contorno 6 colores",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-DS-236072.jpg",
+      "menor": 6400,
+      "mayor": 4600
+    },
+    {
+      "id": "ZMA-E304",
+      "cod": "ZMA-E304",
+      "nom": "E304 delineador líquido",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-E304.jpg",
+      "menor": 4100,
+      "mayor": 3000
+    },
+    {
+      "id": "ZMA-E3764",
+      "cod": "ZMA-E3764",
+      "nom": "E3764 delineador líquido",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-E3764.jpg",
+      "menor": 4100,
+      "mayor": 3000
+    },
+    {
+      "id": "ZMA-E6339",
+      "cod": "ZMA-E6339",
+      "nom": "Lápiz de cejas de 4 puntas",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-E6339.jpg",
+      "menor": 7200,
+      "mayor": 5200
+    },
+    {
+      "id": "ZMA-E6353",
+      "cod": "ZMA-E6353",
+      "nom": "Lápiz de cejas",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-E6353.jpg",
+      "menor": 7200,
+      "mayor": 5200
+    },
+    {
+      "id": "ZMA-EYE-0928--1-0928-3--0928--4-0934-2",
+      "cod": "ZMA-EYE-0928- 1.0928-3. 0928- 4.0934-2",
+      "nom": "Sombras de ojos 9 colores",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-EYE-0928--1-0928-3--0928--4-0934-2.jpg",
+      "menor": 14300,
+      "mayor": 10400
+    },
+    {
+      "id": "ZMA-EYE--18029-30-31",
+      "cod": "ZMA-EYE- 18029.30.31",
+      "nom": "Sombras de ojos 18 colores",
+      "desc": "Paleta de 18 colores, surtido de 3 modelos",
+      "rubro": "ojos",
+      "img": "ZMA-EYE--18029-30-31.jpg",
+      "menor": 14300,
+      "mayor": 10400
+    },
+    {
+      "id": "ZMA-EYE-182601",
+      "cod": "ZMA-EYE-182601",
+      "nom": "Sombras de ojos 18 colores",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-EYE-182601.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-EYE-182602",
+      "cod": "ZMA-EYE-182602",
+      "nom": "Sombras de ojos 18 colores",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-EYE-182602.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-FF031",
+      "cod": "ZMA-FF031",
+      "nom": "Bálsamo labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-FF031.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-FF072",
+      "cod": "ZMA-FF072",
+      "nom": "Mini navajas para cejas, pack de 3",
+      "desc": "12 unid.",
+      "rubro": "ojos",
+      "img": "ZMA-FF072.jpg",
+      "menor": 3800,
+      "mayor": 2700
+    },
+    {
+      "id": "ZMA-FF190",
+      "cod": "ZMA-FF190",
+      "nom": "Bálsamo labial cereza con moño (cambia de color)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-FF190.jpg",
+      "menor": 4900,
+      "mayor": 3600
+    },
+    {
+      "id": "ZMA-GZ8010758",
+      "cod": "ZMA-GZ8010758",
+      "nom": "Aceite labial",
+      "desc": "12 unid.",
+      "rubro": "labios",
+      "img": "ZMA-GZ8010758.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-GZ8030092",
+      "cod": "ZMA-GZ8030092",
+      "nom": "Polvo suelto",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-GZ8030092.jpg",
+      "menor": 9800,
+      "mayor": 7100
+    },
+    {
+      "id": "ZMA-HAN28",
+      "cod": "ZMA-HAN28",
+      "nom": "Crema de manos",
+      "desc": "Crema de manos, 4 aromas: frutilla, durazno, banana y uva",
+      "rubro": "cuidado",
+      "img": "ZMA-HAN28.jpg",
+      "menor": 10600,
+      "mayor": 7700
+    },
+    {
+      "id": "ZMA-HB5645",
+      "cod": "ZMA-HB5645",
+      "nom": "Bálsamo labial",
+      "desc": "24 unid./caja",
+      "rubro": "labios",
+      "img": "ZMA-HB5645.jpg",
+      "menor": 4100,
+      "mayor": 3000
+    },
+    {
+      "id": "ZMA-HL5990",
+      "cod": "ZMA-HL5990",
+      "nom": "Brillo labial",
+      "desc": "24 unid.",
+      "rubro": "labios",
+      "img": "ZMA-HL5990.jpg",
+      "menor": 4100,
+      "mayor": 3000
+    },
+    {
+      "id": "ZMA-HL5991",
+      "cod": "ZMA-HL5991",
+      "nom": "Brillo labial",
+      "desc": "24 unid.",
+      "rubro": "labios",
+      "img": "ZMA-HL5991.jpg",
+      "menor": 4100,
+      "mayor": 3000
+    },
+    {
+      "id": "ZMA-HL5992",
+      "cod": "ZMA-HL5992",
+      "nom": "Brillo labial",
+      "desc": "24 unid.",
+      "rubro": "labios",
+      "img": "ZMA-HL5992.jpg",
+      "menor": 4100,
+      "mayor": 3000
+    },
+    {
+      "id": "ZMA-HL6020",
+      "cod": "ZMA-HL6020",
+      "nom": "Brillo labial",
+      "desc": "24 unid.",
+      "rubro": "labios",
+      "img": "ZMA-HL6020.jpg",
+      "menor": 4900,
+      "mayor": 3600
+    },
+    {
+      "id": "ZMA-HL6338",
+      "cod": "ZMA-HL6338",
+      "nom": "Aceite labial con rodaja de fruta",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-HL6338.jpg",
+      "menor": 10600,
+      "mayor": 7700
+    },
+    {
+      "id": "ZMA-HODAF--202602",
+      "cod": "ZMA-HODAF- 202602",
+      "nom": "Antifaz térmico de vapor (precio por caja de 12 unid.)",
+      "desc": "",
+      "rubro": "otros",
+      "img": "ZMA-HODAF--202602.jpg",
+      "menor": 49000,
+      "mayor": 35500
+    },
+    {
+      "id": "ZMA-JH-1",
+      "cod": "ZMA-JH-1",
+      "nom": "Sérum de centella asiática",
+      "desc": "Ilumina el tono de la piel",
+      "rubro": "cuidado",
+      "img": "ZMA-JH-1.jpg",
+      "menor": 22600,
+      "mayor": 16400
+    },
+    {
+      "id": "ZMA-JH-2",
+      "cod": "ZMA-JH-2",
+      "nom": "Sérum de centella asiática",
+      "desc": "Calma la piel irritada",
+      "rubro": "cuidado",
+      "img": "ZMA-JH-2.jpg",
+      "menor": 22600,
+      "mayor": 16400
+    },
+    {
+      "id": "ZMA-JH-3",
+      "cod": "ZMA-JH-3",
+      "nom": "Sérum de centella asiática",
+      "desc": "Purificante y revitalizante",
+      "rubro": "cuidado",
+      "img": "ZMA-JH-3.jpg",
+      "menor": 22600,
+      "mayor": 16400
+    },
+    {
+      "id": "ZMA-JH-4",
+      "cod": "ZMA-JH-4",
+      "nom": "Sérum de centella asiática",
+      "desc": "Árbol de té, calmante",
+      "rubro": "cuidado",
+      "img": "ZMA-JH-4.jpg",
+      "menor": 22600,
+      "mayor": 16400
+    },
+    {
+      "id": "ZMA-K012-10",
+      "cod": "ZMA-K012-10",
+      "nom": "Máscara de pestañas",
+      "desc": "24 unid.",
+      "rubro": "ojos",
+      "img": "ZMA-K012-10.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-K012-11",
+      "cod": "ZMA-K012-11",
+      "nom": "Máscara de pestañas",
+      "desc": "24 unid.",
+      "rubro": "ojos",
+      "img": "ZMA-K012-11.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-K012-12",
+      "cod": "ZMA-K012-12",
+      "nom": "Máscara de pestañas",
+      "desc": "24 unid.",
+      "rubro": "ojos",
+      "img": "ZMA-K012-12.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-K012-9",
+      "cod": "ZMA-K012-9",
+      "nom": "Máscara de pestañas",
+      "desc": "24 unid.",
+      "rubro": "ojos",
+      "img": "ZMA-K012-9.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-K5395",
+      "cod": "ZMA-K5395",
+      "nom": "K5395 bálsamo labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-K5395.jpg",
+      "menor": 6000,
+      "mayor": 4400
+    },
+    {
+      "id": "ZMA-K6085",
+      "cod": "ZMA-K6085",
+      "nom": "Bálsamo labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-K6085.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-K6228",
+      "cod": "ZMA-K6228",
+      "nom": "Bálsamo labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-K6228.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-L1219",
+      "cod": "ZMA-L1219",
+      "nom": "L1219 brillo labial",
+      "desc": "24 unid./caja",
+      "rubro": "labios",
+      "img": "ZMA-L1219.jpg",
+      "menor": 4500,
+      "mayor": 3300
+    },
+    {
+      "id": "ZMA-L5191",
+      "cod": "ZMA-L5191",
+      "nom": "L5191 aceite labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-L5191.jpg",
+      "menor": 6000,
+      "mayor": 4400
+    },
+    {
+      "id": "ZMA-L5345",
+      "cod": "ZMA-L5345",
+      "nom": "L5345 aceite labial",
+      "desc": "24 unid.",
+      "rubro": "labios",
+      "img": "ZMA-L5345.jpg",
+      "menor": 6000,
+      "mayor": 4400
+    },
+    {
+      "id": "ZMA-L5355",
+      "cod": "ZMA-L5355",
+      "nom": "L5355 brillo labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-L5355.jpg",
+      "menor": 6000,
+      "mayor": 4400
+    },
+    {
+      "id": "ZMA-L951A",
+      "cod": "ZMA-L951A",
+      "nom": "Brillo labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-L951A.jpg",
+      "menor": 4500,
+      "mayor": 3300
+    },
+    {
+      "id": "ZMA-LP-211",
+      "cod": "ZMA-LP-211",
+      "nom": "Brillo labial (lipgloss)",
+      "desc": "No transfiere",
+      "rubro": "labios",
+      "img": "ZMA-LP-211.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-LP-318",
+      "cod": "ZMA-LP-318",
+      "nom": "Brillo labial (lipgloss)",
+      "desc": "Transfiere",
+      "rubro": "labios",
+      "img": "ZMA-LP-318.jpg",
+      "menor": 4500,
+      "mayor": 3300
+    },
+    {
+      "id": "ZMA-LP-368",
+      "cod": "ZMA-LP-368",
+      "nom": "Brillo labial (lipgloss)",
+      "desc": "No transfiere",
+      "rubro": "labios",
+      "img": "ZMA-LP-368.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-M0035",
+      "cod": "ZMA-M0035",
+      "nom": "Sérum crecepestañas",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-M0035.jpg",
+      "menor": 6000,
+      "mayor": 4400
+    },
+    {
+      "id": "ZMA-M-032",
+      "cod": "ZMA-M-032",
+      "nom": "Sombra para cejas",
+      "desc": "Sombra para cejas, 3 combinaciones de color",
+      "rubro": "ojos",
+      "img": "ZMA-M-032.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-M1601-1-2-3",
+      "cod": "ZMA-M1601-1.2.3",
+      "nom": "Sombras de ojos 16 colores",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-M1601-1-2-3.jpg",
+      "menor": 14300,
+      "mayor": 10400
+    },
+    {
+      "id": "ZMA-M3958",
+      "cod": "ZMA-M3958",
+      "nom": "M3958 máscara de pestañas",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-M3958.jpg",
+      "menor": 6800,
+      "mayor": 4900
+    },
+    {
+      "id": "ZMA-M8111",
+      "cod": "ZMA-M8111",
+      "nom": "Máscara de pestañas",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-M8111.jpg",
+      "menor": 4900,
+      "mayor": 3600
+    },
+    {
+      "id": "ZMA-M8138A",
+      "cod": "ZMA-M8138A",
+      "nom": "Brillo labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-M8138A.jpg",
+      "menor": 6000,
+      "mayor": 4400
+    },
+    {
+      "id": "ZMA-M8330",
+      "cod": "ZMA-M8330",
+      "nom": "Lápiz labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-M8330.jpg",
+      "menor": 4900,
+      "mayor": 3600
+    },
+    {
+      "id": "ZMA-M850",
+      "cod": "ZMA-M850",
+      "nom": "Toallitas desmaquillantes 30 unid. – frutos secos",
+      "desc": "",
+      "rubro": "otros",
+      "img": "ZMA-M850.jpg",
+      "menor": 22600,
+      "mayor": 16400
+    },
+    {
+      "id": "ZMA-M850B",
+      "cod": "ZMA-M850B",
+      "nom": "Toallitas desmaquillantes 30 unid. – coco",
+      "desc": "",
+      "rubro": "otros",
+      "img": "ZMA-M850B.jpg",
+      "menor": 22600,
+      "mayor": 16400
+    },
+    {
+      "id": "ZMA-M850D",
+      "cod": "ZMA-M850D",
+      "nom": "Toallitas desmaquillantes 30 unid. – rosa",
+      "desc": "",
+      "rubro": "otros",
+      "img": "ZMA-M850D.jpg",
+      "menor": 22600,
+      "mayor": 16400
+    },
+    {
+      "id": "ZMA-M850E",
+      "cod": "ZMA-M850E",
+      "nom": "Toallitas desmaquillantes 30 unid. – vitamina C",
+      "desc": "",
+      "rubro": "otros",
+      "img": "ZMA-M850E.jpg",
+      "menor": 22600,
+      "mayor": 16400
+    },
+    {
+      "id": "ZMA-M850F",
+      "cod": "ZMA-M850F",
+      "nom": "Toallitas desmaquillantes 30 unid. – vitamina E",
+      "desc": "",
+      "rubro": "otros",
+      "img": "ZMA-M850F.jpg",
+      "menor": 22600,
+      "mayor": 16400
+    },
+    {
+      "id": "ZMA-ME4025",
+      "cod": "ZMA-ME4025",
+      "nom": "Delineador líquido",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-ME4025.jpg",
+      "menor": 5700,
+      "mayor": 4100
+    },
+    {
+      "id": "ZMA-MK033",
+      "cod": "ZMA-MK033",
+      "nom": "Delineador líquido",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-MK033.jpg",
+      "menor": 4500,
+      "mayor": 3300
+    },
+    {
+      "id": "ZMA-MK079",
+      "cod": "ZMA-MK079",
+      "nom": "Iluminador líquido",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-MK079.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-MK370",
+      "cod": "ZMA-MK370",
+      "nom": "Delineador de labios",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-MK370.jpg",
+      "menor": 3000,
+      "mayor": 2200
+    },
+    {
+      "id": "ZMA-MN8005",
+      "cod": "ZMA-MN8005",
+      "nom": "Brillo labial efecto glass",
+      "desc": "24 x 60 cajas",
+      "rubro": "labios",
+      "img": "ZMA-MN8005.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-MN8024",
+      "cod": "ZMA-MN8024",
+      "nom": "Brillo labial que no transfiere",
+      "desc": "24 x 60 cajas",
+      "rubro": "labios",
+      "img": "ZMA-MN8024.jpg",
+      "menor": 4500,
+      "mayor": 3300
+    },
+    {
+      "id": "ZMA-MN8025",
+      "cod": "ZMA-MN8025",
+      "nom": "Aceite labial que cambia de color",
+      "desc": "24 x 60 cajas",
+      "rubro": "labios",
+      "img": "ZMA-MN8025.jpg",
+      "menor": 4500,
+      "mayor": 3300
+    },
+    {
+      "id": "ZMA-MOC2146A",
+      "cod": "ZMA-MOC2146A",
+      "nom": "Set de labiales líquidos",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-MOC2146A.jpg",
+      "menor": 26400,
+      "mayor": 19100
+    },
+    {
+      "id": "ZMA-MOC2196",
+      "cod": "ZMA-MOC2196",
+      "nom": "Labial líquido con pan de oro que cambia de color",
+      "desc": "24 unid.",
+      "rubro": "labios",
+      "img": "ZMA-MOC2196.jpg",
+      "menor": 6400,
+      "mayor": 4600
+    },
+    {
+      "id": "ZMA-MOC2455",
+      "cod": "ZMA-MOC2455",
+      "nom": "Brillo labial 6 colores",
+      "desc": "24 unid.",
+      "rubro": "labios",
+      "img": "ZMA-MOC2455.jpg",
+      "menor": 10600,
+      "mayor": 7700
+    },
+    {
+      "id": "ZMA-MOC2465",
+      "cod": "ZMA-MOC2465",
+      "nom": "Lip mud con colgante para celular",
+      "desc": "12 unid.",
+      "rubro": "labios",
+      "img": "ZMA-MOC2465.jpg",
+      "menor": 15100,
+      "mayor": 10900
+    },
+    {
+      "id": "ZMA-MOC2498",
+      "cod": "ZMA-MOC2498",
+      "nom": "Labial líquido",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-MOC2498.jpg",
+      "menor": 12100,
+      "mayor": 8700
+    },
+    {
+      "id": "ZMA-MOC2545",
+      "cod": "ZMA-MOC2545",
+      "nom": "Aceite labial con colgante de corazón",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-MOC2545.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-MOC2561",
+      "cod": "ZMA-MOC2561",
+      "nom": "Brillo labial perlado",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-MOC2561.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-MOC2562",
+      "cod": "ZMA-MOC2562",
+      "nom": "Brillo labial que no transfiere",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-MOC2562.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-MOC2563",
+      "cod": "ZMA-MOC2563",
+      "nom": "Tinta labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-MOC2563.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-MOC2565",
+      "cod": "ZMA-MOC2565",
+      "nom": "Corrector líquido 6 colores",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-MOC2565.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-MOC2566",
+      "cod": "ZMA-MOC2566",
+      "nom": "Sérum crecepestañas, 3 colores",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-MOC2566.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-MOC2588",
+      "cod": "ZMA-MOC2588",
+      "nom": "Labial líquido con colgante de caramelo",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-MOC2588.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-MOC345",
+      "cod": "ZMA-MOC345",
+      "nom": "Rubor líquido 6 colores",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-MOC345.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-MOC611",
+      "cod": "ZMA-MOC611",
+      "nom": "Iluminador líquido",
+      "desc": "Iluminador hexagonal Kuromi",
+      "rubro": "rostro",
+      "img": "ZMA-MOC611.jpg",
+      "menor": 8300,
+      "mayor": 6000
+    },
+    {
+      "id": "ZMA-MS-280",
+      "cod": "ZMA-MS-280",
+      "nom": "Rubor líquido",
+      "desc": "24 unid./caja",
+      "rubro": "rostro",
+      "img": "ZMA-MS-280.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-MS-300",
+      "cod": "ZMA-MS-300",
+      "nom": "Labial líquido mate (MATTE LIP GLOSS)",
+      "desc": "36",
+      "rubro": "labios",
+      "img": "ZMA-MS-300.jpg",
+      "menor": 4500,
+      "mayor": 3300
+    },
+    {
+      "id": "ZMA-MS-312",
+      "cod": "ZMA-MS-312",
+      "nom": "Tinte para cejas (EYEBROW TINT CREAM)",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-MS-312.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-MS-385",
+      "cod": "ZMA-MS-385",
+      "nom": "Tinta labial luminosa (SHINING LIP TINT)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-MS-385.jpg",
+      "menor": 6000,
+      "mayor": 4400
+    },
+    {
+      "id": "ZMA-MS-393",
+      "cod": "ZMA-MS-393",
+      "nom": "Labial líquido con glitter (HIGH-GLITTER LIPGLOSS)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-MS-393.jpg",
+      "menor": 7200,
+      "mayor": 5200
+    },
+    {
+      "id": "ZMA-MS-532",
+      "cod": "ZMA-MS-532",
+      "nom": "2 en 1 labios y mejillas (LIP & CHEEK)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-MS-532.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-MS-549",
+      "cod": "ZMA-MS-549",
+      "nom": "Labial líquido con glitter (HIGH-GLITTER LIPGLOSS)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-MS-549.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-MS-638",
+      "cod": "ZMA-MS-638",
+      "nom": "Labial líquido luminoso (SHINING LIP GLOSS)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-MS-638.jpg",
+      "menor": 6000,
+      "mayor": 4400
+    },
+    {
+      "id": "ZMA-MS-666B",
+      "cod": "ZMA-MS-666B",
+      "nom": "Brillo labial que cambia de color (MAGIC LIP GLOSS)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-MS-666B.jpg",
+      "menor": 4900,
+      "mayor": 3600
+    },
+    {
+      "id": "ZMA-MS-796",
+      "cod": "ZMA-MS-796",
+      "nom": "Bálsamo labial (LIP BALM)",
+      "desc": "24",
+      "rubro": "labios",
+      "img": "ZMA-MS-796.jpg",
+      "menor": 6400,
+      "mayor": 4600
+    },
+    {
+      "id": "ZMA-Mx488",
+      "cod": "ZMA-Mx488",
+      "nom": "Aceite labial que cambia de color con colgante",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-Mx488.jpg",
+      "menor": 13600,
+      "mayor": 9800
+    },
+    {
+      "id": "ZMA-N6841",
+      "cod": "ZMA-N6841",
+      "nom": "Aceite labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-N6841.jpg",
+      "menor": 5700,
+      "mayor": 4100
+    },
+    {
+      "id": "ZMA-N6842",
+      "cod": "ZMA-N6842",
+      "nom": "Aceite labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-N6842.jpg",
+      "menor": 5700,
+      "mayor": 4100
+    },
+    {
+      "id": "ZMA-N8315",
+      "cod": "ZMA-N8315",
+      "nom": "Lápiz labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-N8315.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-OB-1096",
+      "cod": "ZMA-OB-1096",
+      "nom": "Brillo labial (LIP GLOSS)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-OB-1096.jpg",
+      "menor": 4500,
+      "mayor": 3300
+    },
+    {
+      "id": "ZMA-OB-1107",
+      "cod": "ZMA-OB-1107",
+      "nom": "Brillo labial (LIP GLOSS)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-OB-1107.jpg",
+      "menor": 4900,
+      "mayor": 3600
+    },
+    {
+      "id": "ZMA-OB-11108",
+      "cod": "ZMA-OB-11108",
+      "nom": "Brillo labial (LIP GLOSS)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-OB-11108.jpg",
+      "menor": 4900,
+      "mayor": 3600
+    },
+    {
+      "id": "ZMA-OB-11110",
+      "cod": "ZMA-OB-11110",
+      "nom": "Brillo labial (LIP GLOSS)",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-OB-11110.jpg",
+      "menor": 4500,
+      "mayor": 3300
+    },
+    {
+      "id": "ZMA-OL-158",
+      "cod": "ZMA-OL-158",
+      "nom": "Aceite labial (lip oil)",
+      "desc": "Cambia de color",
+      "rubro": "labios",
+      "img": "ZMA-OL-158.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-PKY-FF122",
+      "cod": "ZMA-PKY-FF122",
+      "nom": "Set de 6 esponjas de maquillaje, frutilla",
+      "desc": "12 unid.",
+      "rubro": "accesorios",
+      "img": "ZMA-PKY-FF122.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-PKY-FF123",
+      "cod": "ZMA-PKY-FF123",
+      "nom": "Set de 6 esponjas de maquillaje, durazno",
+      "desc": "12 unid.",
+      "rubro": "accesorios",
+      "img": "ZMA-PKY-FF123.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-R1720",
+      "cod": "ZMA-R1720",
+      "nom": "Brillo labial",
+      "desc": "6 colores, 24 unid./exhibidor",
+      "rubro": "labios",
+      "img": "ZMA-R1720.jpg",
+      "menor": 3800,
+      "mayor": 2700
+    },
+    {
+      "id": "ZMA-R1789",
+      "cod": "ZMA-R1789",
+      "nom": "Lápiz de maquillaje multiuso",
+      "desc": "4 colores",
+      "rubro": "otros",
+      "img": "ZMA-R1789.jpg",
+      "menor": 13600,
+      "mayor": 9800
+    },
+    {
+      "id": "ZMA-R2615",
+      "cod": "ZMA-R2615",
+      "nom": "Labial líquido",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-R2615.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-R3165",
+      "cod": "ZMA-R3165",
+      "nom": "Brillo labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-R3165.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-R3298",
+      "cod": "ZMA-R3298",
+      "nom": "Brillo labial",
+      "desc": "3 colores, 12 unid./caja de regalo",
+      "rubro": "labios",
+      "img": "ZMA-R3298.jpg",
+      "menor": 10600,
+      "mayor": 7700
+    },
+    {
+      "id": "ZMA-R3927",
+      "cod": "ZMA-R3927",
+      "nom": "Brillo labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-R3927.jpg",
+      "menor": 6800,
+      "mayor": 4900
+    },
+    {
+      "id": "ZMA-RB2131",
+      "cod": "ZMA-RB2131",
+      "nom": "Sombra de ojos en barra",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-RB2131.jpg",
+      "menor": 3800,
+      "mayor": 2700
+    },
+    {
+      "id": "ZMA-RB2167",
+      "cod": "ZMA-RB2167",
+      "nom": "Rubor en barra",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-RB2167.jpg",
+      "menor": 3800,
+      "mayor": 2700
+    },
+    {
+      "id": "ZMA-RB2173",
+      "cod": "ZMA-RB2173",
+      "nom": "Tinte para cejas",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-RB2173.jpg",
+      "menor": 3800,
+      "mayor": 2700
+    },
+    {
+      "id": "ZMA-RB2181",
+      "cod": "ZMA-RB2181",
+      "nom": "Tinte para cejas",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-RB2181.jpg",
+      "menor": 3800,
+      "mayor": 2700
+    },
+    {
+      "id": "ZMA-RB2204",
+      "cod": "ZMA-RB2204",
+      "nom": "Lápiz labial en pincel",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-RB2204.jpg",
+      "menor": 3800,
+      "mayor": 2700
+    },
+    {
+      "id": "ZMA-RB2206",
+      "cod": "ZMA-RB2206",
+      "nom": "Iluminador en lápiz",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-RB2206.jpg",
+      "menor": 7500,
+      "mayor": 5500
+    },
+    {
+      "id": "ZMA-RB2238",
+      "cod": "ZMA-RB2238",
+      "nom": "Corrector y contorno en barra",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-RB2238.jpg",
+      "menor": 3800,
+      "mayor": 2700
+    },
+    {
+      "id": "ZMA-RS--1009",
+      "cod": "ZMA-RS- 1009",
+      "nom": "Iluminador en polvo",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-RS--1009.jpg",
+      "menor": 6800,
+      "mayor": 4900
+    },
+    {
+      "id": "ZMA-RS-1027",
+      "cod": "ZMA-RS-1027",
+      "nom": "Polvo suelto",
+      "desc": "Colores 1, 2 y 3",
+      "rubro": "rostro",
+      "img": "ZMA-RS-1027.jpg",
+      "menor": 8300,
+      "mayor": 6000
+    },
+    {
+      "id": "ZMA-RS-8003-248",
+      "cod": "ZMA-RS-8003",
+      "nom": "Iluminador en polvo",
+      "desc": "",
+      "rubro": "rostro",
+      "img": "ZMA-RS-8003-248.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-S523A",
+      "cod": "ZMA-S523A",
+      "nom": "Iluminador en polvo",
+      "desc": "24 unid./caja",
+      "rubro": "rostro",
+      "img": "ZMA-S523A.jpg",
+      "menor": 6000,
+      "mayor": 4400
+    },
+    {
+      "id": "ZMA-SA487-1",
+      "cod": "ZMA-SA487-1",
+      "nom": "Barra cubre canas",
+      "desc": "Color n.º 1",
+      "rubro": "otros",
+      "img": "ZMA-SA487-1.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-SA487-2",
+      "cod": "ZMA-SA487-2",
+      "nom": "Barra cubre canas",
+      "desc": "Color n.º 2",
+      "rubro": "otros",
+      "img": "ZMA-SA487-2.jpg",
+      "menor": 9000,
+      "mayor": 6600
+    },
+    {
+      "id": "ZMA-WJ-67",
+      "cod": "ZMA-WJ-67",
+      "nom": "Cera en barra para el cabello",
+      "desc": "",
+      "rubro": "cabello",
+      "img": "ZMA-WJ-67.jpg",
+      "menor": 11300,
+      "mayor": 8200
+    },
+    {
+      "id": "ZMA-Y-2663",
+      "cod": "ZMA-Y-2663",
+      "nom": "Brillo labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-Y-2663.jpg",
+      "menor": 3000,
+      "mayor": 2200
+    },
+    {
+      "id": "ZMA-Y-2706",
+      "cod": "ZMA-Y-2706",
+      "nom": "Brillo labial",
+      "desc": "",
+      "rubro": "labios",
+      "img": "ZMA-Y-2706.jpg",
+      "menor": 3000,
+      "mayor": 2200
+    },
+    {
+      "id": "ZMA-Y762",
+      "cod": "ZMA-Y762",
+      "nom": "Iluminador en polvo",
+      "desc": "60",
+      "rubro": "rostro",
+      "img": "ZMA-Y762.jpg",
+      "menor": 6000,
+      "mayor": 4400
+    },
+    {
+      "id": "ZMA-YS202512",
+      "cod": "ZMA-YS202512",
+      "nom": "Brillo labial",
+      "desc": "24 x 40 cajas",
+      "rubro": "labios",
+      "img": "ZMA-YS202512.jpg",
+      "menor": 5300,
+      "mayor": 3800
+    },
+    {
+      "id": "ZMA-YY1807-1",
+      "cod": "ZMA-YY1807-1",
+      "nom": "Sombras de ojos 18 colores",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-YY1807-1.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-YY-261803",
+      "cod": "ZMA-YY-261803",
+      "nom": "Sombras de ojos 18 colores",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-YY-261803.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-YY-261804",
+      "cod": "ZMA-YY-261804",
+      "nom": "Sombras de ojos 18 colores",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-YY-261804.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-YY-261806",
+      "cod": "ZMA-YY-261806",
+      "nom": "Sombras de ojos 18 colores",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-YY-261806.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-YY-261808-2",
+      "cod": "ZMA-YY-261808-2",
+      "nom": "Sombras de ojos 18 colores",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-YY-261808-2.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-YY-261808-4",
+      "cod": "ZMA-YY-261808-4",
+      "nom": "Sombras de ojos 18 colores",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-YY-261808-4.jpg",
+      "menor": 16600,
+      "mayor": 12000
+    },
+    {
+      "id": "ZMA-YY-269009-1",
+      "cod": "ZMA-YY-269009-1",
+      "nom": "Sombras de ojos 9 colores",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-YY-269009-1.jpg",
+      "menor": 12800,
+      "mayor": 9300
+    },
+    {
+      "id": "ZMA-YY-269009-2",
+      "cod": "ZMA-YY-269009-2",
+      "nom": "Sombras de ojos 9 colores",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-YY-269009-2.jpg",
+      "menor": 12800,
+      "mayor": 9300
+    },
+    {
+      "id": "ZMA-YY-269009-3",
+      "cod": "ZMA-YY-269009-3",
+      "nom": "Sombras de ojos 9 colores",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-YY-269009-3.jpg",
+      "menor": 12800,
+      "mayor": 9300
+    },
+    {
+      "id": "ZMA-YY-269009-4",
+      "cod": "ZMA-YY-269009-4",
+      "nom": "Sombras de ojos 9 colores",
+      "desc": "",
+      "rubro": "ojos",
+      "img": "ZMA-YY-269009-4.jpg",
+      "menor": 12800,
+      "mayor": 9300
+    }
+  ]
+}
