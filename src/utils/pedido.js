@@ -63,6 +63,9 @@ export const armarMensaje = (resumen, d, C) => {
   if (d.comentarios.trim()) l.push(`*Comentarios:* ${d.comentarios.trim()}`);
 
   l.push("", `Precios de la lista de ${C.actualizado}.`);
+  // Sin esto, un pedido armado con precios provisorios se lee como un
+  // presupuesto cerrado, y la diferencia se discute después.
+  if (!C.precios_confirmados) l.push("Precios orientativos, a confirmar.");
   return l.join("\n");
 };
 

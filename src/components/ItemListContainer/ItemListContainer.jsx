@@ -46,6 +46,11 @@ export const ItemListContainer = () => {
     <section>
       <title>{`${titulo} | ${config.nombre_negocio}`}</title>
       <h1>{titulo}</h1>
+      {!config.precios_confirmados && (
+        <p className="aviso aviso-provisorio">
+          <b>Precios orientativos.</b> Pueden ajustarse al confirmar el pedido.
+        </p>
+      )}
       <p className="aviso">
         Llevando <b>{config.minimo_mayor} unidades o más del mismo producto</b> pagás <b>precio por mayor</b>. No
         se suman productos distintos. El precio se ajusta solo cuando cargás la cantidad.

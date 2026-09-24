@@ -90,6 +90,15 @@ describe("armarMensaje", () => {
   it("sin viñetas unicode que inflen la URL", () => {
     expect(m).not.toMatch(/[•—·]/);
   });
+
+  it("sin precios confirmados (el valor por defecto) aclara que son orientativos", () => {
+    expect(m).toContain("Precios orientativos, a confirmar.");
+  });
+
+  it("con precios confirmados ya no lo aclara", () => {
+    const c = armarMensaje(resumen, completos, { ...C, precios_confirmados: true });
+    expect(c).not.toContain("orientativos");
+  });
 });
 
 describe("sanearDatos (formulario guardado en sessionStorage)", () => {

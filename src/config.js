@@ -49,4 +49,11 @@ export const CONFIG = {
   // Se muestra al pie y va en el mensaje. Actualizar cuando se cambian
   // precios: es lo que le dice a la clienta que la lista está vigente.
   actualizado: "septiembre 2026",
+
+  // Mientras sea false, el catálogo muestra "Precios orientativos" y cada
+  // pedido de WhatsApp termina aclarándolo. Pasarlo a true SOLO cuando
+  // factor_importacion (datos/config-privada.json) salga de una importación
+  // real. Hasta entonces los precios se calculan sobre un costo supuesto, y
+  // el propio proveedor aclara que su lista es FOB: sin flete ni aduana.
+  precios_confirmados: false,
 };
