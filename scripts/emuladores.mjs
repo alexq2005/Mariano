@@ -9,7 +9,10 @@
 // no pasa, y esta variable de entorno no se puede setear desde un script de
 // npm de forma que ande igual en Windows y en Linux.
 
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
+
+// Las funciones usan una copia de src/compartido (ver copiar-compartido.mjs).
+execFileSync("node", ["scripts/copiar-compartido.mjs"], { stdio: "inherit" });
 
 const argumentos = ["firebase", "emulators:start", "--project", "demo-aurora", ...process.argv.slice(2)];
 

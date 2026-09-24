@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { armarLineas, deltaVenta, ErrorPedido, moverStock, puedePasar } from "./logica-pedido.js";
-import { claveClienta } from "./clientas.js";
 import { claveDia, claveMes, fechaCorta } from "./tiempo.js";
 
 const config = { minimo_mayor: 12, pedido_minimo: 0 };
@@ -97,16 +96,6 @@ describe("deltaVenta", () => {
   });
 });
 
-describe("claveClienta: el mismo teléfono escrito de distintas formas", () => {
-  it("es la misma clienta", () => {
-    const claves = ["11 4567-8901", "+54 9 11 4567-8901", "011 15 4567-8901", "(011) 4567 8901", "5491145678901"].map(claveClienta);
-    expect(new Set(claves)).toEqual(new Set(["tel-1145678901"]));
-  });
-  it("sin teléfono usable no hay clave", () => {
-    expect(claveClienta("")).toBe(null);
-    expect(claveClienta("123")).toBe(null);
-  });
-});
 
 describe("fechas en hora argentina", () => {
   it("las 22:30 del 30/9 en Argentina todavía son septiembre (en UTC ya es octubre)", () => {

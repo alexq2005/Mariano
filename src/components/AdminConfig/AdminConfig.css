@@ -1,0 +1,23 @@
+.config-form fieldset { margin: 0 0 18px; padding: 0; border: 0; min-width: 0; }
+.config-form legend {
+  margin-bottom: 10px;
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 700;
+}
+.config-alerta { color: var(--alerta); font-weight: 600; }
+.config-check { margin: 6px 0; }
+.config-fila { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 8px; }
+.config-fila > input {
+  flex: 1 1 220px;
+  min-height: 44px;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--texto);
+  border: 1px solid var(--line-fuerte);
+  border-radius: 14px;
+  background: var(--ground);
+}
+.config-mini { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; }
+.config-fila .btn-link { padding: 0 4px; color: var(--alerta); }

@@ -26,7 +26,7 @@
   text-decoration: none;
 }
 .admin-marca small {
-  font-family: Archivo, sans-serif;
+  font-family: Figtree, system-ui, sans-serif;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: .15em;
@@ -58,10 +58,24 @@
 }
 .admin-link:hover { color: var(--texto); background: var(--surface); }
 .admin-link.active {
-  background: var(--boton-ok);
-  color: var(--sobre-ok);
+  background: var(--boton);
+  color: var(--sobre-boton);
   font-weight: 600;
 }
+.admin-badge {
+  margin-left: 6px;
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--boton);
+  color: var(--sobre-boton);
+  font-size: 11.5px;
+  font-weight: 800;
+  text-align: center;
+}
+.admin-link.active .admin-badge { background: var(--sobre-boton); color: var(--boton); }
+.admin-tarjeta-link { color: var(--texto); text-decoration: none; transition: border-color .2s; }
+.admin-tarjeta-link:hover { border-color: var(--acento); }
 
 .admin-sesion { display: flex; align-items: center; gap: 10px; }
 .admin-quien { font-size: 13px; color: var(--tenue); }

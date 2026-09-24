@@ -17,7 +17,10 @@
     "sembrar": "node scripts/sembrar-emulador.mjs",
     "cuenta": "node scripts/alta-cuenta.mjs",
     "publicar": "node scripts/publicar-catalogo.mjs",
-    "test:funciones": "node scripts/probar-funciones.mjs"
+    "test:funciones": "node scripts/probar-funciones.mjs",
+    "copiar:compartido": "node scripts/copiar-compartido.mjs",
+    "desplegar": "firebase deploy --only firestore:rules,firestore:indexes,functions",
+    "test:servidor": "vitest run functions/src"
   },
   "dependencies": {
     "firebase": "12.19.0",

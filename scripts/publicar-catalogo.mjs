@@ -49,47 +49,90 @@ if (repetidos.length) {
   salir(`Hay ids repetidos, no se publica nada: ${repetidos.join(", ")}`);
 }
 
-if (!numeroWhatsAppValido(CONFIG.whatsapp) && !bandera("forzar")) {
-  salir(
-    `El WhatsApp de src/config.js (${CONFIG.whatsapp}) es el de ejemplo o no es válido:\n` +
-      "los pedidos no le llegarían a nadie. Poné el número real y volvé a correrlo.\n" +
-      "(Para publicar igual, por ejemplo para una prueba: --forzar)",
-  );
-}
+// Costos y parámetros privados (dólar, factor, márgenes): si están en esta
+// máquina, se suben a privado/ para que el programador pueda recalcular los
+// precios desde el panel (Precios). Las reglas no dejan que nadie más los lea.
+const leerPrivado = (ruta) => {
+  try {
+    return JSON.parse(readFileSync(resolve(RAIZ, ruta), "utf8"));
+  } catch {
+    return null;
+  }
+};
+const proveedor = leerPrivado("datos/proveedor.json");
+const privada = leerPrivado("datos/config-privada.json");
+const costos = proveedor
+  ? Object.fromEntries((proveedor.productos ?? []).filter((p) => typeof p.costo === "number").map((p) => [p.id, p.costo]))
+  : null;
 
 // ── Publicar ────────────────────────────────────────────────────────
-
+// Lo que se cambió en el panel manda sobre el Excel:
+//   - lo pausado sigue pausado y lo agotado sigue agotado;
+//   - los productos dados de alta en el panel no desaparecen;
+//   - los editados en el panel (nombre, precio, foto…) no se pisan;
+//   - la configuración (WhatsApp, mínimos, formas de pago) es la del panel.
+//     Con --config-del-codigo se vuelve a la de src/config.js.
 try {
   const { db } = await conectar(`Publicar ${productos.length} productos en publico/catalogo`);
   const ref = db.collection("publico").doc("catalogo");
-
+  const refParametros = db.collection("privado").doc("config");
   const resultado = await db.runTransaction(async (tx) => {
     const snap = await tx.get(ref);
-    const anteriores = snap.exists ? (snap.data().productos ?? []) : [];
+    const parametrosPanel = (await tx.get(refParametros)).data()?.parametros ?? null;
+    const previo = snap.exists ? snap.data() : {};
+    const anteriores = previo.productos ?? [];
+    const porId = new Map(anteriores.map((p) => [p.id, p]));
 
-    // Lo pausado desde el panel sigue pausado.
-    const pausados = new Set(anteriores.filter((p) => p.activo === false).map((p) => p.id));
-    const nuevos = productos.map((p) => (pausados.has(p.id) ? { ...p, activo: false } : p));
-
+    const nuevos = productos.map((p) => {
+      const antes = porId.get(p.id);
+      if (!antes) return p;
+      if (antes.editadoEnPanel) return antes;
+      return { ...p, ...(antes.activo === false ? { activo: false } : {}), ...(antes.agotado ? { agotado: true } : {}) };
+    });
     const nuevosIds = new Set(ids);
-    const desaparecidos = anteriores.filter((p) => !nuevosIds.has(p.id)).map((p) => p.id);
+    const delPanel = anteriores.filter((p) => p.origen === "panel" && !nuevosIds.has(p.id));
+    const desaparecidos = anteriores.filter((p) => p.origen !== "panel" && !nuevosIds.has(p.id)).map((p) => p.id);
 
-    tx.set(ref, { productos: nuevos, config: CONFIG, version: new Date().toISOString() });
+    const config = bandera("config-del-codigo") ? CONFIG : { ...CONFIG, ...(previo.config ?? {}) };
+    if (!numeroWhatsAppValido(config.whatsapp) && !bandera("forzar")) {
+      throw new Error(
+        `El WhatsApp (${config.whatsapp}) es el de ejemplo o no es válido: los pedidos no le llegarían a nadie.\n` +
+          "  Poné el número real en src/config.js, o publicá con --forzar y cargalo después en el panel (Configuración).",
+      );
+    }
 
+    tx.set(ref, { productos: nuevos.concat(delPanel), config, version: new Date().toISOString() });
+    if (costos && privada) {
+      tx.set(db.collection("privado").doc("costos"), { costos });
+      tx.set(db.collection("privado").doc("config"), { parametros: privada, actualizado: new Date() });
+    }
     return {
       existia: snap.exists,
-      pausadosRespetados: nuevos.filter((p) => p.activo === false).length,
+      pausados: nuevos.filter((p) => p.activo === false).length,
+      editados: nuevos.filter((p) => p.editadoEnPanel).length,
+      delPanel: delPanel.length,
       desaparecidos,
+      configDelPanel: Boolean(previo.config) && !bandera("config-del-codigo"),
+      // El dólar o los márgenes se cambiaron desde el panel (Precios) y en
+      // esta máquina hay otros: mandan los de acá, pero que se sepa.
+      parametrosPisados:
+        costos && privada && parametrosPanel && JSON.stringify(parametrosPanel) !== JSON.stringify(privada) ? parametrosPanel : null,
     };
   });
-
   console.log(`✓ ${productos.length} productos publicados${resultado.existia ? " (reemplaza la versión anterior)" : " por primera vez"}.`);
-  if (resultado.pausadosRespetados) {
-    console.log(`  ${resultado.pausadosRespetados} siguen pausados, como estaban en el panel.`);
+  if (resultado.pausados) console.log(`  ${resultado.pausados} siguen pausados, como estaban en el panel.`);
+  if (resultado.editados) console.log(`  ${resultado.editados} editados en el panel quedaron como estaban.`);
+  if (resultado.delPanel) console.log(`  ${resultado.delPanel} dados de alta en el panel se conservaron.`);
+  if (resultado.desaparecidos.length) console.log(`  Ya no están en la lista nueva: ${resultado.desaparecidos.join(", ")}`);
+  if (resultado.configDelPanel) console.log("  Configuración: la del panel (para usar la de src/config.js: --config-del-codigo).");
+  if (resultado.parametrosPisados) {
+    console.warn(
+      `  OJO: en el panel el dólar era ${resultado.parametrosPisados.tipo_cambio} y el factor ${resultado.parametrosPisados.factor_importacion};\n` +
+        `  quedaron los de datos/config-privada.json (${privada.tipo_cambio} y ${privada.factor_importacion}). Si no era la idea,\n` +
+        "  actualizá ese archivo, corré npm run catalogo y volvé a publicar.",
+    );
   }
-  if (resultado.desaparecidos.length) {
-    console.log(`  Ya no están en la lista nueva: ${resultado.desaparecidos.join(", ")}`);
-  }
+  console.log(costos && privada ? `  Costos subidos para ${Object.keys(costos).length} productos (sección Precios).` : "  Sin datos/ en esta máquina: no se subieron costos.");
   console.log(
     CONFIG.precios_confirmados
       ? "  Precios: CONFIRMADOS."

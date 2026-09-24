@@ -3,7 +3,7 @@ import { HttpsError } from "firebase-functions/https";
 import { db, FieldValue } from "../firebase.js";
 import { refs } from "../refs.js";
 import { anotarEnAuditoria } from "../auditoria.js";
-import { claveClienta } from "../clientas.js";
+import { claveClienta } from "../compartido/clientas.js";
 import { claveIp, refLimite, revisarLimite } from "../limites.js";
 import { claveDia, claveMes } from "../tiempo.js";
 import { armarLineas, deltaVenta, ErrorPedido, moverStock, puedePasar } from "../logica-pedido.js";

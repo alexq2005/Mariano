@@ -1,0 +1,45 @@
+.producto-form {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--sombra);
+}
+.producto-grilla { display: grid; gap: 8px 22px; }
+@media (min-width: 820px) {
+  .producto-grilla { grid-template-columns: 1.6fr 1fr; }
+}
+.producto-dos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.producto-form .campo select,
+.producto-form .campo input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--texto);
+  border: 1px solid var(--line-fuerte);
+  border-radius: 14px;
+  background: var(--ground);
+}
+.producto-costo {
+  margin-top: 6px;
+  padding: 12px 14px 4px;
+  border: 1px dashed var(--mayor);
+  border-radius: 16px;
+  background: var(--mayor-suave);
+}
+.producto-costo .btn-link { padding: 0; min-height: 0; font-size: inherit; color: var(--mayor); font-weight: 700; }
+.producto-foto {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 1;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  color: #6B5263;
+  overflow: hidden;
+}
+.producto-foto img { width: 100%; height: 100%; object-fit: contain; padding: 10px; }
+.precios-vista { margin-top: 16px; }
+.precios-vista .admin-tabla-marco { margin: 10px 0 14px; }

@@ -1,0 +1,38 @@
+/* Color de la serie, validado (dataviz: banda de luminosidad y contraste
+   ≥ 3:1 contra la superficie) para cada tema. */
+.grafico { --grafico: #C8105C; margin: 0; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .grafico { --grafico: #EE4F8F; }
+}
+:root[data-theme="dark"] .grafico { --grafico: #EE4F8F; }
+
+.grafico figcaption { margin: 0 0 8px; font-family: var(--display); font-size: 17px; font-weight: 700; }
+.grafico-marco { position: relative; }
+.grafico svg { display: block; width: 100%; height: auto; overflow: visible; }
+.grafico-grilla line { stroke: var(--line); stroke-width: 1; }
+.grafico-grilla text,
+.grafico-eje { fill: var(--tenue); font-size: 12px; font-variant-numeric: tabular-nums; }
+.grafico-valor { fill: var(--texto); font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.grafico-zona { fill: transparent; }
+.grafico-barra { fill: var(--grafico); pointer-events: none; }
+.grafico-barra.activa { opacity: .8; }
+.grafico-tooltip {
+  position: absolute;
+  top: 0;
+  transform: translate(-50%, -8px);
+  display: flex;
+  flex-direction: column;
+  padding: 6px 10px;
+  border: 1px solid var(--line-fuerte);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: var(--sombra-alta);
+  font-size: 13px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.grafico-tooltip small { color: var(--tenue); }
+.grafico-tabla { margin-top: 10px; font-size: 14px; }
+.grafico-tabla summary { cursor: pointer; color: var(--acento); font-weight: 600; }
+.grafico-tabla table { margin-top: 8px; }
+.ventas-subtitulo { margin: 22px 0 10px; font-family: var(--display); font-size: 20px; }

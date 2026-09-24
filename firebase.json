@@ -45,6 +45,9 @@
         ".git",
         "*.log",
         "test"
+      ],
+      "predeploy": [
+        "node \"$PROJECT_DIR/scripts/copiar-compartido.mjs\""
       ]
     }
   ]
