@@ -187,8 +187,10 @@ factor_importacion = (mercadería + flete + aduana + impuestos + despachante) / 
 - **`/cart`** muestra cada producto con foto, precio c/u, subtotal y
   cuánto falta para el precio por mayor (o cuánto ahorra). "Quitar" y
   "Vaciar" se pueden deshacer, y "Vaciar" pide confirmación.
-- **`/checkout`** pide nombre, retiro o envío (con zona si es envío),
-  forma de pago y comentarios opcionales. Muestra el mensaje tal cual va a
+- **`/checkout`** pide nombre, teléfono, email, retiro o envío (con zona
+  si es envío), forma de pago y comentarios opcionales. Valida con
+  `src/compartido/datos-pedido.js`, el mismo código que va a usar el
+  servidor. Muestra el mensaje tal cual va a
   llegar y abre WhatsApp con el texto escrito. Si el pedido es muy largo
   para el link, ofrece "Copiar pedido".
 - El carrito **se guarda en el navegador** (`localStorage`, clave

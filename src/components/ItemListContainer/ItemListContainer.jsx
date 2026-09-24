@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useProductos } from "../../hooks/useProductos";
-import { filtrarProductos, nombreRubro } from "../../utils/filtros";
+import { filtrarProductos, nombreRubro, productosVisibles } from "../../utils/filtros";
 import { ItemList } from "../ItemList/ItemList";
 import { CatalogError } from "../CatalogError/CatalogError";
 import "./ItemListContainer.css";
@@ -15,9 +15,8 @@ export const ItemListContainer = () => {
   const texto = params.get("q") ?? "";
   const { productos, config, loading, error } = useProductos();
 
-  // Los productos pausados desde el panel no se muestran en la tienda.
   const filtrados = useMemo(
-    () => filtrarProductos(productos.filter((p) => p.activo !== false), { rubro: category, texto }),
+    () => filtrarProductos(productosVisibles(productos), { rubro: category, texto }),
     [productos, category, texto],
   );
 

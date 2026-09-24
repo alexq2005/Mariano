@@ -2,6 +2,11 @@
 
 export const ORDEN_RUBROS = ["labios", "ojos", "rostro", "cuidado", "uñas", "cabello", "accesorios", "otros"];
 
+// Los productos pausados desde el panel no se muestran en la tienda: ni en
+// el listado ni en los contadores del menú. Un solo lugar para esa regla,
+// así el menú no dice "Labios (12)" y el listado muestra 11.
+export const productosVisibles = (productos) => productos.filter((p) => p.activo !== false);
+
 export const nombreRubro = (id) => id.charAt(0).toUpperCase() + id.slice(1);
 
 export const contarRubros = (productos) => {

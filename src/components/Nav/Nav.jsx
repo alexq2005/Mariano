@@ -1,11 +1,12 @@
 import { useMemo } from "react";
 import { NavLink, useSearchParams } from "react-router-dom";
 import { useProductos } from "../../hooks/useProductos";
-import { contarRubros } from "../../utils/filtros";
+import { contarRubros, productosVisibles } from "../../utils/filtros";
 import "./Nav.css";
 
 export const Nav = () => {
-  const { productos } = useProductos();
+  const { productos: todos } = useProductos();
+  const productos = useMemo(() => productosVisibles(todos), [todos]);
   const [params] = useSearchParams();
   const rubros = useMemo(() => contarRubros(productos), [productos]);
 

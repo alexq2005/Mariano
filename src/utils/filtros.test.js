@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { contarRubros, filtrarProductos, sinAcentos } from "./filtros";
+import { contarRubros, filtrarProductos, productosVisibles, sinAcentos } from "./filtros";
 
 const productos = [
   { id: "1", cod: "ZMA-20045", nom: "Lápiz labial /48", desc: "", rubro: "labios" },
@@ -39,5 +39,20 @@ describe("filtros", () => {
 
   it("sinAcentos conserva la ñ como n (búsqueda tolerante)", () => {
     expect(sinAcentos("Uñas")).toBe("unas");
+  });
+});
+
+describe("productosVisibles", () => {
+  it("saca los pausados y deja los que no tienen el campo (catálogos viejos)", () => {
+    const lista = [
+      { id: "a", rubro: "labios", activo: true },
+      { id: "b", rubro: "labios", activo: false },
+      { id: "c", rubro: "ojos" },
+    ];
+    expect(productosVisibles(lista).map((p) => p.id)).toEqual(["a", "c"]);
+    expect(contarRubros(productosVisibles(lista))).toEqual([
+      { id: "labios", nom: "Labios", n: 1 },
+      { id: "ojos", nom: "Ojos", n: 1 },
+    ]);
   });
 });
