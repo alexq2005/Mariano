@@ -1,0 +1,73 @@
+# Publica la tienda en GitHub Pages: https://<usuario>.github.io/<repo>/
+#
+# Es una opción aparte: la tienda en producción está en Vercel, que publica
+# sola cada push a main. Por eso este workflow corre solo a mano (pestaña
+# Actions → "Publicar en GitHub Pages" → Run workflow): con Pages sin
+# activar, correr en cada push dejaría una cruz roja en cada commit.
+#
+# Antes de la primera vez, en GitHub: Settings → Pages → Build and
+# deployment → Source: "GitHub Actions". En un repo privado, Pages necesita
+# GitHub Pro (gratis con el Student Developer Pack de GitHub Education).
+name: Publicar en GitHub Pages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un despliegue a la vez, y el que está en curso no se corta a la mitad.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  construir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      # La dirección donde queda publicado: /<repo>/ en github.io, o la raíz
+      # si algún día se le pone un dominio propio.
+      - id: pages
+        uses: actions/configure-pages@v5
+      # npm run build termina con check:dist: si algo privado se coló en lo
+      # que se publica, el despliegue se corta acá.
+      - run: npm run build
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+          SITE_URL: ${{ steps.pages.outputs.base_url }}/
+          # Opcionales. Sin ellas la tienda lee public/data/catalogo.json, y
+          # el panel /admin no funciona (necesita Firebase). Se cargan en
+          # Settings → Secrets and variables → Actions → Variables: son
+          # públicas por diseño, identifican al proyecto y no dan permisos.
+          VITE_FIREBASE_API_KEY: ${{ vars.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ vars.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ vars.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ vars.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ vars.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ vars.VITE_FIREBASE_APP_ID }}
+      # GitHub Pages no conoce las rutas de la app: /Mariano/product/X no es
+      # un archivo, y para eso sirve 404.html. Con una copia del index, la
+      # app arranca igual y muestra el producto.
+      - run: cp dist/index.html dist/404.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  publicar:
+    needs: construir
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - id: despliegue
+        uses: actions/deploy-pages@v4

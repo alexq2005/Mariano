@@ -51,10 +51,10 @@
   padding: 18px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: 20px;
   box-shadow: var(--sombra);
 }
-.cart-resumen h2 { font-family: var(--serif); font-weight: 600; font-size: 19px; margin: 0; }
+.cart-resumen h2 { font-family: var(--display); font-weight: 700; font-size: 20px; letter-spacing: -.01em; margin: 0; }
 .cart-resumen p { margin: 0; }
 .cart-resumen-conteo { color: var(--tenue); font-size: 13.5px; }
 .cart-resumen-ahorro { color: var(--ok); font-weight: 600; font-size: 13.5px; }

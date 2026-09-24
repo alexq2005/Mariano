@@ -1,5 +1,6 @@
 import { leerDocumentoPublico } from "./firestoreRest";
 import { CONFIG } from "../config";
+import { esProductoValido } from "../compartido/producto";
 
 // Estado compartido del catálogo. Todos los componentes que usan
 // useProductos ven EL MISMO estado: si una carga falla y después un
@@ -41,10 +42,6 @@ export const estadoProductos = () => estado;
 // Lo que llega de afuera se revisa antes de mostrarlo: un producto a medio
 // escribir no puede quedar en la tienda con precio 0 o sin nombre.
 
-const CAMPOS = ["id", "cod", "nom", "rubro", "img"];
-const esProductoValido = (p) =>
-  CAMPOS.every((c) => typeof p?.[c] === "string" && p[c].length > 0) &&
-  [p.menor, p.mayor].every((n) => typeof n === "number" && Number.isFinite(n) && n > 0);
 
 // Un producto con datos rotos no puede tirar abajo el catálogo entero,
 // pero tampoco puede pasar en silencio: queda afuera y se avisa con su id.

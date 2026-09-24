@@ -1,26 +1,45 @@
 /* Estilos globales: tokens de color (claro/oscuro), base y botones.
    Cada componente tiene su propio .css al lado del .jsx.
 
-   Paleta pastel: blancos, rosas y violetas. Los pasteles se usan como
-   RELLENO (fondos, botones, chips) con texto oscuro del mismo tono encima;
-   texto pastel sobre blanco no se lee. Rosa = precio por menor, violeta =
-   precio por mayor. Todos los pares texto/fondo verificados ≥ 4,5:1
-   (WCAG AA) en los dos temas. */
+   Identidad: el color ES el producto. Fucsia vivo para la acción (agregar,
+   ver carrito), violeta para el precio por mayor, verde para lo que se
+   ahorra y para enviar el pedido (el verde de WhatsApp, que es a donde va).
+   Cada rubro tiene su color, sacado del producto: el rojo del labial, el
+   violeta de la sombra, el nude de la base.
+
+   Todos los pares texto/fondo verificados ≥ 4,5:1 (WCAG AA) en los dos
+   temas; el más justo es --acento sobre --acento-suave, 4,78:1. Los colores
+   de rubro se usan solo como aro o relleno decorativo, nunca como texto. */
 
 :root {
   color-scheme: light;
-  --ground: #FDF9FC; --surface: #FFFFFF; --sunken: #F7F0F8;
-  --line: #EEE4F1; --line-fuerte: #DDCDE6;
-  --texto: #2B2035; --tenue: #67587A; --debil: #7A6A8E;
-  --acento: #A3386F; --acento-suave: #FCE4EF;       /* rosa: texto / relleno */
-  --mayor: #6B46A6; --mayor-suave: #EFE6FA;         /* violeta: texto / relleno */
-  --boton: #F5BCD6; --sobre-boton: #4A1435;         /* botón rosa pastel */
-  --boton-ok: #CFB8F3; --sobre-ok: #2E1656;         /* botón lavanda (enviar) */
-  --ok: #5E3E96; --alerta: #8F4A12;
-  --degradado: linear-gradient(100deg, #FFFFFF 0%, #FDEEF5 55%, #F1E9FC 100%);
-  --sombra: 0 1px 2px rgba(107,70,166,.06), 0 4px 14px rgba(163,56,111,.07);
-  --r: 12px;
-  --serif: Fraunces, Georgia, serif;
+  --ground: #FFF8FA; --surface: #FFFFFF; --sunken: #FBEFF4;
+  --line: #F3E2EA; --line-fuerte: #E7CBD8;
+  --texto: #22111C; --tenue: #6B5263; --debil: #7A5F71;
+  --acento: #C8105C; --acento-suave: #FFE4EF;       /* fucsia: acción / precio por menor */
+  --mayor: #6A2FB0; --mayor-suave: #F1E8FF;         /* violeta: precio por mayor */
+  --boton: #C8105C; --sobre-boton: #FFFFFF;         /* botón principal */
+  --boton-ok: #0E7A42; --sobre-ok: #FFFFFF;         /* enviar el pedido */
+  --ok: #0E7A42; --alerta: #9C4700;
+  --degradado: radial-gradient(120% 140% at 0% 0%, #FFE1EE 0%, rgba(255,225,238,0) 55%),
+               radial-gradient(120% 140% at 100% 0%, #EFE3FF 0%, rgba(239,227,255,0) 55%), #FFF8FA;
+  --sombra: 0 1px 2px rgba(120, 20, 70, .06), 0 6px 20px rgba(120, 20, 70, .08);
+  --sombra-alta: 0 2px 4px rgba(120, 20, 70, .08), 0 14px 34px rgba(120, 20, 70, .16);
+  --r: 14px;
+  --display: "Bricolage Grotesque", "Figtree", system-ui, sans-serif;
+
+  /* Un color por rubro, del producto mismo. Van de a pares (fuerte, claro)
+     para los aros tipo historia de Instagram. */
+  --r-todos: conic-gradient(from 210deg, #C8105C, #FF7A59, #F2B44C, #6A2FB0, #C8105C);
+  --r-labios: linear-gradient(135deg, #D90F55, #FF7FA8);
+  --r-ojos: linear-gradient(135deg, #6A2FB0, #C79BFF);
+  --r-rostro: linear-gradient(135deg, #B9765A, #F1C7A6);
+  --r-cuidado: linear-gradient(135deg, #1E9E86, #9FE3D2);
+  --r-cabello: linear-gradient(135deg, #9C5A18, #EDB872);
+  --r-accesorios: linear-gradient(135deg, #F2603D, #FFBBA6);
+  --r-unas: linear-gradient(135deg, #B0125E, #F58BC0);
+  --r-otros: linear-gradient(135deg, #7A5F71, #D8C3CF);
+
   /* Margen lateral: 16px, o más si hay notch (iPhone horizontal). */
   --borde-izq: max(16px, env(safe-area-inset-left, 0px));
   --borde-der: max(16px, env(safe-area-inset-right, 0px));
@@ -28,30 +47,34 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --ground: #1C1622; --surface: #251D2C; --sunken: #2E2536;
-    --line: #3A2F44; --line-fuerte: #4D4059;
-    --texto: #F7EFF8; --tenue: #C2B3CB; --debil: #A596B0;
-    --acento: #F4A9CB; --acento-suave: #3A2433;
-    --mayor: #CDB6F5; --mayor-suave: #2D2442;
-    --boton: #F4B3D1; --sobre-boton: #3D0F2C;
-    --boton-ok: #CDB6F5; --sobre-ok: #25104A;
-    --ok: #CDB6F5; --alerta: #F0B470;
-    --degradado: linear-gradient(100deg, #251D2C 0%, #2F2130 55%, #2A2338 100%);
-    --sombra: 0 1px 2px rgba(0,0,0,.45), 0 3px 12px rgba(0,0,0,.35);
+    --ground: #150B12; --surface: #20131B; --sunken: #2A1823;
+    --line: #3A2331; --line-fuerte: #553447;
+    --texto: #FBEFF5; --tenue: #D4BCC9; --debil: #C2A5B5;
+    --acento: #FF6BA3; --acento-suave: #3F172B;
+    --mayor: #CBA9FF; --mayor-suave: #2D1F47;
+    --boton: #C8105C; --sobre-boton: #FFFFFF;
+    --boton-ok: #0E7A42; --sobre-ok: #FFFFFF;
+    --ok: #5FDC94; --alerta: #FFB45E;
+    --degradado: radial-gradient(120% 140% at 0% 0%, #3A1228 0%, rgba(58,18,40,0) 55%),
+                 radial-gradient(120% 140% at 100% 0%, #2A1A45 0%, rgba(42,26,69,0) 55%), #150B12;
+    --sombra: 0 1px 2px rgba(0,0,0,.5), 0 6px 20px rgba(0,0,0,.4);
+    --sombra-alta: 0 2px 4px rgba(0,0,0,.5), 0 14px 34px rgba(0,0,0,.55);
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --ground: #1C1622; --surface: #251D2C; --sunken: #2E2536;
-  --line: #3A2F44; --line-fuerte: #4D4059;
-  --texto: #F7EFF8; --tenue: #C2B3CB; --debil: #A596B0;
-  --acento: #F4A9CB; --acento-suave: #3A2433;
-  --mayor: #CDB6F5; --mayor-suave: #2D2442;
-  --boton: #F4B3D1; --sobre-boton: #3D0F2C;
-  --boton-ok: #CDB6F5; --sobre-ok: #25104A;
-  --ok: #CDB6F5; --alerta: #F0B470;
-  --degradado: linear-gradient(100deg, #251D2C 0%, #2F2130 55%, #2A2338 100%);
-  --sombra: 0 1px 2px rgba(0,0,0,.45), 0 3px 12px rgba(0,0,0,.35);
+  --ground: #150B12; --surface: #20131B; --sunken: #2A1823;
+  --line: #3A2331; --line-fuerte: #553447;
+  --texto: #FBEFF5; --tenue: #D4BCC9; --debil: #C2A5B5;
+  --acento: #FF6BA3; --acento-suave: #3F172B;
+  --mayor: #CBA9FF; --mayor-suave: #2D1F47;
+  --boton: #C8105C; --sobre-boton: #FFFFFF;
+  --boton-ok: #0E7A42; --sobre-ok: #FFFFFF;
+  --ok: #5FDC94; --alerta: #FFB45E;
+  --degradado: radial-gradient(120% 140% at 0% 0%, #3A1228 0%, rgba(58,18,40,0) 55%),
+               radial-gradient(120% 140% at 100% 0%, #2A1A45 0%, rgba(42,26,69,0) 55%), #150B12;
+  --sombra: 0 1px 2px rgba(0,0,0,.5), 0 6px 20px rgba(0,0,0,.4);
+  --sombra-alta: 0 2px 4px rgba(0,0,0,.5), 0 14px 34px rgba(0,0,0,.55);
 }
 
 * { box-sizing: border-box; }
@@ -72,7 +95,7 @@ body {
   margin: 0;
   background: var(--ground);
   color: var(--texto);
-  font-family: Archivo, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: Figtree, system-ui, -apple-system, "Segoe UI", sans-serif;
   font-size: 15px;
   line-height: 1.45;
   padding-bottom: var(--alto-barra, 0px);
@@ -94,10 +117,11 @@ main {
   padding: 16px var(--borde-der) 32px var(--borde-izq);
 }
 h1 {
-  font-family: var(--serif);
-  font-weight: 600;
-  font-size: 24px;
-  line-height: 1.2;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1.15;
+  letter-spacing: -.02em;
   margin: 4px 0 12px;
 }
 a { color: var(--acento); }
@@ -110,16 +134,22 @@ a { color: var(--acento); }
 }
 
 /* ── Botones (mismo esquema que el repo del curso) ─────────────────── */
+/* Píldora: más amable que el rectángulo, y el formato que ya usan las apps
+   donde estas clientas compran todos los días. */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  min-height: 44px; padding: 10px 18px;
-  border: 1px solid transparent; border-radius: var(--r);
-  font: inherit; font-weight: 600; font-size: 15px; line-height: 1.2;
+  min-height: 44px; padding: 10px 20px;
+  border: 1px solid transparent; border-radius: 999px;
+  font: inherit; font-weight: 700; font-size: 15px; line-height: 1.2;
   text-decoration: none; text-align: center; cursor: pointer;
-  transition: filter .2s, background-color .2s;
+  transition: filter .2s, background-color .2s, transform .12s, box-shadow .2s;
 }
-.btn:hover { filter: brightness(.96) saturate(1.1); }
-.bg-primary { background: var(--boton); border-color: var(--boton); color: var(--sobre-boton); }
+.btn:hover { filter: brightness(1.06) saturate(1.05); }
+.btn:active:not(:disabled) { transform: scale(.97); }
+.bg-primary {
+  background: var(--boton); border-color: var(--boton); color: var(--sobre-boton);
+  box-shadow: 0 4px 14px rgba(200, 16, 92, .25);
+}
 .bg-success { background: var(--boton-ok); border-color: var(--boton-ok); color: var(--sobre-ok); }
 .bg-outline { background: var(--surface); border-color: var(--line-fuerte); color: var(--texto); }
 .btn-link {
@@ -141,7 +171,7 @@ a { color: var(--acento); }
 .estado h1,
 .estado h2,
 .estado strong {
-  display: block; font-family: var(--serif); font-size: 21px; font-weight: 600;
+  display: block; font-family: var(--display); font-size: 21px; font-weight: 600;
   color: var(--texto); margin: 0 0 6px;
 }
 .estado p { margin: 0 0 4px; }

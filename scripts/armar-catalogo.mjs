@@ -60,3 +60,13 @@ console.log(`Catálogo: ${productos.length} productos → ${SALIDA}`);
 if (fallados.length) console.warn(`Sin precio (quedan fuera):\n- ${fallados.join("\n- ")}`);
 const precios = productos.flatMap((p) => [p.menor, p.mayor]);
 console.log(`Precios entre $${Math.min(...precios).toLocaleString("es-AR")} y $${Math.max(...precios).toLocaleString("es-AR")}`);
+
+// Es el momento de recordarlo: si acá se cargó el factor de una importación
+// real, falta prender precios_confirmados para sacar el aviso de la tienda.
+const { CONFIG } = await import("../src/config.js");
+console.log(
+  CONFIG.precios_confirmados
+    ? `Precios CONFIRMADOS (factor de importación ${privada.factor_importacion}).`
+    : `Precios ORIENTATIVOS: la tienda y los pedidos lo avisan. Si factor_importacion (${privada.factor_importacion})\n` +
+        "ya sale de una importación real, poné precios_confirmados: true en src/config.js.",
+);

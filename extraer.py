@@ -40,16 +40,26 @@ FILA_1 = 5          # primera fila con producto (1-indexada)
 ANCHO_MINI = 340    # px; suficiente en celular y en desktop a 2x
 
 
-# Los rubros salen del nombre del producto. El orden importa: gana la
-# primera que coincide, asi que lo especifico va antes que lo general.
+# Los rubros salen del nombre del producto. Gana la primera que coincide,
+# y el ORDEN IMPORTA: lo que dice que ES el producto (mascarilla, crema,
+# toallita) tiene que evaluarse antes que lo que solo lo describe. "Crema
+# iluminadora" es una crema, no maquillaje; con Rostro antes que Cuidado,
+# "iluminador" se la llevaba a Rostro.
+#
+# Los \b tambien importan: sin limite de palabra, "set" matcheaba adentro de
+# "MAKEUP SETTING SPRAY" y el spray fijador caia en Accesorios.
 RUBROS = [
     ("labios",      r"labial|labios|gloss|brillo de labios|lip|bálsamo|balsamo"),
-    ("ojos",        r"ceja|pestañ|delineador|sombra|eyeliner|máscara de pest|rímel|rimel|lente"),
-    ("rostro",      r"base|corrector|polvo|rubor|contorno|iluminador|bb cream|primer"),
-    ("cuidado",     r"mascarilla|crema|sérum|serum|exfoliante|limpiador|aceite|protector|hidratante|ampolla"),
-    ("uñas",        r"uña|uñas|esmalte|manicur"),
-    ("cabello",     r"cabello|pelo|shampoo|champú|acondicionador|cera|tinte para el cabello"),
-    ("accesorios",  r"brocha|pincel|esponja|espejo|neceser|set|organizador|pinza"),
+    ("ojos",        r"ceja|pestañ|delineador|sombra|eyeliner|máscara de pest|rímel|rimel"
+                    r"|lente|gel fijador"),
+    ("cuidado",     r"mascarilla|crema|sérum|serum|exfoliante|limpiador|aceite|protector"
+                    r"|hidratante|ampolla|tónico|tonico|toallita|desmaquill|parche|antifaz"),
+    ("rostro",      r"\bbase\b|corrector|polvo|rubor|contorno|iluminador|bb cream|primer"
+                    r"|fijador de maquillaje|setting spray|glitter|multiuso"),
+    ("uñas",        r"uña|esmalte|manicur"),
+    ("cabello",     r"cabello|\bpelo\b|shampoo|champú|acondicionador|\bcera\b|canas"
+                    r"|tinte para el cabello"),
+    ("accesorios",  r"brocha|pincel|esponja|espejo|neceser|\bset\b|organizador|pinza"),
 ]
 
 

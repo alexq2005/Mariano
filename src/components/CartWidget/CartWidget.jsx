@@ -18,7 +18,13 @@ export const CartWidget = () => {
         <circle cx="17" cy="20.5" r="1.3" />
       </svg>
       <span className="cart-widget-texto">Carrito</span>
-      {n > 0 && <span className="incart num">{n > 99 ? "99+" : n}</span>}
+      {/* key={n}: el contador se vuelve a montar con cada cambio, y eso
+          dispara la animación de "pop" (apagada con prefers-reduced-motion). */}
+      {n > 0 && (
+        <span key={n} className="incart num">
+          {n > 99 ? "99+" : n}
+        </span>
+      )}
     </Link>
   );
 };

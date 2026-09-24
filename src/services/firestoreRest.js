@@ -34,6 +34,13 @@ const camposAPlano = (campos = {}) =>
   Object.fromEntries(Object.entries(campos).map(([clave, valor]) => [clave, aPlano(valor)]));
 
 export const leerDocumentoPublico = async (ruta, { signal } = {}) => {
+  // Un build sin proyecto de Firebase (sin las variables VITE_FIREBASE_*,
+  // como la vista previa en GitHub Pages) no tiene a quién preguntarle: falla
+  // enseguida, sin un pedido a ".../projects/undefined/...", y la tienda
+  // sigue con el archivo publicado.
+  if (!env.VITE_FIREBASE_PROJECT_ID) {
+    throw new Error("este build no tiene proyecto de Firebase (faltan las variables VITE_FIREBASE_*)");
+  }
   const url = new URL(`${base}/${ruta}`);
   if (!enEmuladores && env.VITE_FIREBASE_API_KEY) url.searchParams.set("key", env.VITE_FIREBASE_API_KEY);
 

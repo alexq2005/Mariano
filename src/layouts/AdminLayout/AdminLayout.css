@@ -19,7 +19,7 @@
 }
 
 .admin-marca {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-size: 20px;
   font-weight: 600;
   color: var(--texto);

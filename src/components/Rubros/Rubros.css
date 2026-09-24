@@ -1,0 +1,70 @@
+/* Rubros como historias: la fila corre de borde a borde de la pantalla en el
+   celular (margen negativo), y se desliza con el dedo. */
+.rubros {
+  margin: 0 calc(-1 * var(--borde-der)) 6px calc(-1 * var(--borde-izq));
+}
+.rubros-lista {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  /* 6px arriba y abajo: overflow-x recorta también en vertical, y sin ese
+     margen se cortaba el anillo de foco y la sombra del activo. */
+  padding: 6px var(--borde-der) 10px var(--borde-izq);
+}
+.rubros-lista::-webkit-scrollbar { display: none; }
+.rubros-lista > li { scroll-snap-align: start; }
+
+.rubro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 76px;
+  color: var(--texto);
+  text-decoration: none;
+  border-radius: 16px;
+}
+.rubro:focus-visible { outline-offset: 4px; }
+
+/* El aro: el color del rubro por detrás, 3px a la vista. */
+.rubro-aro {
+  display: block;
+  width: 70px;
+  height: 70px;
+  padding: 3px;
+  border-radius: 50%;
+  background: var(--aro);
+  transition: transform .2s, padding .2s, box-shadow .2s;
+}
+/* La separación blanca entre el aro y la foto, como en las historias. */
+.rubro-foto {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  border: 2.5px solid var(--surface);
+  border-radius: 50%;
+  overflow: hidden;
+  /* Las fotos del proveedor tienen fondo blanco: en modo oscuro se deja
+     blanco igual, si no queda un recuadro. */
+  background: #fff;
+}
+.rubro-foto img { width: 100%; height: 100%; object-fit: cover; }
+.rubro-foto.mosaico { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+
+.rubro-nombre {
+  margin-top: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.rubro-n { font-size: 11px; color: var(--tenue); }
+
+.rubro:hover .rubro-aro { transform: scale(1.05); }
+/* NavLink agrega .active y aria-current="page" solo. */
+.rubro.active .rubro-aro {
+  padding: 4.5px;
+  box-shadow: 0 6px 16px rgba(200, 16, 92, .25);
+}
+.rubro.active .rubro-nombre { font-weight: 800; color: var(--acento); }
