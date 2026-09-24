@@ -4,8 +4,10 @@ Tienda web de cosmética, por mayor y por menor. La clienta arma el carrito
 y hace el pedido: el servidor lo registra con un número y le da un link para
 seguirlo. Cuando el negocio lo confirma (con el envío), la clienta lo paga
 desde ese link: con **Mercado Pago** (tarjetas, dinero en cuenta, efectivo)
-o por **transferencia** al alias. El negocio lo ve todo en el panel:
-pedidos y cobros en vivo, stock, ventas, clientas, productos y precios.
+o por **transferencia** al alias. Cada cobro sale con su **factura
+electrónica de ARCA** (y cada devolución con su nota de crédito). El negocio
+lo ve todo en el panel: pedidos, cobros y facturas en vivo, stock, ventas,
+clientas, productos y precios.
 
 Hecho con **Vite + React 19 + react-router-dom**, con la misma estructura
 que el proyecto del curso (C26242).
@@ -143,10 +145,11 @@ del servidor rechazan lo que no corresponde.
 | **Pedidos** | la lista en vivo (un pedido nuevo aparece solo) por estado y con su cobro; en cada uno: confirmar sumando el envío (descuenta el stock, cuenta como venta y la clienta ya puede pagar), marcar entregado, cancelar con motivo (si estaba confirmado, el stock vuelve), escribirle por WhatsApp a la clienta. **Cobro**: ver si pagó y cómo, marcar pagado (transferencia, efectivo), devolver un pago de Mercado Pago, corregir el envío |
 | **Productos** | buscar, filtrar (sin stock, pausados), cargar stock en la misma fila, pausar, dar de alta y editar (nombre, código, rubro, foto, precios) |
 | **Ventas** | por mes: vendido, pedidos, unidades, descuento por mayor, gráfico por día y lo más vendido |
+| **Facturas** | las facturas y notas de crédito del mes, con neto, IVA y total, y la descarga en CSV para el contador |
 | **Clientas** | se arma sola con cada pedido (por teléfono): compras, total, sus pedidos; «borrar sus datos» (Ley 25.326) deja los pedidos anónimos |
 | **Arrepentimientos** | las solicitudes del botón de arrepentimiento, para marcar resueltas |
 | **Historial** | quién hizo qué y cuándo; no se puede borrar ni modificar |
-| **Configuración** | nombre, **WhatsApp**, mínimo por mayor, pedido mínimo, fecha de la lista, formas de entrega y de pago, Instagram, email y punto de retiro; y **cómo cobrar**: Mercado Pago sí o no, alias, CBU/CVU, titular y banco |
+| **Configuración** | nombre, **WhatsApp**, mínimo por mayor, pedido mínimo, fecha de la lista, formas de entrega y de pago, Instagram, email y punto de retiro; **cómo cobrar** (Mercado Pago, alias, CBU/CVU); y la **facturación** (condición, CUIT, punto de venta, ambiente, «Probar conexión con ARCA») |
 | **Precios** | solo el programador: dólar, factor de importación y márgenes, con vista previa antes de aplicar |
 
 | Rol | Qué ve |
@@ -175,16 +178,19 @@ npm run sembrar    # terminal 2: cuentas, catálogo y datos de ejemplo
 npm run dev        # terminal 2: la tienda y el panel
 ```
 
-`npm run sembrar` deja 5 pedidos de ejemplo (pendientes, confirmado sin
-pagar, entregado y pagado por transferencia, cancelado), stock en dos
-productos, un arrepentimiento y costos para probar Precios. Los emuladores no guardan nada al cerrarse: hay que
+`npm run sembrar` deja 5 pedidos de ejemplo (pendientes, uno con CUIT,
+confirmado sin pagar, entregado y pagado por transferencia con su factura C,
+cancelado), stock en dos productos, un arrepentimiento y costos para probar
+Precios. Los emuladores no guardan nada al cerrarse: hay que
 sembrar cada vez.
 
 `npm run emu` también levanta un **Mercado Pago simulado** (puerto 8531):
 «Pagar con Mercado Pago» abre una pantalla de pago de mentira con botones
 para aprobar, dejar pendiente (efectivo) o rechazar, y vuelve a la tienda
-igual que el real, con aviso firmado incluido. No cobra nada ni sale de tu
-compu.
+igual que el real, con aviso firmado incluido. Y un **ARCA simulado**
+(puerto 8532), con un certificado de prueba que se genera solo: autoriza las
+facturas con las mismas validaciones que ARCA (número correlativo, condición
+IVA del receptor, IVA, tope de consumidor final). Nada sale de tu compu.
 
 Cuentas de prueba (solo en los emuladores): `admin@aurora.test`,
 `programador@aurora.test` y `exempleada@aurora.test` (dada de baja), todas
@@ -216,10 +222,10 @@ npx firebase use --add          # elegí el proyecto
 npm run desplegar               # reglas + índices + Cloud Functions
 ```
 
-La primera vez pide dos secretos, `MP_ACCESS_TOKEN` y `MP_WEBHOOK_SECRET`
-(los de Mercado Pago, ver «Cobrar los pedidos»). Si todavía no tenés la
-cuenta, escribí `SIN-CONFIGURAR` en los dos: el cobro por transferencia anda
-igual y Mercado Pago se conecta después.
+La primera vez pide cuatro secretos: `MP_ACCESS_TOKEN` y `MP_WEBHOOK_SECRET`
+(Mercado Pago, ver «Cobrar los pedidos») y `ARCA_CERT` y `ARCA_KEY` (ARCA,
+ver «Facturar con ARCA»). Lo que todavía no tengas, cargalo como
+`SIN-CONFIGURAR`: el resto anda igual y se conecta después.
 
 **4. Conectar la tienda.** En Vercel → Settings → Environment Variables,
 las mismas `VITE_FIREBASE_*` de `.env.example` con los valores del paso 1
@@ -268,8 +274,8 @@ Las reglas de seguridad están en `firestore.rules` y se prueban con
 leer cada uno. El navegador **nunca escribe** en Firestore: todo pasa por
 las Cloud Functions, que validan, recalculan los precios y dejan el cambio
 en el historial en la misma operación. `npm run test:funciones` prueba el
-servidor de punta a punta (147 casos, cobros con el Mercado Pago simulado
-incluidos) contra los emuladores.
+servidor de punta a punta (192 casos, con cobros y facturas contra los
+simulados de Mercado Pago y ARCA) contra los emuladores.
 
 ### Cobrar los pedidos
 
@@ -331,6 +337,77 @@ Para probar con Mercado Pago de verdad sin plata real: en Tus integraciones
 Token del vendedor de prueba como `MP_ACCESS_TOKEN`, pagá con el comprador
 de prueba y las tarjetas de prueba de su documentación, y al terminar volvé
 a cargar el token real (paso 4).
+
+### Facturar con ARCA
+
+Con la facturación prendida, **la factura sale sola en el momento en que se
+cobra** (el aviso de Mercado Pago o «Marcar pagado»), y si después se
+devuelve el pago (o se anula uno marcado por error), sale sola la **nota de
+crédito**. La clienta ve e imprime su factura (con el QR de ARCA) desde el
+link del pedido; en el panel está en el pedido y en **Facturas** (el mes
+entero, con el CSV para el contador).
+
+Qué comprobante sale:
+
+| El negocio es | Le vende a | Sale |
+|---|---|---|
+| Monotributo | cualquiera | Factura C |
+| Responsable inscripto | inscripto o monotributista, con CUIT | Factura A (con el IVA discriminado) |
+| Responsable inscripto | consumidor final o exento | Factura B (con el «IVA contenido», Ley 27.743) |
+
+En el checkout, quien quiere la factura a su nombre elige «Con CUIT» y deja
+el CUIT, la condición ante el IVA y la razón social. Si no, va a
+«Consumidor final». Desde $10.000.000 a consumidor final ARCA pide
+identificarlo (RG 5866/2026): esa factura queda con el aviso y se carga el
+DNI en el pedido → «Datos para la factura» → Reintentar.
+
+Si ARCA no la autoriza, el cobro queda guardado igual y el pedido muestra el
+motivo con «Reintentar». Si fue algo pasajero (ARCA caído), se reintenta
+solo cada 30 minutos. Si se corta la conexión justo cuando ARCA la autoriza,
+el reintento la recupera: no se duplican números.
+
+#### Conectar ARCA (una vez)
+
+Lo hace quien tiene la clave fiscal del CUIT (o el contador). Conviene
+probar primero en **homologación** (pruebas, sin validez fiscal) y después
+repetir los pasos 2 a 5 en producción.
+
+1. **Clave y pedido de certificado**, en tu compu (sin openssl, anda en
+   Windows):
+
+   ```
+   npm run arca:certificado -- --cuit 20123456786 --nombre "Nombre o razón social"
+   ```
+
+   Deja `datos/arca/clave-privada.key` (no se comparte con nadie, ni con
+   ARCA) y `datos/arca/pedido.csr`.
+2. **El certificado**: en ARCA con clave fiscal → «Administración de
+   Certificados Digitales» → agregar el alias `aurora` → subir `pedido.csr` →
+   descargar el `.crt`. (Para homologación: «WSASS - Autogestión
+   Certificados Homologación».)
+3. **Autorizarlo a facturar**: «Administrador de Relaciones de Clave
+   Fiscal» → Nueva relación → servicio **Facturación electrónica** (wsfe) →
+   representante: el certificado `aurora`.
+4. **Punto de venta**: «Administración de puntos de venta y domicilios» →
+   uno nuevo del tipo **Factura electrónica – Web Services** (en monotributo:
+   «Factura Electrónica - Monotributo - Web Services»). Anotá el número.
+5. **Cargar el certificado en el servidor**:
+
+   ```
+   npx firebase functions:secrets:set ARCA_CERT --data-file certificado.crt
+   npx firebase functions:secrets:set ARCA_KEY --data-file datos/arca/clave-privada.key
+   npm run desplegar
+   ```
+
+6. **Panel → Configuración → Facturación electrónica**: condición,
+   CUIT, razón social, domicilio comercial, Ingresos Brutos, inicio de
+   actividades, punto de venta y ambiente. «Probar conexión con ARCA» y, si
+   dice «Conectado», tildá «Facturar los cobros» y guardá.
+
+Al pasar de homologación a producción: certificado de producción (pasos 2 y
+3 en ARCA, con otro alias si querés), punto de venta real, los dos secretos
+de nuevo y en el panel ambiente «Producción». El certificado vence: ARCA
+avisa y se renueva con el mismo `pedido.csr` o uno nuevo.
 
 **Lo que cuesta.** La transferencia no tiene comisión. Mercado Pago cobra un
 porcentaje por venta que depende de cuándo querés la plata disponible (al
@@ -479,11 +556,10 @@ Necesita `pip install openpyxl Pillow`.
    con leyendas tipo "QTY: 1728pcs". Para vender por menor confunden;
    fotos propias del producto suelto es la mejora que más va a mover la
    aguja. En el panel, la foto de un producto puede ser un link https.
-3. **Facturación electrónica (ARCA).** Todavía no emite facturas. Cada
-   cobro queda registrado (fecha, monto, medio y n.º de operación) para
-   facturarlo. Hacerlo automático depende de la condición fiscal
-   (monotributo o responsable inscripto), el CUIT, un punto de venta
-   electrónico y el certificado de ARCA: se define con el contador.
+3. **Facturación: revisar con el contador** el tipo de punto de venta, la
+   alícuota (todo al 21 %: si algún producto va con otra, hay que
+   separarlo), y si el envío se factura junto con los productos (hoy va en
+   la misma factura).
 4. **Para consultar con un contador o abogado** antes de publicar:
    - La Res. SIC 4/2025 pide mostrar además el precio "sin impuestos
      nacionales" en ciertos casos; depende de la condición fiscal.

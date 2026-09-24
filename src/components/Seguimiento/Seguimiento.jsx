@@ -176,6 +176,21 @@ export const Seguimiento = () => {
       </p>
 
       <Pago p={p} token={token} config={config} verificando={volvioDeMp} />
+      {p.comprobantes?.length > 0 && (
+        <section className="seguimiento-facturas" aria-labelledby="facturas-titulo">
+          <h2 id="facturas-titulo">{p.comprobantes.length === 1 ? "Tu factura" : "Tus comprobantes"}</h2>
+          <ul>
+            {p.comprobantes.map((c) => (
+              <li key={c.token}>
+                <Link to={`/factura/${c.token}`}>
+                  {c.nombre} <span className="num">{c.numeroTexto}</span>
+                </Link>
+                <span className="num">{plata(c.total)}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       {errorPago && (
         <p className="pago-error" role="alert">
           {errorPago}

@@ -38,6 +38,15 @@ const resumen = (a) => {
     case "pago.mercadopago":
     case "pago.demas":
       return `Pedido #${d.numero} · ${plata(d.monto)}${d.estado ? ` · ${COBROS[d.estado] ?? d.estado}` : ""} · n.º ${d.referencia}`;
+    case "factura.emitida":
+    case "factura.anulada":
+      return `Pedido #${d.numero} · ${d.comprobante} · ${plata(d.total)}${d.ambiente === "homologacion" ? " · prueba" : ""}${d.recuperado ? " · recuperado" : ""}`;
+    case "factura.reintentar":
+    case "factura.emitir":
+      return `Pedido #${d.numero}`;
+    case "pedido.fiscal":
+      return `Pedido #${d.numero} · ${d.cuit ? `CUIT ${d.cuit}` : d.conDni ? "con DNI" : "consumidor final"}`;
+    case "facturacion.guardar":
     case "cobro.guardar":
       // A dónde va la plata: se muestra el antes y el después.
       return Object.entries(d)
@@ -90,7 +99,7 @@ export const AdminHistorial = () => {
                 <tr key={a.id}>
                   <td className="num">{fechaHora(a.cuando)}</td>
                   <td>
-                    {a.quien?.email ?? (a.quien?.rol === "sistema" ? "Mercado Pago" : "—")} <span className={`admin-rol admin-rol-${a.quien?.rol}`}>{a.quien?.rol}</span>
+                    {a.quien?.email ?? (a.quien?.rol === "sistema" ? (a.quien?.uid === "arca" ? "ARCA" : "Mercado Pago") : "—")} <span className={`admin-rol admin-rol-${a.quien?.rol}`}>{a.quien?.rol}</span>
                   </td>
                   <td>
                     {ACCIONES[a.accion] ?? a.accion}

@@ -5,6 +5,7 @@ import { anotarEnAuditoria } from "../auditoria.js";
 import { claveIp, refLimite, revisarLimite } from "../limites.js";
 import { ErrorMercadoPago, hayMercadoPago, mp, secretoWebhook, urlFunciones } from "../mercadopago.js";
 import { decidirCobro, detallePago, estadoCobroDe, firmaValida } from "../mp-logica.js";
+import { cambiosFactura, facturarSiHaceFalta } from "./factura.js";
 
 // Cobrar un pedido. Se paga DESPUÉS de que el negocio lo confirma (con el
 // stock separado y el envío sumado), de dos maneras:
@@ -135,8 +136,8 @@ export const aplicarPago = async (pago) => {
   const nuevo = estadoCobroDe(pago.status);
   const ahora = new Date();
 
-  return db.runTransaction(async (tx) => {
-    const [ped] = await tx.getAll(refs.pedido(pedidoId));
+  const r = await db.runTransaction(async (tx) => {
+    const [ped, cfg] = await tx.getAll(refs.pedido(pedidoId), refs.config());
     if (!ped.exists) return { ignorado: true };
     const p = ped.data();
     const actual = p.cobro ?? { estado: "sin_pagar" };
@@ -170,11 +171,15 @@ export const aplicarPago = async (pago) => {
     }
 
     const cobro = { ...registro, quien: null, preferencia: actual.preferencia ?? null };
-    tx.update(ped.ref, { cobro, actualizado: ahora });
+    // Cobrado: se factura solo. Devuelto: sale la nota de crédito.
+    tx.update(ped.ref, { cobro, actualizado: ahora, ...cambiosFactura(p, nuevo, cfg.data()?.facturacion) });
     tx.set(refs.seguimiento(p.token), { cobro: { estado: nuevo, detalle: registro.detalle } }, { merge: true });
     auditar("pago.mercadopago");
     return { estado: nuevo };
   });
+  // Cobrado o devuelto: la factura (o la nota de crédito) sale ya.
+  if (!r.ignorado && !r.sinCambios && !r.deMas) await facturarSiHaceFalta(pedidoId);
+  return r;
 };
 
 // ── La clienta vuelve de Mercado Pago ───────────────────────────────
@@ -257,8 +262,9 @@ export const registrarPago = async (datos, quien) => {
   if (!MEDIOS_A_MANO[medio]) throw new HttpsError("invalid-argument", "Elegí cómo pagó: transferencia, efectivo u otro.");
   const nota = texto(datos?.nota, 120);
   const ahora = new Date();
-  return db.runTransaction(async (tx) => {
+  const r = await db.runTransaction(async (tx) => {
     const ped = await leerPedido(tx, datos?.id);
+    const [cfg] = await tx.getAll(refs.config());
     const p = ped.data();
     if (p.estado === "cancelado") throw new HttpsError("failed-precondition", `El pedido #${p.numero} está cancelado.`);
     if (["aprobado", "reclamo"].includes(p.cobro?.estado)) throw new HttpsError("failed-precondition", `El pedido #${p.numero} ya figura pagado.`);
@@ -267,25 +273,30 @@ export const registrarPago = async (datos, quien) => {
     tx.update(ped.ref, {
       cobro: { estado: "aprobado", medio, detalle, monto, referencia: null, cuando: ahora, quien: quienCorto(quien), preferencia: p.cobro?.preferencia ?? null },
       actualizado: ahora,
+      ...cambiosFactura(p, "aprobado", cfg.data()?.facturacion),
     });
     tx.set(refs.seguimiento(p.token), { cobro: { estado: "aprobado", detalle: MEDIOS_A_MANO[medio] } }, { merge: true });
     anotarEnAuditoria(tx, db, { accion: "pago.registrar", quien, cuando: ahora.toISOString(), detalle: { id: ped.id, numero: p.numero, medio, monto } });
     return { id: ped.id, numero: p.numero, estado: "aprobado" };
   });
+  await facturarSiHaceFalta(r.id);
+  return r;
 };
 
 // Deshacer un pago marcado a mano por error. Los de Mercado Pago no: esos
 // se devuelven (y la plata vuelve a la clienta).
 export const anularPago = async (datos, quien) => {
   const ahora = new Date();
-  return db.runTransaction(async (tx) => {
+  const r = await db.runTransaction(async (tx) => {
     const ped = await leerPedido(tx, datos?.id);
+    const [cfg] = await tx.getAll(refs.config());
     const p = ped.data();
     const c = p.cobro ?? {};
     if (c.estado !== "aprobado" || c.medio === "mercadopago") {
       throw new HttpsError("failed-precondition", c.medio === "mercadopago" ? "Un pago de Mercado Pago no se anula: se devuelve." : "No hay un pago marcado a mano para anular.");
     }
-    tx.update(ped.ref, { cobro: { estado: "sin_pagar", preferencia: c.preferencia ?? null }, actualizado: ahora });
+    // Si ya estaba facturado, sale la nota de crédito.
+    tx.update(ped.ref, { cobro: { estado: "sin_pagar", preferencia: c.preferencia ?? null }, actualizado: ahora, ...cambiosFactura(p, "sin_pagar", cfg.data()?.facturacion) });
     tx.set(refs.seguimiento(p.token), { cobro: { estado: "sin_pagar", detalle: null } }, { merge: true });
     anotarEnAuditoria(tx, db, {
       accion: "pago.anular",
@@ -295,6 +306,8 @@ export const anularPago = async (datos, quien) => {
     });
     return { id: ped.id, numero: p.numero, estado: "sin_pagar" };
   });
+  await facturarSiHaceFalta(r.id);
+  return r;
 };
 
 // Devolver un pago de Mercado Pago (el del pedido, o uno de más). La plata

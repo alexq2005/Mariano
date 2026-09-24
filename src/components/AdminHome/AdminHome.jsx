@@ -28,6 +28,9 @@ export const AdminHome = () => {
   const { docs: confirmados } = useConsulta(confirmadosQ);
   const porCobrar = confirmados.filter((p) => !["aprobado", "reclamo"].includes(p.cobro?.estado));
   const montoPorCobrar = porCobrar.reduce((s, p) => s + (p.aCobrar ?? p.total), 0);
+  // Cobros que ARCA no facturó (datos que faltan, ARCA caído…).
+  const sinFacturaQ = useMemo(() => query(collection(db, "pedidos"), where("factura.estado", "==", "error"), limit(20)), []);
+  const { docs: sinFactura } = useConsulta(sinFacturaQ);
 
   const agotados = productos.filter((p) => p.agotado && p.activo !== false).length;
   const pausados = productos.filter((p) => p.activo === false).length;
@@ -47,6 +50,21 @@ export const AdminHome = () => {
           <b>Falta el WhatsApp real de la tienda.</b> Los pedidos llegan igual al panel, pero la clienta no puede avisarte por
           WhatsApp. <Link to="/admin/configuracion">Cargalo en Configuración</Link>.
         </p>
+      )}
+
+      {sinFactura.length > 0 && (
+        <div className="aviso" role="note">
+          <b>
+            {sinFactura.length === 1 ? "Un pedido cobrado no se pudo facturar" : `${sinFactura.length} pedidos cobrados no se pudieron facturar`}:
+          </b>{" "}
+          {sinFactura.map((p, i) => (
+            <span key={p.id}>
+              {i > 0 && ", "}
+              <Link to={`/admin/pedidos/${p.id}`}>#{p.numero}</Link>
+            </span>
+          ))}
+          . En cada uno está el motivo y el botón para reintentar.
+        </div>
       )}
 
       <div className="admin-tarjetas">

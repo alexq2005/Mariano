@@ -8,6 +8,7 @@ import { rutaImagen } from "../../services/productos";
 import { whatsappDeTelefono } from "../../compartido/clientas";
 import { urlSeguimiento } from "../../services/tienda";
 import { CobroPedido } from "./CobroPedido";
+import { FacturaPedido } from "./FacturaPedido";
 import "./AdminPedidos.css";
 
 // El detalle de un pedido y lo que se puede hacer con él. El documento se
@@ -132,6 +133,7 @@ export const AdminPedido = () => {
       </p>
 
       <CobroPedido p={p} hacer={hacer} trabajando={trabajando} />
+      <FacturaPedido p={p} hacer={hacer} trabajando={trabajando} />
 
       <div className="pedido-grilla">
         <div className="admin-tarjeta">

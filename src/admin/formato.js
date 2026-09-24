@@ -59,4 +59,10 @@ export const ACCIONES = {
   "pago.mercadopago": "Mercado Pago avisó un pago",
   "pago.demas": "Mercado Pago avisó un pago de más",
   "cobro.guardar": "Cambió los datos para cobrar",
+  "facturacion.guardar": "Cambió los datos de facturación",
+  "factura.emitida": "ARCA autorizó una factura",
+  "factura.anulada": "ARCA autorizó una nota de crédito",
+  "factura.reintentar": "Reintentó una factura",
+  "factura.emitir": "Pidió emitir una factura",
+  "pedido.fiscal": "Cambió los datos de facturación de un pedido",
 };

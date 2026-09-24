@@ -85,6 +85,7 @@ for (const cuenta of CUENTAS) {
 const { readFileSync } = await import("node:fs");
 const { productos } = JSON.parse(readFileSync("public/data/catalogo.json", "utf8"));
 const { CONFIG } = await import("../src/config.js");
+const { CUIT_PRUEBA } = await import("./certificado-prueba.mjs");
 
 await escribir("publico/catalogo", {
   productos: aValor(productos),
@@ -136,12 +137,41 @@ if (!process.argv.includes("--sin-ejemplos")) {
     const hechos = [];
     hechos.push(await llamar("tienda", "pedido.crear", { carrito: [{ id: a.id, cant: 12 }, { id: c.id, cant: 2 }], cliente: cliente(clientas[0]) }));
     hechos.push(await llamar("tienda", "pedido.crear", { carrito: [{ id: d.id, cant: 24 }], cliente: cliente(clientas[1]) }));
-    hechos.push(await llamar("tienda", "pedido.crear", { carrito: [{ id: e.id, cant: 1 }, { id: b.id, cant: 1 }], cliente: cliente(clientas[2]) }));
+    hechos.push(
+      await llamar("tienda", "pedido.crear", {
+        carrito: [{ id: e.id, cant: 1 }, { id: b.id, cant: 1 }],
+        cliente: cliente(clientas[2]),
+        fiscal: { condicion: "monotributo", cuit: "27409378477", nombre: "Sofía Díaz" },
+      }),
+    );
     hechos.push(await llamar("tienda", "pedido.crear", { carrito: [{ id: a.id, cant: 12 }, { id: e.id, cant: 12 }], cliente: cliente(clientas[3]) }));
     hechos.push(await llamar("tienda", "pedido.crear", { carrito: [{ id: c.id, cant: 3 }], cliente: cliente(clientas[0]) }));
 
     // Cobro: Mercado Pago (el simulado, en la compu) y un alias de ejemplo.
     await llamar("panel", "cobro.guardar", { alias: "aurora.ejemplo", titular: "Aurora (ejemplo)", banco: "Mercado Pago", mercadopago: true }, admin);
+    // Facturación contra el ARCA simulado (arranca vacío, como la base), con
+    // el CUIT del certificado de prueba de los emuladores.
+    try {
+      await fetch("http://127.0.0.1:8532/__simular/reiniciar", { method: "POST" });
+      await llamar(
+        "panel",
+        "facturacion.guardar",
+        {
+          activa: true,
+          condicion: "monotributo",
+          cuit: CUIT_PRUEBA,
+          razon_social: "Aurora Cosmética (ejemplo)",
+          domicilio: "Av. Corrientes 1234, CABA",
+          iibb: "Exento",
+          inicio: "01/03/2024",
+          ptoVta: 3,
+          ambiente: "homologacion",
+        },
+        admin,
+      );
+    } catch (err) {
+      console.warn(`Sin facturación de ejemplo (¿está el ARCA simulado?): ${err.message}`);
+    }
 
     await llamar("panel", "pedido.confirmar", { id: hechos[0].id, envio: 2500 }, admin);
     await llamar("panel", "pago.registrar", { id: hechos[0].id, medio: "transferencia", nota: "Comprobante 0012" }, admin);
@@ -150,7 +180,7 @@ if (!process.argv.includes("--sin-ejemplos")) {
     await llamar("panel", "pedido.confirmar", { id: hechos[3].id }, admin);
     await llamar("panel", "pedido.cancelar", { id: hechos[3].id, motivo: "La clienta cambió de idea" }, admin);
     await llamar("tienda", "arrepentimiento.crear", { nombre: "Lucía Pérez", contacto: "11 5555-1234", numero: hechos[1].numero, motivo: "El tono no era el que esperaba" });
-    console.log(`\nEjemplos: ${hechos.length} pedidos (#${hechos[0].numero} a #${hechos.at(-1).numero}), uno pagado, uno por cobrar, stock en 2 productos y un arrepentimiento.`);
+    console.log(`\nEjemplos: ${hechos.length} pedidos (#${hechos[0].numero} a #${hechos.at(-1).numero}), uno pagado y facturado, uno por cobrar, stock en 2 productos y un arrepentimiento.`);
 
     // Costos para probar Precios (solo programador): los reales si está
     // datos/ en esta máquina; si no, unos de mentira sacados del precio.

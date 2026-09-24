@@ -9,6 +9,7 @@ import { AdminProducto } from "../components/AdminProducto/AdminProducto";
 import { AdminPedidos } from "../components/AdminPedidos/AdminPedidos";
 import { AdminPedido } from "../components/AdminPedidos/AdminPedido";
 import { AdminVentas } from "../components/AdminVentas/AdminVentas";
+import { AdminFacturas } from "../components/AdminFacturas/AdminFacturas";
 import { AdminClientas } from "../components/AdminClientas/AdminClientas";
 import { AdminHistorial } from "../components/AdminHistorial/AdminHistorial";
 import { AdminArrepentimientos } from "../components/AdminArrepentimientos/AdminArrepentimientos";
@@ -32,6 +33,7 @@ export default function AdminArea() {
             <Route path="productos/nuevo" element={<AdminProducto />} />
             <Route path="productos/:id" element={<AdminProducto />} />
             <Route path="ventas" element={<AdminVentas />} />
+            <Route path="facturas" element={<AdminFacturas />} />
             <Route path="clientas" element={<AdminClientas />} />
             <Route path="arrepentimientos" element={<AdminArrepentimientos />} />
             <Route path="historial" element={<AdminHistorial />} />

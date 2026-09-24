@@ -40,6 +40,7 @@
 .opc { font-weight: 400; color: var(--tenue); font-size: 12.5px; }
 
 .campo input[type="text"],
+.campo select,
 .campo textarea {
   width: 100%;
   font: inherit;
@@ -154,3 +155,7 @@
 .registrado-acciones { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; margin: 16px 0 10px; }
 .registrado-acciones .btn { flex: 1 1 200px; }
 .registrado .btn-link { padding: 0 2px; min-height: 0; font-size: inherit; color: var(--acento); }
+
+/* Los datos para la factura con CUIT, adentro de su opción. */
+.factura-cuit { margin-top: 10px; padding: 12px 12px 2px; border-radius: 14px; background: var(--sunken); }
+.factura-cuit .campo:last-child { margin-bottom: 10px; }

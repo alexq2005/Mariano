@@ -1,0 +1,2 @@
+.facturas-pruebas { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; }
+.facturas-pruebas input { width: 18px; height: 18px; accent-color: var(--mayor); }

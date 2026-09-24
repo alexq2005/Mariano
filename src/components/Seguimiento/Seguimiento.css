@@ -143,3 +143,15 @@
   cursor: pointer;
 }
 .btn-copiar:hover { border-color: var(--acento); }
+
+/* Facturas y notas de crédito del pedido. */
+.seguimiento-facturas ul { margin: 0 0 16px; padding: 0; list-style: none; }
+.seguimiento-facturas li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 15px;
+}
+.seguimiento-facturas a { font-weight: 700; }

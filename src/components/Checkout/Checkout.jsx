@@ -14,6 +14,7 @@ import {
   validarDatos,
 } from "../../utils/pedido";
 import { hayServidor, llamarTienda, urlSeguimiento } from "../../services/tienda";
+import { CONDICIONES_FISCALES, sanearFiscal, validarFiscal } from "../../compartido/fiscal";
 import { CatalogError } from "../CatalogError/CatalogError";
 import "./Checkout.css";
 
@@ -32,7 +33,7 @@ const leerGuardados = () => {
   }
 };
 
-const ORDEN_CAMPOS = ["nombre", "telefono", "email", "entrega", "direccion", "pago"];
+const ORDEN_CAMPOS = ["nombre", "telefono", "email", "entrega", "direccion", "pago", "cuit", "razon_social"];
 const ESPACIO_DURO = String.fromCharCode(160);
 
 // El pedido ya quedó guardado: el número, el link de seguimiento y el aviso
@@ -110,6 +111,10 @@ export const Checkout = () => {
   const refEntrega = useRef(null);
   const refDireccion = useRef(null);
   const refPago = useRef(null);
+  const refCuit = useRef(null);
+  const refRazon = useRef(null);
+  // Factura: consumidor final (lo común) o a nombre de un CUIT.
+  const [factura, setFactura] = useState({ conCuit: false, condicion: "responsable_inscripto", cuit: "", nombre: "" });
   const vistaPrevia = useRef(null);
   const gracias = useRef(null);
 
@@ -173,8 +178,12 @@ export const Checkout = () => {
     );
   }
 
-  const errores = { ...erroresServidor, ...validarDatos(datos, config) };
-  const valido = Object.keys(validarDatos(datos, config)).length === 0;
+  // Se ofrece solo si el negocio factura (y con servidor: sin él no hay factura).
+  const pideFactura = hayServidor && Boolean(config.emite_factura);
+  const fiscal = pideFactura && factura.conCuit ? sanearFiscal({ condicion: factura.condicion, cuit: factura.cuit, nombre: factura.nombre }) : null;
+  const erroresLocales = { ...validarDatos(datos, config), ...(fiscal ? validarFiscal(fiscal) : {}) };
+  const errores = { ...erroresServidor, ...erroresLocales };
+  const valido = Object.keys(erroresLocales).length === 0;
   const mensaje = armarMensaje(resumen, datos, config);
   const url = urlWhatsApp(mensaje, config);
   const entrega = formaDeEntrega(datos.entrega, config);
@@ -191,11 +200,23 @@ export const Checkout = () => {
     }
   };
 
+  const cambiarFactura = (campo) => (e) => {
+    setFactura({ ...factura, [campo]: e.target.value });
+    const clave = campo === "nombre" ? "razon_social" : campo;
+    if (erroresServidor[clave]) {
+      setErroresServidor((previos) => {
+        const resto = { ...previos };
+        delete resto[clave];
+        return resto;
+      });
+    }
+  };
+
   // Si falta algo, se muestran los errores y el foco va al primer campo mal.
   const revisar = () => {
     if (valido) return true;
     setIntentado(true);
-    const campos = { nombre: refNombre, telefono: refTelefono, email: refEmail, entrega: refEntrega, direccion: refDireccion, pago: refPago };
+    const campos = { nombre: refNombre, telefono: refTelefono, email: refEmail, entrega: refEntrega, direccion: refDireccion, pago: refPago, cuit: refCuit, razon_social: refRazon };
     const primero = ORDEN_CAMPOS.find((c) => errores[c]);
     campos[primero]?.current?.focus();
     return false;
@@ -219,7 +240,7 @@ export const Checkout = () => {
       // Solo lo que entra en el total: sin lo pausado o agotado que haya
       // quedado en el carrito (el carrito lo muestra aparte).
       const carrito = resumen.items.map((i) => ({ id: i.p.id, cant: i.cant }));
-      const r = await llamarTienda("pedido.crear", { carrito, cliente: datos });
+      const r = await llamarTienda("pedido.crear", { carrito, cliente: datos, ...(fiscal ? { fiscal } : {}) });
       const seguimiento = urlSeguimiento(r.token);
       const conNumero = armarMensaje(resumen, datos, config, { numero: r.numero, seguimiento });
       flushSync(() => {
@@ -398,6 +419,70 @@ export const Checkout = () => {
             {error("pago") && <p id="error-pago" className="error">{errores.pago}</p>}
           </fieldset>
 
+          {pideFactura && (
+            <fieldset className="campo">
+              <legend>
+                Factura <span className="opc">(sale sola cuando pagás)</span>
+              </legend>
+              <label className="opcion">
+                <input type="radio" name="factura" checked={!factura.conCuit} onChange={() => setFactura({ ...factura, conCuit: false })} />
+                Consumidor final
+              </label>
+              <label className="opcion">
+                <input type="radio" name="factura" checked={factura.conCuit} onChange={() => setFactura({ ...factura, conCuit: true })} />
+                Con CUIT (para tu negocio o para deducirla)
+              </label>
+              {factura.conCuit && (
+                <div className="factura-cuit">
+                  <div className="campo">
+                    <label htmlFor="c-cuit">
+                      CUIT <span className="req">(obligatorio)</span>
+                    </label>
+                    <input
+                      ref={refCuit}
+                      id="c-cuit"
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="off"
+                      value={factura.cuit}
+                      onChange={cambiarFactura("cuit")}
+                      aria-invalid={Boolean(error("cuit"))}
+                      aria-describedby={[ayuda("cuit"), "nota-cuit"].filter(Boolean).join(" ")}
+                    />
+                    <p id="nota-cuit" className="nota-campo">11 números. Ej.: 20-12345678-6.</p>
+                    {error("cuit") && <p id="error-cuit" className="error">{errores.cuit}</p>}
+                  </div>
+                  <div className="campo">
+                    <label htmlFor="c-condicion">Condición ante el IVA</label>
+                    <select id="c-condicion" value={factura.condicion} onChange={cambiarFactura("condicion")}>
+                      {Object.entries(CONDICIONES_FISCALES).map(([k, v]) => (
+                        <option key={k} value={k}>
+                          {v.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="campo">
+                    <label htmlFor="c-razon">
+                      Nombre o razón social <span className="req">(obligatorio)</span>
+                    </label>
+                    <input
+                      ref={refRazon}
+                      id="c-razon"
+                      type="text"
+                      autoComplete="organization"
+                      value={factura.nombre}
+                      onChange={cambiarFactura("nombre")}
+                      aria-invalid={Boolean(error("razon_social"))}
+                      aria-describedby={ayuda("razon_social")}
+                    />
+                    {error("razon_social") && <p id="error-razon_social" className="error">{errores.razon_social}</p>}
+                  </div>
+                </div>
+              )}
+            </fieldset>
+          )}
+
           <div className="campo">
             <label htmlFor="c-comentarios">
               Comentarios <span className="opc">(opcional)</span>
@@ -461,7 +546,7 @@ export const Checkout = () => {
           </p>
           <p className="nota">
             {hayServidor
-              ? "Te damos un número de pedido y un link para seguirlo. El stock, el envío y el pago se confirman por WhatsApp."
+              ? "Te damos un número de pedido y un link para seguirlo. Cuando confirmemos el stock y el envío, lo pagás desde ese link."
               : "Se abre WhatsApp con el mensaje ya escrito: solo tenés que apretar Enviar. El stock, el envío y el pago se confirman en el chat."}
           </p>
           {enviado && (

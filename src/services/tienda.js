@@ -55,3 +55,6 @@ export const llamarTienda = async (accion, datos) => {
 
 // El link que se le da a la clienta para ver cómo va su pedido.
 export const urlSeguimiento = (token) => `${window.location.origin}${import.meta.env.BASE_URL}pedido/${token}`;
+
+// La factura (o nota de crédito) para ver e imprimir.
+export const urlFactura = (token) => `${window.location.origin}${import.meta.env.BASE_URL}factura/${token}`;

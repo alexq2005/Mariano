@@ -9,6 +9,7 @@ import { claveDia, claveMes } from "../tiempo.js";
 import { vistaPagar } from "./cobro.js";
 import { armarLineas, deltaVenta, ErrorPedido, moverStock, puedePasar } from "../logica-pedido.js";
 import { formaDeEntrega, sanearDatosPedido, validarDatosPedido } from "../compartido/datos-pedido.js";
+import { sanearFiscal, validarFiscal } from "../compartido/fiscal.js";
 
 export const LIMITES_PEDIDO = { ip: 20, telefono: 5 };
 const DIAS_SEGUIMIENTO = 90;
@@ -46,7 +47,9 @@ export const crearPedido = async (datos, { ip }) => {
   const configPrevia = previa.data().config ?? {};
 
   const cliente = sanearDatosPedido(datos?.cliente, configPrevia);
-  const errores = validarDatosPedido(cliente, configPrevia);
+  // Para la factura: consumidor final, o CUIT y condición ante el IVA.
+  const fiscal = sanearFiscal(datos?.fiscal);
+  const errores = { ...validarDatosPedido(cliente, configPrevia), ...validarFiscal(fiscal) };
   if (Object.keys(errores).length) {
     throw new HttpsError("invalid-argument", Object.values(errores)[0], { errores });
   }
@@ -102,6 +105,7 @@ export const crearPedido = async (datos, { ip }) => {
       entrega: { id: entrega.id, nombre: entrega.nombre, direccion: entrega.pide_direccion ? cliente.direccion : null },
       pago: cliente.pago,
       comentarios: cliente.comentarios || null,
+      fiscal,
       ...lineas,
       // Lo que se cobra: los productos y, al confirmar, el envío.
       envio: 0,

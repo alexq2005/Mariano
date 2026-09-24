@@ -266,6 +266,166 @@ const SeccionCobro = () => {
   return <FormularioCobro key={JSON.stringify(datos?.cobro ?? {})} cobro={datos?.cobro} aviso={aviso} setAviso={setAviso} />;
 };
 
+const desdeFacturacion = (c = {}) => ({
+  activa: Boolean(c.activa),
+  condicion: c.condicion ?? "",
+  cuit: c.cuit ?? "",
+  razon_social: c.razon_social ?? "",
+  domicilio: c.domicilio ?? "",
+  iibb: c.iibb ?? "",
+  inicio: c.inicio ?? "",
+  ptoVta: c.ptoVta ? String(c.ptoVta) : "",
+  ambiente: c.ambiente ?? "homologacion",
+});
+
+// Los datos del negocio para ARCA. Con la facturación prendida, cada cobro
+// sale con su factura (C si es monotributo; A o B si es responsable
+// inscripto) y cada devolución con su nota de crédito.
+const FormularioFacturacion = ({ facturacion, aviso, setAviso }) => {
+  const [f, setF] = useState(() => desdeFacturacion(facturacion));
+  const [guardando, setGuardando] = useState(false);
+  const [probando, setProbando] = useState(false);
+  const [prueba, setPrueba] = useState(null);
+  const campo = (k) => (e) => setF({ ...f, [k]: e.target.type === "checkbox" ? e.target.checked : e.target.value });
+
+  const guardar = async (e) => {
+    e.preventDefault();
+    const base = desdeFacturacion(facturacion);
+    const datos = Object.fromEntries(Object.entries(f).filter(([k, v]) => v !== base[k]));
+    if (datos.ptoVta !== undefined) datos.ptoVta = Number(datos.ptoVta.replace(/\D/g, "")) || 0;
+    if (datos.condicion === "") delete datos.condicion;
+    if (!Object.keys(datos).length) return setAviso({ tipo: "ok", texto: "No hay cambios para guardar." });
+    setGuardando(true);
+    setAviso({ tipo: "", texto: "" });
+    try {
+      const r = await llamarYRefrescar("facturacion.guardar", datos);
+      setAviso({ tipo: "ok", texto: r.cambiados.length ? "Guardado." : "No había cambios." });
+    } catch (err) {
+      setAviso({ tipo: "error", texto: err.message });
+    } finally {
+      setGuardando(false);
+    }
+  };
+
+  const probar = async () => {
+    setProbando(true);
+    setPrueba(null);
+    try {
+      setPrueba({ ok: true, ...(await llamarPanel("factura.probar", {})) });
+    } catch (err) {
+      setPrueba({ ok: false, texto: err.message });
+    } finally {
+      setProbando(false);
+    }
+  };
+
+  return (
+    <form className="producto-form config-form" onSubmit={guardar} noValidate>
+      <fieldset>
+        <legend>Facturación electrónica (ARCA)</legend>
+        <p className="nota-campo">
+          La factura sale sola cuando se cobra un pedido (Mercado Pago o «Marcar pagado»), y la nota de crédito cuando se devuelve. La clienta la ve e imprime desde su link.
+        </p>
+        <label className="opcion config-check">
+          <input type="checkbox" checked={f.activa} onChange={campo("activa")} />
+          Facturar los cobros
+        </label>
+        <div className="producto-dos">
+          <div className="campo">
+            <label htmlFor="fa-condicion">Condición ante el IVA</label>
+            <select id="fa-condicion" value={f.condicion} onChange={campo("condicion")}>
+              <option value="">Elegí…</option>
+              <option value="monotributo">Monotributo (factura C)</option>
+              <option value="responsable_inscripto">Responsable inscripto (factura A o B)</option>
+            </select>
+          </div>
+          <div className="campo">
+            <label htmlFor="fa-cuit">CUIT del negocio</label>
+            <input id="fa-cuit" inputMode="numeric" value={f.cuit} onChange={campo("cuit")} maxLength={13} />
+          </div>
+        </div>
+        <div className="producto-dos">
+          <div className="campo">
+            <label htmlFor="fa-razon">Razón social (o nombre y apellido)</label>
+            <input id="fa-razon" value={f.razon_social} onChange={campo("razon_social")} maxLength={80} />
+          </div>
+          <div className="campo">
+            <label htmlFor="fa-domicilio">Domicilio comercial</label>
+            <input id="fa-domicilio" value={f.domicilio} onChange={campo("domicilio")} maxLength={120} />
+          </div>
+        </div>
+        <div className="producto-dos">
+          <div className="campo">
+            <label htmlFor="fa-iibb">
+              Ingresos Brutos <span className="opc">(número, «Exento» o «Convenio Multilateral»)</span>
+            </label>
+            <input id="fa-iibb" value={f.iibb} onChange={campo("iibb")} maxLength={40} />
+          </div>
+          <div className="campo">
+            <label htmlFor="fa-inicio">Inicio de actividades</label>
+            <input id="fa-inicio" value={f.inicio} onChange={campo("inicio")} placeholder="dd/mm/aaaa" maxLength={10} />
+          </div>
+        </div>
+        <div className="producto-dos">
+          <div className="campo">
+            <label htmlFor="fa-pto">Punto de venta (web service)</label>
+            <input id="fa-pto" inputMode="numeric" value={f.ptoVta} onChange={campo("ptoVta")} maxLength={5} />
+          </div>
+          <div className="campo">
+            <label htmlFor="fa-ambiente">Ambiente</label>
+            <select id="fa-ambiente" value={f.ambiente} onChange={campo("ambiente")}>
+              <option value="homologacion">Homologación (pruebas, sin validez fiscal)</option>
+              <option value="produccion">Producción (facturas reales)</option>
+            </select>
+          </div>
+        </div>
+        <p className="nota-campo">
+          El certificado de ARCA no se carga acá: va en el servidor (ver LEEME, «Facturar con ARCA»). Probá primero en homologación.
+        </p>
+      </fieldset>
+      <p className={`admin-aviso-accion ${aviso.tipo === "error" ? "es-error" : ""}`} role={aviso.tipo === "error" ? "alert" : "status"}>
+        {aviso.texto}
+      </p>
+      <div className="pedido-acciones">
+        <button type="submit" className="btn bg-primary" disabled={guardando}>
+          {guardando ? "Guardando…" : "Guardar facturación"}
+        </button>
+        <button type="button" className="btn bg-outline" onClick={probar} disabled={probando}>
+          {probando ? "Probando…" : "Probar conexión con ARCA"}
+        </button>
+      </div>
+      {prueba && (
+        <div className={`config-prueba ${prueba.ok ? "" : "es-error"}`} role={prueba.ok ? "status" : "alert"}>
+          {prueba.ok ? (
+            <>
+              <p>
+                <b>Conectado a ARCA ({prueba.ambiente === "produccion" ? "producción" : "homologación"}).</b> Servidores: {prueba.servidores?.app}. Certificado aceptado.
+              </p>
+              <ul>
+                {prueba.ultimos.map((u) => (
+                  <li key={u.nombre}>
+                    Última {u.nombre}: <span className="num">{u.ultimo}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <p>{prueba.texto}</p>
+          )}
+        </div>
+      )}
+    </form>
+  );
+};
+
+const SeccionFacturacion = () => {
+  const { datos, cargando, error } = useDocumento("interno/config");
+  const [aviso, setAviso] = useState({ tipo: "", texto: "" });
+  if (cargando) return null;
+  if (error) return <p className="estado" role="alert">{error}</p>;
+  return <FormularioFacturacion key={JSON.stringify(datos?.facturacion ?? {})} facturacion={datos?.facturacion} aviso={aviso} setAviso={setAviso} />;
+};
+
 // Los datos del negocio que ve la tienda. Viajan con el catálogo: el cambio
 // se ve en la próxima visita, sin volver a publicar el sitio.
 export const AdminConfig = () => {
@@ -279,6 +439,7 @@ export const AdminConfig = () => {
       <p className="admin-intro">Lo que ve la clienta en la tienda y en el pedido.</p>
       <Formulario config={config} />
       <SeccionCobro />
+      <SeccionFacturacion />
     </section>
   );
 };

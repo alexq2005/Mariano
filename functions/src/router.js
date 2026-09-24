@@ -10,6 +10,7 @@ import { guardarConfig } from "./acciones/config.js";
 import { borrarClienta } from "./acciones/clienta.js";
 import { crearArrepentimiento, resolverArrepentimiento } from "./acciones/arrepentimiento.js";
 import { anularPago, cambiarEnvio, devolverPago, guardarCobro, iniciarPago, registrarPago, verificarPago } from "./acciones/cobro.js";
+import { emitirFactura, guardarFacturacion, guardarFiscalPedido, probarArca, reintentarFactura } from "./acciones/factura.js";
 
 // Dos puertas de entrada, cada una con su lista de acciones a la vista:
 //
@@ -29,6 +30,11 @@ const ACCIONES_PANEL = {
   "pago.anular": anularPago,
   "pago.devolver": devolverPago,
   "cobro.guardar": guardarCobro,
+  "facturacion.guardar": guardarFacturacion,
+  "factura.probar": probarArca,
+  "factura.emitir": emitirFactura,
+  "factura.reintentar": reintentarFactura,
+  "pedido.fiscal": guardarFiscalPedido,
   "precios.recalcular": recalcularPrecios,
   "config.guardar": guardarConfig,
   "clienta.borrar": borrarClienta,

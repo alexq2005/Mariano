@@ -10,21 +10,41 @@
 // npm de forma que ande igual en Windows y en Linux.
 
 import { execFileSync, spawn } from "node:child_process";
-import { existsSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { certificadoDePrueba } from "./certificado-prueba.mjs";
 
 // Las funciones usan una copia de src/compartido (ver copiar-compartido.mjs).
 execFileSync("node", ["scripts/copiar-compartido.mjs"], { stdio: "inherit" });
 
-// Mercado Pago, en la compu: credenciales de mentira y el simulado
-// (scripts/mercadopago-simulado.mjs). Los dos archivos están en .gitignore y
-// el emulador los lee solo; en producción no se usan.
-if (!existsSync("functions/.secret.local")) {
-  writeFileSync("functions/.secret.local", "MP_ACCESS_TOKEN=TEST-simulado\nMP_WEBHOOK_SECRET=simulado\n");
-}
-if (!existsSync("functions/.env.local")) {
-  writeFileSync("functions/.env.local", "MP_API_URL=http://127.0.0.1:8531\n");
-}
-const simulado = spawn("node", ["scripts/mercadopago-simulado.mjs"], { stdio: "inherit" });
+// Mercado Pago y ARCA, en la compu: credenciales de mentira y los simulados
+// (scripts/mercadopago-simulado.mjs y scripts/arca-simulado.mjs). Los dos
+// archivos están en .gitignore y el emulador los lee solo; en producción no
+// se usan. A un archivo que ya existe se le agrega solo lo que le falta.
+const asegurar = (archivo, variables) => {
+  const actual = existsSync(archivo) ? readFileSync(archivo, "utf8") : "";
+  const tiene = new Set(actual.split(/\r?\n/).map((l) => l.split("=")[0].trim()));
+  const faltan = Object.entries(variables).filter(([k]) => !tiene.has(k));
+  if (!faltan.length) return;
+  const base = actual && !actual.endsWith("\n") ? `${actual}\n` : actual;
+  writeFileSync(archivo, base + faltan.map(([k, v]) => `${k}=${typeof v === "function" ? v() : v}`).join("\n") + "\n");
+};
+let cert;
+const deCert = (campo) => () => {
+  cert ??= certificadoDePrueba();
+  return Buffer.from(cert[campo]).toString("base64");
+};
+asegurar("functions/.secret.local", {
+  MP_ACCESS_TOKEN: "TEST-simulado",
+  MP_WEBHOOK_SECRET: "simulado",
+  ARCA_CERT: deCert("certificado"),
+  ARCA_KEY: deCert("clave"),
+});
+asegurar("functions/.env.local", {
+  MP_API_URL: "http://127.0.0.1:8531",
+  ARCA_WSAA_URL: "http://127.0.0.1:8532/ws/services/LoginCms",
+  ARCA_WSFE_URL: "http://127.0.0.1:8532/wsfev1/service.asmx",
+});
+const simulados = ["scripts/mercadopago-simulado.mjs", "scripts/arca-simulado.mjs"].map((s) => spawn("node", [s], { stdio: "inherit" }));
 
 const argumentos = ["firebase", "emulators:start", "--project", "demo-aurora", ...process.argv.slice(2)];
 
@@ -35,6 +55,6 @@ const hijo = spawn("npx", argumentos, {
 });
 
 hijo.on("exit", (codigo) => {
-  simulado.kill();
+  for (const s of simulados) s.kill();
   process.exit(codigo ?? 0);
 });

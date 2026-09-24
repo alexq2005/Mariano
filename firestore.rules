@@ -13,13 +13,14 @@ rules_version = '2';
 //   interno/{stock|tablero|config}     stock, contadores en vivo, datos de cobro — staff
 //   pedidos/{id}              pedido completo con datos personales — staff
 //   seguimiento/{token}       vista mínima de la clienta — quien tenga el link, hasta que vence
+//   comprobantes/{token}      facturas y notas de crédito para ver e imprimir — quien tenga el link; el staff las lista
 //   clientas/{id}             ficha + total comprado — staff (Ley 25.326)
 //   stats/{AAAA-MM}           ventas por día y por producto — staff
 //   auditoria/{id}            historial inalterable — programador todo; admin solo nivel 'general'
 //   salida/{id}               outbox de emails/push — misma visibilidad que la auditoría
 //   arrepentimientos/{id}     solicitudes del botón — staff
 //   staff/{uid}               {rol, activo, email, nombre} — cada uno la suya; programador todas
-//   contadores, limites, importaciones, staff/*/dispositivos — solo Functions
+//   contadores, limites, importaciones, sistema, staff/*/dispositivos — solo Functions
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -79,6 +80,13 @@ service cloud.firestore {
       // y solo con email verificado.
       allow list: if request.auth != null && acotada(50)
                   && resource.data.uid == request.auth.uid;
+    }
+
+    // Cada factura tiene su propio token al azar (128 bits): es la llave para
+    // verla. Se lista solo desde el panel (el resumen del mes para el contador).
+    match /comprobantes/{token} {
+      allow get: if true;
+      allow list: if acotada(100) && esStaff();
     }
 
     match /clientas/{id} {

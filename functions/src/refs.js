@@ -9,6 +9,7 @@ export const refs = {
   contador: () => db.collection("contadores").doc("pedidos"),
   pedido: (id) => db.collection("pedidos").doc(id),
   seguimiento: (token) => db.collection("seguimiento").doc(token),
+  comprobante: (token) => db.collection("comprobantes").doc(token),
   clienta: (id) => db.collection("clientas").doc(id),
   stats: (mes) => db.collection("stats").doc(mes),
   limite: (clave) => db.collection("limites").doc(clave),

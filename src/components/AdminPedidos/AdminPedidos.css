@@ -150,7 +150,8 @@
 .cobro-aprobado { background: var(--sunken); color: var(--ok); }
 .cobro-rechazado { background: var(--acento-suave); color: var(--acento); }
 .cobro-devuelto { background: var(--sunken); color: var(--tenue); }
-.cobro { margin: 10px 0 0; }
+.cobro,
+.tarjeta-factura { margin: 10px 0 0; }
 .cobro-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .pedido-detalle .cobro-cabecera h2 { margin: 0; }
 .cobro-cuenta { margin: 10px 0; max-width: 360px; }
@@ -189,3 +190,23 @@
 }
 .campo-envio { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
 .campo-envio input { width: 120px; }
+
+/* ── Factura ─────────────────────────────────────────────────── */
+.factura-lista { margin: 6px 0 4px; padding: 0; list-style: none; }
+.factura-lista li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.factura-lista a { font-weight: 700; }
+.factura-lista small { flex-basis: 100%; color: var(--tenue); }
+.cobro-detalle .btn-link { margin-left: 8px; }
+.cobro-form select {
+  width: 100%;
+  max-width: 320px;
+  font: inherit;
+  font-size: 16px;
+  padding: 9px 12px;
+  border: 1px solid var(--line-fuerte);
+  border-radius: 12px;
+  background: var(--ground);
+  color: var(--texto);
+  margin-bottom: 8px;
+}
+.cobro-form > label { margin-top: 6px; }

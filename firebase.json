@@ -48,7 +48,7 @@
         "test"
       ],
       "predeploy": [
-        "node \"$PROJECT_DIR/scripts/copiar-compartido.mjs\""
+        "node scripts/copiar-compartido.mjs"
       ]
     }
   ]

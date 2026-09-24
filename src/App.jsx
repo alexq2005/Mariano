@@ -12,6 +12,8 @@ import { useProductos } from "./hooks/useProductos";
 
 // El panel se descarga aparte, solo cuando alguien entra a /admin.
 const AdminArea = lazy(() => import("./admin/AdminArea"));
+// La factura también: lleva el generador del QR, que el resto no necesita.
+const Factura = lazy(() => import("./components/Factura/Factura").then((m) => ({ default: m.Factura })));
 
 // Sin las variables de Firebase (por ejemplo, recién publicado en Vercel) el
 // panel no tiene a dónde conectarse: Firebase Auth ni siquiera arranca sin
@@ -61,6 +63,14 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/pedido/:token" element={<Seguimiento />} />
+          <Route
+            path="/factura/:token"
+            element={
+              <Suspense fallback={<p className="estado">Buscando la factura…</p>}>
+                <Factura />
+              </Suspense>
+            }
+          />
           <Route path="/arrepentimiento" element={<Arrepentimiento />} />
           <Route
             path="*"

@@ -393,6 +393,164 @@ for (const a of ["cobro.guardar", "pago.mercadopago", "pago.demas", "pago.devolv
   check(`historial: quedó anotado ${a}`, audPagos.has(a));
 }
 
+// ── Facturación electrónica (ARCA simulado) ─────────────────────────
+// scripts/arca-simulado.mjs lo levanta `npm run emu`, con un certificado de
+// prueba del CUIT 20-11111111-2.
+const ARCA = "http://127.0.0.1:8532";
+const arcaSim = async (ruta, cuerpo) =>
+  (await fetch(`${ARCA}${ruta}`, cuerpo ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(cuerpo) } : {})).json();
+try {
+  await arcaSim("/__simular/comprobantes");
+} catch {
+  console.error("No está el ARCA simulado. `npm run emu` lo levanta solo; si no: node scripts/arca-simulado.mjs");
+  process.exit(1);
+}
+// La base se borró al empezar: el ARCA simulado también arranca vacío (sin
+// comprobantes ni el ticket de acceso, que el real no vuelve a dar por 12 h).
+await arcaSim("/__simular/reiniciar", {});
+// Los frenos contra el abuso cuentan pedidos por hora desde esta conexión:
+// en las pruebas se hacen muchos seguidos.
+const limpiarLimites = async () => {
+  const docs = await listar("limites");
+  await Promise.all(docs.map((d) => fetch(`${BASE}/limites/${d.id}`, { method: "DELETE", headers: DUENO })));
+};
+await limpiarLimites();
+let telF = 5000;
+const pedidoCon = async (fiscal, carrito = [{ id: B.id, cant: 2 }]) => {
+  telF++;
+  const r = await tienda("pedido.crear", { carrito, cliente: cliente(`11 4200-${telF}`), ...(fiscal ? { fiscal } : {}) });
+  if (r.error) throw new Error(`pedido.crear: ${r.error.message}`);
+  await panel("pedido.confirmar", { id: r.result.id }, admin);
+  return r.result;
+};
+const cobrarAMano = (id) => panel("pago.registrar", { id, medio: "transferencia" }, admin);
+const comprobanteDe = async (token) => leer(`comprobantes/${token}`, {});
+const EMISOR = {
+  activa: true,
+  condicion: "monotributo",
+  cuit: "20-11111111-2",
+  razon_social: "Aurora Cosmética (prueba)",
+  domicilio: "Av. Corrientes 1234, CABA",
+  iibb: "Exento",
+  inicio: "01/03/2024",
+  ptoVta: 3,
+  ambiente: "homologacion",
+};
+
+check("facturación: la tienda no puede configurarla", (await tienda("facturacion.guardar", { activa: true })).error?.status === "NOT_FOUND");
+check("facturación: CUIT inválido se rechaza", (await panel("facturacion.guardar", { cuit: "20-11111111-3" }, admin)).error?.status === "INVALID_ARGUMENT");
+const incompleta = await panel("facturacion.guardar", { activa: true, condicion: "monotributo" }, admin);
+check("facturación: prenderla con datos incompletos dice qué falta", incompleta.error?.status === "FAILED_PRECONDITION" && /falta el CUIT/.test(incompleta.error?.message), incompleta);
+const sinFacturar = await pedidoCon();
+await cobrarAMano(sinFacturar.id);
+check("con la facturación apagada, cobrar no factura", !(await pedidoDe(sinFacturar.id))?.factura);
+const gf = await panel("facturacion.guardar", EMISOR, admin);
+check("el admin guarda los datos de ARCA y prende la facturación", gf.result?.cambiados?.length === 9, gf);
+check("la tienda sabe que se factura (para ofrecer factura con CUIT)", (await leer("publico/catalogo")).config?.emite_factura === true);
+const prueba = await panel("factura.probar", {}, admin);
+check("probar conexión: servidores OK, certificado aceptado, sin comprobantes todavía", prueba.result?.servidores?.app === "OK" && prueba.result?.ultimos?.[0]?.ultimo === "ninguno todavía", prueba);
+
+// Monotributo → Factura C
+const f1 = await pedidoCon();
+const pag1 = await cobrarAMano(f1.id);
+const ped1 = await pedidoDe(f1.id);
+check("cobrado: la factura sale en el momento", pag1.result?.estado === "aprobado" && ped1?.factura?.estado === "emitida", ped1?.factura);
+check("monotributo → Factura C n.º 1 del punto de venta 3, con CAE", ped1?.facturaVigente?.tipo === 11 && ped1?.facturaVigente?.numeroTexto === "00003-00000001" && /^\d{14}$/.test(ped1?.facturaVigente?.cae ?? ""), ped1?.facturaVigente);
+const fc1 = await comprobanteDe(ped1.facturaVigente.token);
+check("la factura se ve SIN cuenta, con su link", fc1?.nombre === "Factura C" && fc1?.receptor?.nombre === "Consumidor final" && fc1?.total === ped1.aCobrar, fc1);
+check("lleva el QR de ARCA y los datos del negocio", fc1?.qr?.startsWith("https://www.arca.gob.ar/fe/qr/?p=") && fc1?.emisor?.cuit === "20111111112" && fc1?.emisor?.inicio === "01/03/2024");
+check("en C no se discrimina IVA", fc1?.iva === 0 && fc1?.neto === fc1?.total && fc1?.alicuota === null);
+check("el seguimiento de la clienta muestra la factura", (await segDe(f1.token))?.comprobantes?.[0]?.numeroTexto === "00003-00000001");
+check("la lista de comprobantes NO se lee sin cuenta", (await fetch(`${BASE}/comprobantes?pageSize=5`)).status === 403);
+
+const f2 = await pedidoCon();
+await cobrarAMano(f2.id);
+check("la segunda usa el mismo acceso a ARCA (no pide otro) y es la n.º 2", (await pedidoDe(f2.id))?.facturaVigente?.numero === 2);
+await panel("pago.anular", { id: f2.id }, admin);
+const ped2 = await pedidoDe(f2.id);
+check("anular el pago → nota de crédito C que anula la factura", ped2?.factura?.estado === "anulada" && ped2?.facturaVigente === null && ped2?.comprobantes?.[1]?.tipo === 13, ped2?.factura);
+const nc2 = await comprobanteDe(ped2.comprobantes[1].token);
+check("la nota de crédito dice qué factura anula", nc2?.asociado?.nombre === "Factura C 00003-00000002" && nc2?.total === ped2.comprobantes[0].total, nc2?.asociado);
+
+// Con CUIT
+check("CUIT inválido al pedir: se rechaza y dice qué campo", (await tienda("pedido.crear", { carrito: [{ id: B.id, cant: 1 }], cliente: cliente("11 4300-0001"), fiscal: { condicion: "responsable_inscripto", cuit: "30712345670", nombre: "Sur SA" } })).error?.details?.errores?.cuit !== undefined);
+const f3 = await pedidoCon({ condicion: "responsable_inscripto", cuit: "30-71234567-1", nombre: "Distribuidora Sur SA" });
+await cobrarAMano(f3.id);
+const fc3 = await comprobanteDe((await pedidoDe(f3.id)).facturaVigente.token);
+check("con CUIT: la factura va a su nombre y CUIT", fc3?.receptor?.nombre === "Distribuidora Sur SA" && fc3?.receptor?.doc === "CUIT 30-71234567-1" && fc3?.receptor?.condicion === "IVA Responsable Inscripto", fc3?.receptor);
+
+// Mercado Pago cobra y devuelve: factura y nota de crédito solas
+await panel("cobro.guardar", { mercadopago: true }, admin);
+const f4 = await pedidoCon();
+await tienda("pago.iniciar", { token: f4.token, volverA: volver(f4.token) });
+const pref4 = (await mpSim("/__simular/preferencias")).find((x) => x.external_reference === f4.id);
+await mpSim("/__simular/pagar", { preferencia: pref4.id, resultado: "aprobado" });
+check("pagado con Mercado Pago: el aviso trae la factura", (await pedidoDe(f4.id))?.factura?.estado === "emitida");
+await panel("pago.devolver", { id: f4.id }, admin);
+check("devuelto por Mercado Pago: sale la nota de crédito", (await pedidoDe(f4.id))?.factura?.estado === "anulada");
+
+// Responsable inscripto → A o B
+check("pasar a responsable inscripto", (await panel("facturacion.guardar", { condicion: "responsable_inscripto" }, admin)).result?.cambiados?.[0] === "condicion");
+const f5 = await pedidoCon();
+await cobrarAMano(f5.id);
+const fc5 = await comprobanteDe((await pedidoDe(f5.id)).facturaVigente.token);
+check("a consumidor final: Factura B con el IVA discriminado", fc5?.tipo === 6 && fc5?.alicuota === 21 && Math.abs(fc5.neto + fc5.iva - fc5.total) < 0.001 && fc5.iva === Math.round((fc5.total - Math.round((fc5.total / 1.21) * 100) / 100) * 100) / 100, fc5);
+const f6 = await pedidoCon({ condicion: "monotributo", cuit: "20123456786", nombre: "Ana Revende" });
+await cobrarAMano(f6.id);
+check("a un monotributista con CUIT: Factura A", (await pedidoDe(f6.id))?.facturaVigente?.tipo === 1);
+await panel("pago.anular", { id: f6.id }, admin);
+check("y su anulación es nota de crédito A", (await pedidoDe(f6.id))?.comprobantes?.[1]?.tipo === 3);
+
+// Cuando ARCA falla
+await limpiarLimites();
+await arcaSim("/__simular/modo", { modo: "rechazar" });
+const f7 = await pedidoCon();
+const pag7 = await cobrarAMano(f7.id);
+const ped7 = await pedidoDe(f7.id);
+check("ARCA rechaza: el cobro se guarda igual y la factura queda con el motivo", pag7.result?.estado === "aprobado" && ped7?.factura?.estado === "error" && /Rechazo de prueba/.test(ped7?.factura?.error) && ped7?.factura?.temporal === false, ped7?.factura);
+check("reintentar desde el panel: sale la factura", (await panel("factura.reintentar", { id: f7.id }, admin)).result?.resultado?.estado === "emitida");
+check("reintentar sin nada pendiente: no", (await panel("factura.reintentar", { id: f7.id }, admin)).error?.status === "FAILED_PRECONDITION");
+
+const antesCorte = Object.values(await arcaSim("/__simular/comprobantes")).flat().length;
+await arcaSim("/__simular/modo", { modo: "cortar" });
+const f8 = await pedidoCon();
+await cobrarAMano(f8.id);
+const ped8 = await pedidoDe(f8.id);
+check("se corta la respuesta de ARCA: queda en error pasajero", ped8?.factura?.estado === "error" && ped8?.factura?.temporal === true, ped8?.factura);
+await panel("factura.reintentar", { id: f8.id }, admin);
+const ped8b = await pedidoDe(f8.id);
+const despuesCorte = Object.values(await arcaSim("/__simular/comprobantes")).flat().length;
+check("al reintentar recupera el comprobante que ARCA sí registró: no hay duplicado", ped8b?.factura?.estado === "emitida" && despuesCorte === antesCorte + 1, { factura: ped8b?.factura, antesCorte, despuesCorte });
+
+await arcaSim("/__simular/modo", { modo: "caido" });
+const f9 = await pedidoCon();
+await cobrarAMano(f9.id);
+check("ARCA caído: error pasajero (se reintenta solo cada 30 minutos)", (await pedidoDe(f9.id))?.factura?.temporal === true);
+await arcaSim("/__simular/modo", { modo: "normal" });
+check("vuelve ARCA: reintentar la emite", (await panel("factura.reintentar", { id: f9.id }, admin)).result?.resultado?.estado === "emitida");
+
+// Desde $10.000.000 a consumidor final hay que identificarlo
+await limpiarLimites();
+const grande = await pedidoCon(null, [{ id: B.id, cant: Math.ceil(10_000_000 / B.mayor) + 1 }]);
+await cobrarAMano(grande.id);
+check("desde $10.000.000 sin identificar: no factura y explica", /10\.000\.000/.test((await pedidoDe(grande.id))?.factura?.error ?? ""));
+check("datos para la factura: DNI inválido se rechaza", (await panel("pedido.fiscal", { id: grande.id, fiscal: { condicion: "consumidor_final", dni: "12", nombre: "Ana" } }, admin)).error?.status === "INVALID_ARGUMENT");
+await panel("pedido.fiscal", { id: grande.id, fiscal: { condicion: "consumidor_final", dni: "30.123.456", nombre: "Ana Prueba" } }, admin);
+await panel("factura.reintentar", { id: grande.id }, admin);
+const fcg = await comprobanteDe((await pedidoDe(grande.id))?.facturaVigente?.token ?? "x");
+check("con el DNI cargado, sale", fcg?.receptor?.doc === "DNI 30123456", fcg?.receptor);
+check("ya facturado: los datos no se cambian", (await panel("pedido.fiscal", { id: grande.id, fiscal: { condicion: "consumidor_final" } }, admin)).error?.status === "FAILED_PRECONDITION");
+
+// Un pedido cobrado antes de prender la facturación
+check("emitir a mano el que se cobró con la facturación apagada", (await panel("factura.emitir", { id: sinFacturar.id }, admin)).result?.resultado?.estado === "emitida");
+check("emitirla dos veces: no", (await panel("factura.emitir", { id: sinFacturar.id }, admin)).error?.status === "FAILED_PRECONDITION");
+
+const audF = new Set((await listar("auditoria")).map((a) => a.accion));
+for (const a of ["facturacion.guardar", "factura.emitida", "factura.anulada", "factura.reintentar", "factura.emitir", "pedido.fiscal"]) {
+  check(`historial: quedó anotado ${a}`, audF.has(a));
+}
+check("el historial no guarda el DNI", !JSON.stringify(await listar("auditoria")).includes("30123456"));
+
 // ── Historial de operaciones ────────────────────────────────────────
 const aud = await listar("auditoria");
 const acciones = new Set(aud.map((a) => a.accion));

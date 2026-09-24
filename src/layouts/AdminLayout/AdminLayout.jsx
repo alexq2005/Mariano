@@ -13,6 +13,7 @@ const SECCIONES = [
   { a: "/admin/pedidos", texto: "Pedidos", cuenta: "pendiente" },
   { a: "/admin/productos", texto: "Productos" },
   { a: "/admin/ventas", texto: "Ventas" },
+  { a: "/admin/facturas", texto: "Facturas" },
   { a: "/admin/clientas", texto: "Clientas" },
   { a: "/admin/arrepentimientos", texto: "Arrepentimientos" },
   { a: "/admin/historial", texto: "Historial" },
