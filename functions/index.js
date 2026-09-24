@@ -8,4 +8,5 @@ setGlobalOptions({ region: "us-central1", maxInstances: 10 });
 
 // Todo lo que escribe el panel entra por acá. El navegador nunca escribe
 // directo en Firestore: las reglas no se lo permiten.
-export const panel = onCall(async (req) => atender(req.data ?? {}, req.auth));
+// La IP solo se usa (como hash) para el límite de pedidos sin cuenta.
+export const panel = onCall(async (req) => atender(req.data ?? {}, req.auth, { ip: req.rawRequest?.ip }));

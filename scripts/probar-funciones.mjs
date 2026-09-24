@@ -103,6 +103,125 @@ const reactivado = await llamar("producto.pausar", { id: ID, pausar: false }, to
 check("el programador puede reactivar", reactivado.result?.activo === true, JSON.stringify(reactivado));
 check("vuelve a verse en la tienda", (await leerCatalogo()).find((p) => p.id === ID)?.activo === true);
 
+// ── Pedido de la clienta (sin cuenta) ─────────────────────────────
+// El límite por hora vive en limites/: se limpia para que la prueba se
+// pueda correr varias veces seguidas.
+const borrarColeccion = async (col) => {
+  const res = await fetch(`${FS}/${col}?pageSize=300`, { headers: { Authorization: "Bearer owner" } });
+  for (const d of (await res.json()).documents ?? []) {
+    await fetch(`http://127.0.0.1:8519/v1/${d.name}`, { method: "DELETE", headers: { Authorization: "Bearer owner" } });
+  }
+};
+await borrarColeccion("limites");
+
+const leerDoc = async (ruta, auth = "Bearer owner") => {
+  const res = await fetch(`${FS}/${ruta}`, { headers: auth ? { Authorization: auth } : {} });
+  return { status: res.status, datos: await res.json() };
+};
+
+const { productos: catalogo } = (await import("../public/data/catalogo.json", { with: { type: "json" } })).default;
+const [P1, P2] = catalogo;
+const cliente = {
+  nombre: "  Ana Pérez ",
+  telefono: "11 4567-8901",
+  email: "ana@ejemplo.com",
+  entrega: "envio",
+  direccion: "Caballito",
+  pago: "Transferencia",
+  comentarios: "",
+};
+const items = [{ id: P1.id, cant: 12 }, { id: P2.id, cant: 1 }];
+const total = P1.mayor * 12 + P2.menor;
+const solicitud = () => `prueba-${Math.random().toString(36).slice(2)}${Date.now()}`;
+const pedir = (cambios = {}, idToken = null) =>
+  llamar("pedido.crear", { items, cliente, totalVisto: total, solicitud: solicitud(), ...cambios }, idToken);
+
+const rechazo = (r, status) => r.error?.status === status;
+
+check("pedido vacío: se rechaza", rechazo(await pedir({ items: [] }), "INVALID_ARGUMENT"));
+check("cantidad con decimales: se rechaza", rechazo(await pedir({ items: [{ id: P1.id, cant: 1.5 }] }), "INVALID_ARGUMENT"));
+check("producto repetido: se rechaza", rechazo(await pedir({ items: [items[0], items[0]] }), "INVALID_ARGUMENT"));
+check("sin código de solicitud: se rechaza", rechazo(await pedir({ solicitud: "corto" }), "INVALID_ARGUMENT"));
+
+const sinEmail = await pedir({ cliente: { ...cliente, email: "ana@" } });
+check(
+  "datos inválidos: se rechaza y dice qué campo",
+  rechazo(sinEmail, "INVALID_ARGUMENT") && sinEmail.error?.details?.errores?.email,
+  JSON.stringify(sinEmail),
+);
+
+const inventado = await pedir({ items: [{ id: "NO-EXISTE", cant: 1 }], totalVisto: 1 });
+check(
+  "producto inexistente: se rechaza y lo nombra",
+  rechazo(inventado, "FAILED_PRECONDITION") && inventado.error?.details?.noDisponibles?.includes("NO-EXISTE"),
+  JSON.stringify(inventado),
+);
+
+const barato = await pedir({ totalVisto: total - 100 });
+check(
+  "total que no coincide con el servidor: se rechaza y manda el real",
+  rechazo(barato, "FAILED_PRECONDITION") && barato.error?.details?.total === total,
+  JSON.stringify(barato),
+);
+
+// Un producto pausado entre que la clienta lo agregó y confirmó.
+await llamar("producto.pausar", { id: P2.id, pausar: true }, tokenAdmin);
+const conPausado = await pedir();
+check(
+  "producto pausado: se rechaza y lo nombra",
+  rechazo(conPausado, "FAILED_PRECONDITION") && conPausado.error?.details?.noDisponibles?.includes(P2.id),
+  JSON.stringify(conPausado),
+);
+await llamar("producto.pausar", { id: P2.id, pausar: false }, tokenAdmin);
+
+const idem = solicitud();
+const ok = await pedir({ solicitud: idem });
+check("pedido válido sin cuenta: se crea con número y link", ok.result?.numero > 0 && /^[0-9a-f]{32}$/.test(ok.result?.seguimiento ?? ""), JSON.stringify(ok));
+check("el total es el que calculó el servidor", ok.result?.total === total);
+
+const repetido = await pedir({ solicitud: idem });
+check(
+  "el mismo pedido dos veces (doble clic): devuelve el mismo, no crea otro",
+  repetido.result?.repetido === true && repetido.result?.numero === ok.result?.numero,
+  JSON.stringify(repetido),
+);
+
+const otro = await pedir();
+check("el siguiente pedido lleva el número siguiente", otro.result?.numero === ok.result?.numero + 1, JSON.stringify(otro));
+
+const seg = await leerDoc(`seguimiento/${ok.result?.seguimiento}`, null);
+const segCampos = seg.datos.fields ?? {};
+check("el link de seguimiento se lee sin cuenta", seg.status === 200, JSON.stringify(seg.datos).slice(0, 200));
+check(
+  "el seguimiento no tiene datos personales",
+  !JSON.stringify(segCampos).match(/Ana|4567|ejemplo\.com|Caballito/),
+  JSON.stringify(segCampos).slice(0, 300),
+);
+
+const res = await fetch(`${FS}/pedidos?pageSize=50`, { headers: { Authorization: "Bearer owner" } });
+const guardado = ((await res.json()).documents ?? []).find(
+  (d) => Number(d.fields.numero.integerValue) === ok.result?.numero,
+);
+check(
+  "el pedido guarda los datos recortados",
+  guardado?.fields.cliente.mapValue.fields.nombre.stringValue === "Ana Pérez",
+  JSON.stringify(guardado?.fields.cliente).slice(0, 200),
+);
+
+const ajeno = await leerDoc(`pedidos/${guardado?.name.split("/").pop()}`, null);
+check("el pedido completo NO se lee sin cuenta", ajeno.status === 403, String(ajeno.status));
+
+const historial = await auditoria();
+check("el pedido quedó en el historial", historial.some((a) => a.accion === "pedido.crear"));
+
+let ultimo;
+for (let i = 0; i < 12; i++) ultimo = await pedir();
+check("muchos pedidos seguidos desde la misma conexión: se frena", rechazo(ultimo, "RESOURCE_EXHAUSTED"), JSON.stringify(ultimo));
+await borrarColeccion("limites");
+
+const accionHeredada = await llamar("constructor", {}, tokenAdmin);
+check("'constructor' no es una acción", rechazo(accionHeredada, "NOT_FOUND"), JSON.stringify(accionHeredada));
+
 const fallan = casos.filter((c) => !c.ok).length;
 console.log(`\n${casos.length - fallan}/${casos.length} OK`);
 process.exit(fallan ? 1 : 0);
