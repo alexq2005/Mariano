@@ -1,16 +1,16 @@
 # Publica la tienda en GitHub Pages: https://<usuario>.github.io/<repo>/
 #
+# Es una opción aparte: la tienda en producción está en Vercel, que publica
+# sola cada push a main. Por eso este workflow corre solo a mano (pestaña
+# Actions → "Publicar en GitHub Pages" → Run workflow): con Pages sin
+# activar, correr en cada push dejaría una cruz roja en cada commit.
+#
 # Antes de la primera vez, en GitHub: Settings → Pages → Build and
 # deployment → Source: "GitHub Actions". En un repo privado, Pages necesita
 # GitHub Pro (gratis con el Student Developer Pack de GitHub Education).
-#
-# Corre cuando se sube algo a main (por ejemplo, al hacer merge de un PR) o
-# a mano: pestaña Actions → "Publicar en GitHub Pages" → Run workflow.
 name: Publicar en GitHub Pages
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -34,11 +34,16 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      # La dirección donde queda publicado: /<repo>/ en github.io, o la raíz
+      # si algún día se le pone un dominio propio.
+      - id: pages
+        uses: actions/configure-pages@v5
       # npm run build termina con check:dist: si algo privado se coló en lo
       # que se publica, el despliegue se corta acá.
       - run: npm run build
         env:
-          BASE_PATH: /${{ github.event.repository.name }}/
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+          SITE_URL: ${{ steps.pages.outputs.base_url }}/
           # Opcionales. Sin ellas la tienda lee public/data/catalogo.json, y
           # el panel /admin no funciona (necesita Firebase). Se cargan en
           # Settings → Secrets and variables → Actions → Variables: son
@@ -53,7 +58,6 @@ jobs:
       # un archivo, y para eso sirve 404.html. Con una copia del index, la
       # app arranca igual y muestra el producto.
       - run: cp dist/index.html dist/404.html
-      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

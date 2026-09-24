@@ -34,23 +34,33 @@ npm run dev        # abre en http://localhost:8518
 
 ### Publicar
 
-`npm run build` y subir la carpeta `dist/` a Vercel o Netlify (o conectar
-el repositorio y que lo hagan solos). `vercel.json` y `public/_redirects`
-ya están configurados para que recargar `/cart` o `/product/...` no dé 404.
+**La tienda en producción está en Vercel**, conectado al repositorio: cada
+push a `main` (por ejemplo, el merge de un PR) se publica solo en
+<https://mariano-theta.vercel.app>, y cada PR recibe su propio link de vista
+previa. `vercel.json` hace que recargar `/cart` o `/product/...` no dé 404
+(`public/_redirects` hace lo mismo en Netlify).
 
-#### En GitHub Pages
+Sin las variables `VITE_FIREBASE_*` en Vercel (Settings → Environment
+Variables), la tienda lee `public/data/catalogo.json` y el panel `/admin`
+no funciona. Con ellas, lee el catálogo de Firestore.
+
+La imagen que aparece al compartir el link por WhatsApp es `public/og.jpg`
+(1200 × 630). Si cambia el nombre del negocio o la estética, hay que
+reemplazarla.
+
+#### En GitHub Pages (opcional)
 
 El workflow `.github/workflows/pages.yml` la publica en
-`https://<usuario>.github.io/<repo>/` cada vez que se sube algo a `main`.
+`https://<usuario>.github.io/<repo>/`. Corre solo a mano, para no dejar una
+cruz roja en cada commit mientras Pages no esté activado.
 
 1. **Requisito**: con el repositorio privado, Pages necesita GitHub Pro
    (gratis para estudiantes con el Student Developer Pack de GitHub
    Education). Con el repositorio público, no.
 2. En GitHub: **Settings → Pages → Build and deployment → Source: GitHub
    Actions**. Se hace una sola vez.
-3. Hacer merge del PR a `main`, o correrlo a mano: **Actions → Publicar en
-   GitHub Pages → Run workflow**. En un par de minutos queda la dirección en
-   Settings → Pages.
+3. **Actions → Publicar en GitHub Pages → Run workflow**. En un par de
+   minutos queda la dirección en Settings → Pages.
 
 Sin las variables de Firebase la tienda se ve completa (lee
 `public/data/catalogo.json`), pero el panel `/admin` no funciona. Para
