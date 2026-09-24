@@ -5,6 +5,7 @@ import { db } from "../../firebase/panel";
 import { useConsulta, useDocumento } from "../../admin/vivo";
 import { ESTADOS, fechaHora } from "../../admin/formato";
 import { plata } from "../../utils/precios";
+import { PastillaCobro } from "./CobroPedido";
 import "./AdminPedidos.css";
 
 const PESTANAS = ["pendiente", "confirmado", "entregado", "cancelado", "todos"];
@@ -67,8 +68,14 @@ export const AdminPedidos = () => {
                     {fechaHora(p.creado)} · {p.unidades} u. · {p.entrega?.nombre}
                   </small>
                 </span>
-                <span className="pedido-total num">{plata(p.total)}</span>
-                <span className={`estado-pastilla estado-${p.estado}`}>{ESTADOS[p.estado]?.nom ?? p.estado}</span>
+                <span className="pedido-total num">{plata(p.aCobrar ?? p.total)}</span>
+                <span className="pedido-pastillas">
+                  {/* El cobro importa una vez confirmado; antes, solo si ya pagó. */}
+                  {p.cobro && (p.estado === "confirmado" || p.estado === "entregado" || p.cobro.estado !== "sin_pagar") && (
+                    <PastillaCobro estado={p.cobro.estado} />
+                  )}
+                  <span className={`estado-pastilla estado-${p.estado}`}>{ESTADOS[p.estado]?.nom ?? p.estado}</span>
+                </span>
               </Link>
             </li>
           ))}

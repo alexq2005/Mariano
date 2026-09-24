@@ -52,7 +52,7 @@
 .pedido-quien b, .pedido-quien small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pedido-quien small { color: var(--tenue); font-size: 12.5px; }
 .pedido-total { grid-area: total; justify-self: end; font-weight: 800; }
-.pedido-fila .estado-pastilla { grid-area: estado; justify-self: end; }
+.pedido-pastillas { grid-area: estado; justify-self: end; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
 
 /* Colores de estado: siempre con texto, nunca solo el color. */
 .estado-pastilla {
@@ -143,3 +143,49 @@
 .clienta-pedidos li { margin-bottom: 4px; }
 .clienta-ficha .btn-link { padding: 0; min-height: 32px; color: var(--alerta); }
 .arrepentimiento-item p { margin: 0 0 6px; font-size: 14px; }
+
+/* ── Cobro ───────────────────────────────────────────────────── */
+.cobro-sin_pagar { background: var(--sunken); color: var(--alerta); }
+.cobro-pendiente, .cobro-reclamo { background: var(--sunken); color: var(--alerta); }
+.cobro-aprobado { background: var(--sunken); color: var(--ok); }
+.cobro-rechazado { background: var(--acento-suave); color: var(--acento); }
+.cobro-devuelto { background: var(--sunken); color: var(--tenue); }
+.cobro { margin: 10px 0 0; }
+.cobro-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.pedido-detalle .cobro-cabecera h2 { margin: 0; }
+.cobro-cuenta { margin: 10px 0; max-width: 360px; }
+.cobro-cuenta div { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
+.cobro-cuenta dd { margin: 0; }
+.cobro-total { margin-top: 4px; padding-top: 6px; border-top: 1px solid var(--line); font-weight: 800; }
+.cobro-total dd { font-family: var(--display); font-size: 19px; }
+.pedido-detalle .cobro-detalle { margin: 0 0 8px; font-size: 14px; font-weight: 600; }
+.cobro-detalle small { display: block; font-weight: 400; color: var(--tenue); }
+.cobro-alerta {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--alerta);
+  border-radius: 12px;
+  font-size: 14px;
+}
+.pedido-detalle .cobro-alerta p { margin: 0; }
+.cobro-alerta ul { margin: 6px 0 0; padding-left: 18px; }
+.cobro-alerta .btn-link { margin-left: 8px; }
+.cobro-form { margin: 8px 0 0; padding: 12px 14px; border: 1px solid var(--line-fuerte); border-radius: 14px; }
+.cobro-form fieldset { margin: 0 0 10px; padding: 0; border: 0; }
+.cobro-form legend { font-weight: 700; margin-bottom: 6px; }
+.cobro-opcion { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; margin-right: 14px; font-size: 15px; }
+.cobro-form > label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+.cobro-form input:not([type="radio"]),
+.campo-envio input {
+  width: 100%;
+  max-width: 320px;
+  font: inherit;
+  font-size: 16px;
+  padding: 9px 12px;
+  border: 1px solid var(--line-fuerte);
+  border-radius: 12px;
+  background: var(--ground);
+  color: var(--texto);
+}
+.campo-envio { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+.campo-envio input { width: 120px; }

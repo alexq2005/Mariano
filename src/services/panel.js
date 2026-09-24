@@ -29,7 +29,9 @@ export const llamarPanel = async (accion, datos = {}) => {
   } catch (err) {
     console.error(`Falló la acción ${accion}:`, err);
     const codigo = err.code?.replace("functions/", "");
-    const error = new Error(GENERICOS[codigo] ?? err.message ?? "No se pudo completar.");
+    // El SDK le agrega al mensaje el código HTTP (" [400]"): a quien lo lee no le dice nada.
+    const mensaje = typeof err.message === "string" ? err.message.replace(/\s*\[\d{3}\]$/, "") : "";
+    const error = new Error(GENERICOS[codigo] ?? (mensaje || "No se pudo completar."));
     error.detalle = err.details ?? null;
     error.codigo = err.code;
     throw error;

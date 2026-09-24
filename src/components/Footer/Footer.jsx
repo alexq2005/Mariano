@@ -3,6 +3,7 @@ import { useCart } from "../../context/CartContext";
 import { plata } from "../../utils/precios";
 import { numeroWhatsAppValido } from "../../utils/pedido";
 import { enumerarFrase } from "../../utils/presentacion";
+import { hayServidor } from "../../services/tienda";
 import { Sello } from "../Sello/Sello";
 import "./Footer.css";
 
@@ -102,7 +103,11 @@ export const Footer = () => {
               <li>Elegí los productos y cuántos querés de cada uno.</li>
               <li>Llevando {config.minimo_mayor} o más del mismo, pagás precio por mayor.</li>
               <li>Hacé el pedido: te damos un número y un link para seguirlo.</li>
-              <li>Coordinamos la entrega y el pago por WhatsApp.</li>
+              <li>
+                {hayServidor
+                  ? "Te lo confirmamos con el envío y lo pagás desde el link del pedido."
+                  : "Coordinamos la entrega y el pago por WhatsApp."}
+              </li>
             </ol>
           </div>
           <div className="footer-col">

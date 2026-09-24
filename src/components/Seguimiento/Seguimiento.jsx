@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { leerDocumentoPublico } from "../../services/firestoreRest";
-import { hayServidor } from "../../services/tienda";
+import { hayServidor, llamarTienda } from "../../services/tienda";
 import { useProductos } from "../../hooks/useProductos";
 import { plata } from "../../utils/precios";
 import { numeroWhatsAppValido, urlWhatsApp } from "../../utils/pedido";
 import { rutaImagen } from "../../services/productos";
+import { Pago } from "./Pago";
 import "./Seguimiento.css";
 
 // Los pasos que ve la clienta. "Cancelado" no es un paso: reemplaza a los
 // que faltaban.
 const PASOS = [
   { estado: "pendiente", texto: "Recibido", ayuda: "La tienda ya tiene tu pedido." },
-  { estado: "confirmado", texto: "Confirmado", ayuda: "Se acordó el stock, la entrega y el pago." },
+  { estado: "confirmado", texto: "Confirmado", ayuda: "Tenemos todo separado para vos." },
   { estado: "entregado", texto: "Entregado", ayuda: "¡Listo! Que lo disfrutes." },
 ];
 
@@ -30,6 +31,16 @@ export const Seguimiento = () => {
   const tokenValido = hayServidor && /^[0-9a-f]{32}$/.test(token);
   const [leido, setEstado] = useState({ cargando: true, pedido: null, error: null });
   const estado = tokenValido ? leido : { cargando: false, pedido: null, error: "no-existe" };
+  const [recarga, setRecarga] = useState(0);
+
+  // Al volver de Mercado Pago la dirección trae el número de pago
+  // (?payment_id=…). Se le pide al servidor que lo revise: así la clienta ve
+  // "Pagado" aunque el aviso de Mercado Pago todavía no haya llegado.
+  const [params, setParams] = useSearchParams();
+  const volvioDeMp = ["payment_id", "collection_id", "preference_id"].some((k) => params.has(k));
+  const idVuelta = params.get("payment_id") ?? params.get("collection_id") ?? "";
+  const pagoVuelta = tokenValido && /^\d{1,20}$/.test(idVuelta) ? idVuelta : null;
+  const [errorPago, setErrorPago] = useState("");
 
   useEffect(() => {
     if (!tokenValido) return undefined;
@@ -39,10 +50,49 @@ export const Seguimiento = () => {
       .catch((err) => {
         if (err.name === "AbortError") return;
         const error = err.status === 404 ? "no-existe" : err.status === 403 ? "vencido" : "red";
-        setEstado({ cargando: false, pedido: null, error });
+        // Si ya se estaba viendo, una recarga que falla no lo borra.
+        setEstado((antes) => (antes.pedido ? antes : { cargando: false, pedido: null, error }));
       });
     return () => control.abort();
-  }, [token, tokenValido]);
+  }, [token, tokenValido, recarga]);
+
+  useEffect(() => {
+    if (!volvioDeMp) return undefined;
+    let vivo = true;
+    const revisar = async () => {
+      let error = "";
+      if (pagoVuelta) {
+        try {
+          await llamarTienda("pago.verificar", { token, pagoId: pagoVuelta });
+        } catch (err) {
+          error = err.deConexion ? "No pudimos confirmar tu pago todavía. Si se aprobó, en unos minutos lo vas a ver acá." : err.message;
+        }
+      }
+      // Se relee el pedido ANTES de sacar el "confirmando…": si no, por un
+      // instante volvían a aparecer los botones de pagar.
+      const pedido = await leerDocumentoPublico(`seguimiento/${token}`).catch(() => null);
+      if (!vivo) return;
+      if (pedido) setEstado({ cargando: false, pedido, error: null });
+      setErrorPago(error);
+      // La dirección vuelve a ser el link del pedido, sin los datos del pago.
+      setParams({}, { replace: true });
+    };
+    revisar();
+    return () => {
+      vivo = false;
+    };
+  }, [volvioDeMp, pagoVuelta, token, setParams]);
+
+  // Un pago en efectivo (Rapipago / Pago Fácil) se acredita horas después:
+  // mientras la página esté abierta, se revisa cada medio minuto.
+  const cobroEnCurso = leido.pedido?.cobro?.estado === "pendiente";
+  useEffect(() => {
+    if (!cobroEnCurso) return undefined;
+    const id = setInterval(() => {
+      if (document.visibilityState === "visible") setRecarga((n) => n + 1);
+    }, 30_000);
+    return () => clearInterval(id);
+  }, [cobroEnCurso]);
 
   const titulo = <title>{`Tu pedido | ${config.nombre_negocio}`}</title>;
   if (estado.cargando) return <p className="estado">Buscando tu pedido…</p>;
@@ -118,12 +168,19 @@ export const Seguimiento = () => {
         ))}
       </ul>
       <p className="seguimiento-total num">
-        Total <b>{plata(p.total)}</b> <small>(sin envío)</small>
+        {p.estado === "pendiente" ? "Total" : "Productos"} <b>{plata(p.total)}</b> {p.estado === "pendiente" && <small>(sin envío)</small>}
       </p>
       {p.ahorro > 0 && <p className="seguimiento-ahorro num">Ahorraste {plata(p.ahorro)} por comprar por mayor</p>}
       <p className="seguimiento-datos">
         Entrega: {p.entrega} · Pago: {p.pago}
       </p>
+
+      <Pago p={p} token={token} config={config} verificando={volvioDeMp} />
+      {errorPago && (
+        <p className="pago-error" role="alert">
+          {errorPago}
+        </p>
+      )}
 
       {numeroWhatsAppValido(config.whatsapp) && (
         <a className="btn bg-success" href={consulta} target="_blank" rel="noopener noreferrer">

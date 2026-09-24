@@ -7,6 +7,7 @@ import { plata } from "../../utils/precios";
 import { rutaImagen } from "../../services/productos";
 import { whatsappDeTelefono } from "../../compartido/clientas";
 import { urlSeguimiento } from "../../services/tienda";
+import { CobroPedido } from "./CobroPedido";
 import "./AdminPedidos.css";
 
 // El detalle de un pedido y lo que se puede hacer con él. El documento se
@@ -18,6 +19,7 @@ export const AdminPedido = () => {
   const [aviso, setAviso] = useState({ tipo: "", texto: "" });
   const [cancelando, setCancelando] = useState(false);
   const [motivo, setMotivo] = useState("");
+  const [envio, setEnvio] = useState("");
 
   if (cargando) return <p className="estado">Cargando el pedido…</p>;
   if (error) return <p className="estado" role="alert">{error}</p>;
@@ -39,8 +41,10 @@ export const AdminPedido = () => {
       const r = await llamarPanel(accion, { id, ...extra });
       setAviso({ tipo: "ok", texto: r.sinCambios ? "Ya estaba así." : exito });
       setCancelando(false);
+      return true;
     } catch (err) {
       setAviso({ tipo: "error", texto: err.message });
+      return false;
     } finally {
       setTrabajando("");
     }
@@ -65,10 +69,24 @@ export const AdminPedido = () => {
 
       <div className="pedido-acciones">
         {p.estado === "pendiente" && (
-          <button type="button" className="btn bg-success" disabled={Boolean(trabajando)}
-            onClick={() => hacer("pedido.confirmar", {}, "Confirmado: se descontó el stock y ya cuenta como venta.")}>
-            {trabajando === "pedido.confirmar" ? "Confirmando…" : "Confirmar pedido"}
-          </button>
+          <>
+            {/* El envío se suma al confirmar: la clienta ve el total final
+                y lo paga desde su link de seguimiento. */}
+            <label className="campo-envio">
+              Envío a cobrar $
+              <input inputMode="numeric" placeholder="0" value={envio} onChange={(e) => setEnvio(e.target.value.replace(/\D/g, ""))} />
+            </label>
+            <button type="button" className="btn bg-success" disabled={Boolean(trabajando)}
+              onClick={() =>
+                hacer(
+                  "pedido.confirmar",
+                  envio ? { envio: Number(envio) } : {},
+                  "Confirmado: se descontó el stock, ya cuenta como venta y la clienta ya puede pagar.",
+                )
+              }>
+              {trabajando === "pedido.confirmar" ? "Confirmando…" : "Confirmar pedido"}
+            </button>
+          </>
         )}
         {p.estado === "confirmado" && (
           <button type="button" className="btn bg-success" disabled={Boolean(trabajando)}
@@ -94,6 +112,8 @@ export const AdminPedido = () => {
           <textarea id="motivo" rows={2} maxLength={300} value={motivo} onChange={(e) => setMotivo(e.target.value)} />
           <p className="nota-campo">
             {p.estado === "confirmado" ? "El stock vuelve y se resta de las ventas del mes." : "No toca el stock: todavía no se había descontado."}
+            {p.cobro?.estado === "aprobado" && p.cobro?.medio === "mercadopago" && " Está pagado con Mercado Pago: después devolvé el pago desde «Cobro»."}
+            {p.cobro?.estado === "aprobado" && p.cobro?.medio !== "mercadopago" && " Está marcado como pagado: devolvele la plata a la clienta."}
           </p>
           <div className="pedido-acciones">
             <button type="button" className="btn bg-primary" disabled={Boolean(trabajando)}
@@ -110,6 +130,8 @@ export const AdminPedido = () => {
       <p className={`admin-aviso-accion ${aviso.tipo === "error" ? "es-error" : ""}`} role={aviso.tipo === "error" ? "alert" : "status"}>
         {aviso.texto}
       </p>
+
+      <CobroPedido p={p} hacer={hacer} trabajando={trabajando} />
 
       <div className="pedido-grilla">
         <div className="admin-tarjeta">
@@ -135,7 +157,7 @@ export const AdminPedido = () => {
               </>
             )}
           </p>
-          <h2>Pago</h2>
+          <h2>Cómo dijo que paga</h2>
           <p>{p.pago}</p>
           {p.comentarios && (
             <>

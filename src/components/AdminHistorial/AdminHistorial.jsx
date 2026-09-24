@@ -3,7 +3,8 @@ import { collection, limit, orderBy, query, where } from "firebase/firestore";
 import { db } from "../../firebase/panel";
 import { useAuth } from "../../context/AuthContext";
 import { useConsulta } from "../../admin/vivo";
-import { ACCIONES, fechaHora } from "../../admin/formato";
+import { ACCIONES, COBROS, fechaHora } from "../../admin/formato";
+import { plata } from "../../utils/precios";
 import "../AdminPedidos/AdminPedidos.css";
 
 // Un renglón legible del detalle de cada acción.
@@ -28,6 +29,20 @@ const resumen = (a) => {
       return `${d.codigo}${d.numero ? ` · pedido #${d.numero}` : ""}`;
     case "clienta.borrar":
       return `${d.pedidosAnonimizados} pedidos anonimizados`;
+    case "pedido.envio":
+      return `Pedido #${d.numero}: envío ${plata(d.antes)} → ${plata(d.despues)}`;
+    case "pago.registrar":
+    case "pago.anular":
+      return `Pedido #${d.numero} · ${d.medio} · ${plata(d.monto)}`;
+    case "pago.devolver":
+    case "pago.mercadopago":
+    case "pago.demas":
+      return `Pedido #${d.numero} · ${plata(d.monto)}${d.estado ? ` · ${COBROS[d.estado] ?? d.estado}` : ""} · n.º ${d.referencia}`;
+    case "cobro.guardar":
+      // A dónde va la plata: se muestra el antes y el después.
+      return Object.entries(d)
+        .map(([k, v]) => `${k}: ${v.antes ?? "—"} → ${v.despues ?? "—"}`)
+        .join(" · ");
     default:
       return "";
   }
@@ -75,7 +90,7 @@ export const AdminHistorial = () => {
                 <tr key={a.id}>
                   <td className="num">{fechaHora(a.cuando)}</td>
                   <td>
-                    {a.quien?.email ?? "—"} <span className={`admin-rol admin-rol-${a.quien?.rol}`}>{a.quien?.rol}</span>
+                    {a.quien?.email ?? (a.quien?.rol === "sistema" ? "Mercado Pago" : "—")} <span className={`admin-rol admin-rol-${a.quien?.rol}`}>{a.quien?.rol}</span>
                   </td>
                   <td>
                     {ACCIONES[a.accion] ?? a.accion}

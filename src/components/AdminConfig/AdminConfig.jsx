@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useProductos } from "../../hooks/useProductos";
 import { useAuth } from "../../context/AuthContext";
-import { llamarYRefrescar } from "../../services/panel";
+import { llamarPanel, llamarYRefrescar } from "../../services/panel";
+import { useDocumento } from "../../admin/vivo";
 import { numeroWhatsAppValido } from "../../utils/pedido";
 import "../Checkout/Checkout.css";
 import "../AdminProducto/AdminProducto.css";
@@ -168,6 +169,103 @@ const Formulario = ({ config }) => {
   );
 };
 
+const desdeCobro = (c = {}) => ({
+  alias: c.alias ?? "",
+  cbu: c.cbu ?? "",
+  titular: c.titular ?? "",
+  banco: c.banco ?? "",
+  mercadopago: Boolean(c.mercadopago),
+});
+
+// Cómo le paga la clienta un pedido confirmado. Vive en interno/config (lo
+// ve solo el equipo) y se muestra en el link de seguimiento de cada pedido
+// confirmado: no queda a la vista de cualquiera que entre a la tienda.
+const FormularioCobro = ({ cobro, aviso, setAviso }) => {
+  const [f, setF] = useState(() => desdeCobro(cobro));
+  const [guardando, setGuardando] = useState(false);
+  const campo = (k) => (e) => setF({ ...f, [k]: e.target.type === "checkbox" ? e.target.checked : e.target.value });
+
+  const guardar = async (e) => {
+    e.preventDefault();
+    const base = desdeCobro(cobro);
+    const datos = Object.fromEntries(Object.entries(f).filter(([k, v]) => v !== base[k]));
+    if (!Object.keys(datos).length) return setAviso({ tipo: "ok", texto: "No hay cambios para guardar." });
+    setGuardando(true);
+    setAviso({ tipo: "", texto: "" });
+    try {
+      const r = await llamarPanel("cobro.guardar", datos);
+      const n = r.actualizados ?? 0;
+      setAviso({
+        tipo: "ok",
+        texto: r.cambiados.length ? `Guardado.${n ? ` Se actualizó en ${n} ${n === 1 ? "pedido confirmado" : "pedidos confirmados"} sin pagar.` : ""}` : "No había cambios.",
+      });
+    } catch (err) {
+      setAviso({ tipo: "error", texto: err.message });
+    } finally {
+      setGuardando(false);
+    }
+  };
+
+  return (
+    <form className="producto-form config-form" onSubmit={guardar} noValidate>
+      <fieldset>
+        <legend>Cobrar los pedidos</legend>
+        <p className="nota-campo">
+          Cuando confirmás un pedido, la clienta lo paga desde su link de seguimiento. Lo que cargues acá es lo que ve.
+        </p>
+        <label className="opcion config-check">
+          <input type="checkbox" checked={f.mercadopago} onChange={campo("mercadopago")} />
+          Cobrar con Mercado Pago (tarjetas de crédito y débito, dinero en cuenta, efectivo en Rapipago / Pago Fácil)
+        </label>
+        <p className="nota-campo">
+          Se marca pagado solo. Necesita la cuenta de Mercado Pago conectada en el servidor (ver LEEME); si falta, al guardar te avisa.
+        </p>
+        <h3 className="config-sub">Transferencia (cualquier banco o billetera)</h3>
+        <div className="producto-dos">
+          <div className="campo">
+            <label htmlFor="cb-alias">Alias</label>
+            <input id="cb-alias" value={f.alias} onChange={campo("alias")} maxLength={20} autoCapitalize="none" spellCheck={false} />
+          </div>
+          <div className="campo">
+            <label htmlFor="cb-cbu">CBU o CVU</label>
+            <input id="cb-cbu" inputMode="numeric" value={f.cbu} onChange={campo("cbu")} maxLength={26} />
+          </div>
+        </div>
+        <div className="producto-dos">
+          <div className="campo">
+            <label htmlFor="cb-titular">Titular de la cuenta</label>
+            <input id="cb-titular" value={f.titular} onChange={campo("titular")} maxLength={60} />
+          </div>
+          <div className="campo">
+            <label htmlFor="cb-banco">Banco o billetera</label>
+            <input id="cb-banco" value={f.banco} onChange={campo("banco")} maxLength={40} placeholder="Ej.: Mercado Pago, Galicia, Ualá" />
+          </div>
+        </div>
+        <p className="nota-campo">
+          Las transferencias las marcás vos como pagadas al ver el comprobante (en el pedido, «Marcar pagado»). Un cambio de alias o CBU queda en el historial.
+        </p>
+      </fieldset>
+      <p className={`admin-aviso-accion ${aviso.tipo === "error" ? "es-error" : ""}`} role={aviso.tipo === "error" ? "alert" : "status"}>
+        {aviso.texto}
+      </p>
+      <button type="submit" className="btn bg-primary" disabled={guardando}>
+        {guardando ? "Guardando…" : "Guardar datos de cobro"}
+      </button>
+    </form>
+  );
+};
+
+const SeccionCobro = () => {
+  const { datos, cargando, error } = useDocumento("interno/config");
+  // El aviso vive acá: al guardar, el formulario se vuelve a armar con lo
+  // guardado (ver key) y el "Guardado" no se tiene que perder.
+  const [aviso, setAviso] = useState({ tipo: "", texto: "" });
+  if (cargando) return <p className="estado">Cargando los datos de cobro…</p>;
+  if (error) return <p className="estado" role="alert">{error}</p>;
+  // key: si otra persona del equipo lo cambia, el formulario arranca de nuevo con lo guardado.
+  return <FormularioCobro key={JSON.stringify(datos?.cobro ?? {})} cobro={datos?.cobro} aviso={aviso} setAviso={setAviso} />;
+};
+
 // Los datos del negocio que ve la tienda. Viajan con el catálogo: el cambio
 // se ve en la próxima visita, sin volver a publicar el sitio.
 export const AdminConfig = () => {
@@ -180,6 +278,7 @@ export const AdminConfig = () => {
       <h1>Configuración</h1>
       <p className="admin-intro">Lo que ve la clienta en la tienda y en el pedido.</p>
       <Formulario config={config} />
+      <SeccionCobro />
     </section>
   );
 };

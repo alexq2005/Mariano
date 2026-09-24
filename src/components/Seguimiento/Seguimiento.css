@@ -83,3 +83,63 @@
 .seguimiento-ahorro { margin: 0; text-align: right; font-size: 13px; font-weight: 700; color: var(--ok); }
 .seguimiento-datos { margin: 14px 0 16px; font-size: 14px; color: var(--tenue); }
 .seguimiento .btn { width: 100%; }
+
+/* ── Pago ───────────────────────────────────────────────────────── */
+.pago { margin: 6px 0 18px; }
+.pago h3 { margin: 0 0 2px; font-size: 15px; }
+.pago-nota { margin: 0 0 16px; font-size: 14px; color: var(--tenue); }
+.pago-cuenta { margin: 0 0 14px; padding: 12px 14px; border-radius: 14px; background: var(--sunken); }
+.pago-cuenta div { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
+.pago-cuenta dd { margin: 0; }
+.pago-cuenta .pago-total { margin-top: 6px; padding-top: 8px; border-top: 1px solid var(--line-fuerte); font-weight: 700; }
+.pago-total dd { font-family: var(--display); font-size: 22px; font-weight: 800; }
+.pago-opcion { padding: 14px 0; border-top: 1px solid var(--line); }
+.pago-opcion:first-of-type { border-top: 0; padding-top: 0; }
+.pago-medios { margin: 6px 0 10px; font-size: 13px; color: var(--tenue); }
+.pago-error { margin: 8px 0 0; font-size: 14px; font-weight: 600; color: var(--alerta); }
+.pago-aviso { margin: 6px 0 8px; font-size: 13px; color: var(--ok); }
+/* Vacío no ocupa lugar, pero sigue en la página: si se ocultara, el lector
+   de pantalla no anunciaría el "Alias copiado". */
+.pago-aviso:empty { margin: 0; }
+.pago-opcion:last-child { padding-bottom: 0; }
+
+/* El estado del pago: verde si está pagado, ámbar si hay que esperar o
+   reintentar. El texto dice qué pasa; el color acompaña. */
+.pago-estado {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line-fuerte);
+  background: var(--sunken);
+  font-size: 14px;
+}
+.pago-estado b { font-size: 16px; }
+.pago-estado[data-clase="ok"] { border-color: var(--ok); }
+.pago-estado[data-clase="ok"] b { color: var(--ok); }
+.pago-estado[data-clase="ok"] b::before { content: "✓ "; }
+.pago-estado[data-clase="error"] b,
+.pago-estado[data-clase="espera"] b { color: var(--alerta); }
+
+/* Alias, CBU y monto: grandes y con "Copiar" al lado. */
+.datos { margin: 0; }
+.dato { padding: 8px 0; border-bottom: 1px solid var(--line); }
+.dato dt { font-size: 12px; font-weight: 600; color: var(--tenue); }
+.dato dd { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 2px 0 0; font-size: 15px; font-weight: 600; }
+.dato-valor { min-width: 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.btn-copiar {
+  flex: none;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line-fuerte);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--acento);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-copiar:hover { border-color: var(--acento); }

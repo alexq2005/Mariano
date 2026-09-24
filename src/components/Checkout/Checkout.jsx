@@ -75,7 +75,7 @@ const PedidoRegistrado = ({ registro, config, titulo, refTitulo }) => {
       </div>
       {wa && <p className="nota">Si nos avisás por WhatsApp lo vemos al toque: el mensaje ya va escrito.</p>}
       <p className="nota">
-        Guardá el link de seguimiento: ahí ves si ya lo confirmamos.{" "}
+        Guardá el link de seguimiento: ahí ves si ya lo confirmamos y cómo pagarlo.{" "}
         <button type="button" className="btn-link" onClick={copiarLink}>
           Copiar link
         </button>

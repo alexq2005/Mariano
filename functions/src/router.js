@@ -9,12 +9,13 @@ import { recalcularPrecios } from "./acciones/precios.js";
 import { guardarConfig } from "./acciones/config.js";
 import { borrarClienta } from "./acciones/clienta.js";
 import { crearArrepentimiento, resolverArrepentimiento } from "./acciones/arrepentimiento.js";
+import { anularPago, cambiarEnvio, devolverPago, guardarCobro, iniciarPago, registrarPago, verificarPago } from "./acciones/cobro.js";
 
 // Dos puertas de entrada, cada una con su lista de acciones a la vista:
 //
 //   panel   el equipo, con cuenta. El rol sale de staff/{uid} en el servidor
 //           y cada acción se cruza con la tabla de permisos.js.
-//   tienda  la clienta, sin cuenta: solo hacer un pedido y el botón de
+//   tienda  la clienta, sin cuenta: hacer un pedido, pagarlo y el botón de
 //           arrepentimiento, con freno contra el abuso (limites.js).
 const ACCIONES_PANEL = {
   "producto.pausar": pausarProducto,
@@ -23,6 +24,11 @@ const ACCIONES_PANEL = {
   "pedido.confirmar": confirmarPedido,
   "pedido.entregar": entregarPedido,
   "pedido.cancelar": cancelarPedido,
+  "pedido.envio": cambiarEnvio,
+  "pago.registrar": registrarPago,
+  "pago.anular": anularPago,
+  "pago.devolver": devolverPago,
+  "cobro.guardar": guardarCobro,
   "precios.recalcular": recalcularPrecios,
   "config.guardar": guardarConfig,
   "clienta.borrar": borrarClienta,
@@ -32,6 +38,8 @@ const ACCIONES_PANEL = {
 const ACCIONES_TIENDA = {
   "pedido.crear": crearPedido,
   "arrepentimiento.crear": crearArrepentimiento,
+  "pago.iniciar": iniciarPago,
+  "pago.verificar": verificarPago,
 };
 
 export const atender = async ({ accion, datos }, auth) => {

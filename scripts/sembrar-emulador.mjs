@@ -140,13 +140,17 @@ if (!process.argv.includes("--sin-ejemplos")) {
     hechos.push(await llamar("tienda", "pedido.crear", { carrito: [{ id: a.id, cant: 12 }, { id: e.id, cant: 12 }], cliente: cliente(clientas[3]) }));
     hechos.push(await llamar("tienda", "pedido.crear", { carrito: [{ id: c.id, cant: 3 }], cliente: cliente(clientas[0]) }));
 
-    await llamar("panel", "pedido.confirmar", { id: hechos[0].id }, admin);
+    // Cobro: Mercado Pago (el simulado, en la compu) y un alias de ejemplo.
+    await llamar("panel", "cobro.guardar", { alias: "aurora.ejemplo", titular: "Aurora (ejemplo)", banco: "Mercado Pago", mercadopago: true }, admin);
+
+    await llamar("panel", "pedido.confirmar", { id: hechos[0].id, envio: 2500 }, admin);
+    await llamar("panel", "pago.registrar", { id: hechos[0].id, medio: "transferencia", nota: "Comprobante 0012" }, admin);
     await llamar("panel", "pedido.entregar", { id: hechos[0].id }, admin);
     await llamar("panel", "pedido.confirmar", { id: hechos[1].id }, admin);
     await llamar("panel", "pedido.confirmar", { id: hechos[3].id }, admin);
     await llamar("panel", "pedido.cancelar", { id: hechos[3].id, motivo: "La clienta cambió de idea" }, admin);
     await llamar("tienda", "arrepentimiento.crear", { nombre: "Lucía Pérez", contacto: "11 5555-1234", numero: hechos[1].numero, motivo: "El tono no era el que esperaba" });
-    console.log(`\nEjemplos: ${hechos.length} pedidos (#${hechos[0].numero} a #${hechos.at(-1).numero}), stock en 2 productos y un arrepentimiento.`);
+    console.log(`\nEjemplos: ${hechos.length} pedidos (#${hechos[0].numero} a #${hechos.at(-1).numero}), uno pagado, uno por cobrar, stock en 2 productos y un arrepentimiento.`);
 
     // Costos para probar Precios (solo programador): los reales si está
     // datos/ en esta máquina; si no, unos de mentira sacados del precio.

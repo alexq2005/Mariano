@@ -6,6 +6,7 @@ import { anotarEnAuditoria } from "../auditoria.js";
 import { claveClienta } from "../compartido/clientas.js";
 import { claveIp, refLimite, revisarLimite } from "../limites.js";
 import { claveDia, claveMes } from "../tiempo.js";
+import { vistaPagar } from "./cobro.js";
 import { armarLineas, deltaVenta, ErrorPedido, moverStock, puedePasar } from "../logica-pedido.js";
 import { formaDeEntrega, sanearDatosPedido, validarDatosPedido } from "../compartido/datos-pedido.js";
 
@@ -25,6 +26,11 @@ const vistaSeguimiento = (pedido, config, expira) => ({
   items: pedido.items.map((i) => ({ nom: i.nom, img: i.img, cant: i.cant, unit: i.unit, sub: i.sub, esMayor: i.esMayor })),
   total: pedido.total,
   ahorro: pedido.ahorro,
+  envio: pedido.envio,
+  aCobrar: pedido.aCobrar,
+  cobro: { estado: pedido.cobro.estado, detalle: null },
+  // Cómo pagar: aparece cuando el negocio confirma el pedido.
+  pagar: null,
   entrega: pedido.entrega.nombre,
   pago: pedido.pago,
   historial: [{ estado: pedido.estado, cuando: pedido.creado }],
@@ -97,6 +103,10 @@ export const crearPedido = async (datos, { ip }) => {
       pago: cliente.pago,
       comentarios: cliente.comentarios || null,
       ...lineas,
+      // Lo que se cobra: los productos y, al confirmar, el envío.
+      envio: 0,
+      aCobrar: lineas.total,
+      cobro: { estado: "sin_pagar" },
       // Las condiciones con las que se armó: si mañana cambia el mínimo por
       // mayor, este pedido sigue explicándose solo.
       condiciones: {
@@ -138,10 +148,16 @@ const cambiarEstado = (hacia) => async (datos, quien) => {
   const { id } = datos ?? {};
   const motivo = typeof datos?.motivo === "string" ? datos.motivo.trim().slice(0, 300) : "";
   if (typeof id !== "string" || !id) throw new HttpsError("invalid-argument", "Falta el pedido.");
+  // Al confirmar se puede sumar el costo del envío: la clienta paga
+  // productos + envío.
+  const envio = hacia === "confirmado" && datos?.envio !== undefined && datos?.envio !== null ? datos.envio : undefined;
+  if (envio !== undefined && (!Number.isInteger(envio) || envio < 0 || envio > 10_000_000)) {
+    throw new HttpsError("invalid-argument", "El envío es un monto en pesos, sin centavos.");
+  }
   const ahora = new Date();
 
   return db.runTransaction(async (tx) => {
-    const [ped, st, cat] = await tx.getAll(refs.pedido(id), refs.stock(), refs.catalogo());
+    const [ped, st, cat, cfg] = await tx.getAll(refs.pedido(id), refs.stock(), refs.catalogo(), refs.config());
     if (!ped.exists) throw new HttpsError("not-found", "Ese pedido no existe.");
     const p = ped.data();
     if (p.estado === hacia) return { id, numero: p.numero, estado: hacia, sinCambios: true };
@@ -194,15 +210,26 @@ const cambiarEstado = (hacia) => async (datos, quien) => {
 
     const entrada = { estado: hacia, cuando: ahora, quien: { nombre: quien.nombre ?? quien.email ?? "", rol: quien.rol } };
     if (motivo) entrada.motivo = motivo;
+    // Confirmado, ya se puede pagar: el monto final y cómo pagarlo.
+    const cobrar = {};
+    if (hacia === "confirmado") {
+      cobrar.envio = envio ?? p.envio ?? 0;
+      cobrar.aCobrar = p.total + cobrar.envio;
+    }
     tx.update(refs.pedido(id), {
       estado: hacia,
       actualizado: ahora,
       historial: FieldValue.arrayUnion(entrada),
-      ...(hacia === "confirmado" ? { confirmado: ahora } : {}),
+      ...(hacia === "confirmado" ? { confirmado: ahora, ...cobrar } : {}),
     });
     tx.set(
       refs.seguimiento(p.token),
-      { estado: hacia, actualizado: ahora, historial: FieldValue.arrayUnion({ estado: hacia, cuando: ahora }) },
+      {
+        estado: hacia,
+        actualizado: ahora,
+        historial: FieldValue.arrayUnion({ estado: hacia, cuando: ahora }),
+        ...(hacia === "confirmado" ? { ...cobrar, pagar: vistaPagar(cfg.data()?.cobro) } : {}),
+      },
       { merge: true },
     );
     tx.set(refs.tablero(), { porEstado: { [p.estado]: inc(-1), [hacia]: inc(1) } }, { merge: true });
@@ -210,7 +237,7 @@ const cambiarEstado = (hacia) => async (datos, quien) => {
       accion: `pedido.${VERBO[hacia]}`,
       quien,
       cuando: ahora.toISOString(),
-      detalle: { id, numero: p.numero, de: p.estado, a: hacia, total: p.total, ...(motivo ? { motivo } : {}) },
+      detalle: { id, numero: p.numero, de: p.estado, a: hacia, total: p.total, ...(cobrar.envio ? { envio: cobrar.envio } : {}), ...(motivo ? { motivo } : {}) },
     });
     return { id, numero: p.numero, estado: hacia, sinCambios: false };
   });

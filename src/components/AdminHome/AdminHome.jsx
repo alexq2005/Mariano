@@ -23,6 +23,11 @@ export const AdminHome = () => {
   const { datos: ventas } = useDocumento(`stats/${mes}`);
   const pendientesQ = useMemo(() => query(collection(db, "pedidos"), where("estado", "==", "pendiente"), orderBy("creado", "desc"), limit(5)), []);
   const { docs: pendientes } = useConsulta(pendientesQ);
+  // Confirmados que faltan cobrar (transferencias por marcar, pagos en curso).
+  const confirmadosQ = useMemo(() => query(collection(db, "pedidos"), where("estado", "==", "confirmado"), orderBy("creado", "desc"), limit(50)), []);
+  const { docs: confirmados } = useConsulta(confirmadosQ);
+  const porCobrar = confirmados.filter((p) => !["aprobado", "reclamo"].includes(p.cobro?.estado));
+  const montoPorCobrar = porCobrar.reduce((s, p) => s + (p.aCobrar ?? p.total), 0);
 
   const agotados = productos.filter((p) => p.agotado && p.activo !== false).length;
   const pausados = productos.filter((p) => p.activo === false).length;
@@ -54,6 +59,13 @@ export const AdminHome = () => {
           <div className="rotulo">Vendido en {nombreMes(mes)}</div>
           <div className="dato num">{plata(ventas?.totales?.total ?? 0)}</div>
           <div className="nota">{ventas?.totales?.pedidos ?? 0} pedidos confirmados</div>
+        </Link>
+        <Link to="/admin/pedidos?estado=confirmado" className="admin-tarjeta admin-tarjeta-link">
+          <div className="rotulo">Por cobrar</div>
+          <div className="dato num">{plata(montoPorCobrar)}</div>
+          <div className="nota">
+            {porCobrar.length ? `${porCobrar.length} ${porCobrar.length === 1 ? "pedido confirmado" : "pedidos confirmados"} sin pagar` : "todo cobrado"}
+          </div>
         </Link>
         <Link to="/admin/productos" className="admin-tarjeta admin-tarjeta-link">
           <div className="rotulo">Productos en la tienda</div>

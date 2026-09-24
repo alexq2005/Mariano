@@ -249,6 +249,150 @@ let ultimo;
 for (let i = 0; i < 6; i++) ultimo = await hacerPedido([{ id: B.id, cant: 1 }], "11 4999-0000");
 check("el 6.º pedido en una hora con el mismo teléfono se frena", ultimo.error?.status === "RESOURCE_EXHAUSTED", ultimo);
 
+// ── Cobros: Mercado Pago (simulado) y transferencia ─────────────────
+// El Mercado Pago simulado (scripts/mercadopago-simulado.mjs) lo levanta
+// `npm run emu`; las funciones le hablan a él en vez de al real.
+const MP = "http://127.0.0.1:8531";
+const mpSim = async (ruta, cuerpo) =>
+  (await fetch(`${MP}${ruta}`, cuerpo ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(cuerpo) } : {})).json();
+const volver = (tk) => `http://localhost:8518/pedido/${tk}`;
+const pedidoDe = async (id) => leer(`pedidos/${id}`);
+const segDe = async (tk) => leer(`seguimiento/${tk}`, {});
+try {
+  await mpSim("/__simular/avisos");
+} catch {
+  console.error("No está el Mercado Pago simulado. `npm run emu` lo levanta solo; si no: node scripts/mercadopago-simulado.mjs");
+  process.exit(1);
+}
+
+check("cobro: la tienda no puede cambiar el alias", (await tienda("cobro.guardar", { alias: "robado.ok" })).error?.status === "NOT_FOUND");
+check("cobro: alias inválido se rechaza", (await panel("cobro.guardar", { alias: "con espacios" }, admin)).error?.status === "INVALID_ARGUMENT");
+check("cobro: CBU que no son 22 números se rechaza", (await panel("cobro.guardar", { cbu: "123" }, admin)).error?.status === "INVALID_ARGUMENT");
+const gc = await panel(
+  "cobro.guardar",
+  { alias: "Aurora.Cosmetica", cbu: "0000003100 0123456789 01", titular: "Aurora Cosmética", banco: "Mercado Pago", mercadopago: true },
+  admin,
+);
+check("el admin guarda alias, CBU y prende Mercado Pago (el servidor prueba el token)", gc.result?.cambiados?.length === 5, gc);
+check("alias en minúscula y CBU sin espacios", (await leer("interno/config"))?.cobro?.cbu === "0000003100012345678901" && (await leer("interno/config"))?.cobro?.alias === "aurora.cosmetica");
+check("la config de cobro no se lee sin cuenta", (await leer("interno/config", {}))?.__error === 403);
+
+const pp = await hacerPedido([{ id: B.id, cant: 2 }], "11 4100-0001");
+const segPend = await segDe(pp.result.token);
+check("pedido nuevo: sin pagar y todavía sin datos para pagar", segPend?.cobro?.estado === "sin_pagar" && segPend?.pagar === null && segPend?.aCobrar === pp.result.total, segPend);
+check("no se puede pagar un pedido sin confirmar", (await tienda("pago.iniciar", { token: pp.result.token, volverA: volver(pp.result.token) })).error?.status === "FAILED_PRECONDITION");
+const ventasAntes = (await leer(`stats/${mes}`))?.totales?.total ?? 0;
+check("envío negativo al confirmar: se rechaza", (await panel("pedido.confirmar", { id: pp.result.id, envio: -5 }, admin)).error?.status === "INVALID_ARGUMENT");
+check("confirmar sumando $3.500 de envío", (await panel("pedido.confirmar", { id: pp.result.id, envio: 3500 }, admin)).result?.estado === "confirmado");
+const aCobrar = pp.result.total + 3500;
+const segConf = await segDe(pp.result.token);
+check(
+  "el seguimiento muestra productos + envío y cómo pagar",
+  segConf?.aCobrar === aCobrar && segConf?.envio === 3500 && segConf?.pagar?.mercadopago === true && segConf?.pagar?.transferencia?.alias === "aurora.cosmetica",
+  segConf,
+);
+check("las ventas del mes no cuentan el envío", (await leer(`stats/${mes}`))?.totales?.total === ventasAntes + pp.result.total);
+
+check("volver a otro sitio después de pagar: no", (await tienda("pago.iniciar", { token: pp.result.token, volverA: "https://otro.com/pedido/x" })).error?.status === "INVALID_ARGUMENT");
+check("link de pedido inventado: no", (await tienda("pago.iniciar", { token: "0".repeat(32), volverA: volver("0".repeat(32)) })).error?.status === "NOT_FOUND");
+const ini = await tienda("pago.iniciar", { token: pp.result.token, volverA: volver(pp.result.token) });
+check("pagar con Mercado Pago: devuelve el link de pago", (ini.result?.url ?? "").startsWith(`${MP}/checkout/`), ini);
+const pref = (await mpSim("/__simular/preferencias")).find((x) => x.external_reference === pp.result.id);
+check("el monto lo pone el servidor (productos + envío) y el aviso va al webhook", pref?.items?.[0]?.unit_price === aCobrar && pref?.notification_url?.endsWith("/us-central1/mercadopago"), pref);
+check("pedir el link dos veces reusa el mismo pago", (await tienda("pago.iniciar", { token: pp.result.token, volverA: volver(pp.result.token) })).result?.url === ini.result.url);
+
+const rech = await mpSim("/__simular/pagar", { preferencia: pref.id, resultado: "rechazado" });
+check("tarjeta rechazada: llega el aviso y queda rechazado", (await pedidoDe(pp.result.id))?.cobro?.estado === "rechazado");
+const apr = await mpSim("/__simular/pagar", { preferencia: pref.id, resultado: "aprobado", sinAviso: true });
+check("la vuelta de Mercado Pago trae el número de pago", new URL(apr.vuelta).searchParams.get("payment_id") === String(apr.pago.id), apr.vuelta);
+check("sin el aviso todavía, sigue rechazado", (await pedidoDe(pp.result.id))?.cobro?.estado === "rechazado");
+check("verificar con el link de OTRO pedido: no", (await tienda("pago.verificar", { token: p2.result.token, pagoId: String(apr.pago.id) })).error?.status === "PERMISSION_DENIED");
+check("verificar un pago que no existe: no", (await tienda("pago.verificar", { token: pp.result.token, pagoId: "1" })).error?.status === "NOT_FOUND");
+const ver = await tienda("pago.verificar", { token: pp.result.token, pagoId: String(apr.pago.id) });
+check("la clienta vuelve de Mercado Pago: se verifica y queda pagado", ver.result?.estado === "aprobado", ver);
+const cobro1 = (await pedidoDe(pp.result.id))?.cobro;
+check(
+  "el cobro guarda medio, detalle, monto y número de pago",
+  cobro1?.medio === "mercadopago" && cobro1?.monto === aCobrar && cobro1?.referencia === String(apr.pago.id) && cobro1?.detalle === "Tarjeta de crédito visa, 3 cuotas",
+  cobro1,
+);
+const segPag = await segDe(pp.result.token);
+check("el seguimiento muestra pagado", segPag?.cobro?.estado === "aprobado" && segPag?.cobro?.detalle === "Tarjeta de crédito visa, 3 cuotas", segPag?.cobro);
+await mpSim("/__simular/avisar", { id: apr.pago.id });
+check("el aviso que llega después no cambia nada", (await pedidoDe(pp.result.id))?.cobro?.cuando === cobro1.cuando);
+await mpSim("/__simular/avisar", { id: rech.pago.id });
+const trasViejo = await pedidoDe(pp.result.id);
+check("el aviso viejo del rechazado no pisa el pago", trasViejo?.cobro?.estado === "aprobado" && !trasViejo?.pagosDeMas, trasViejo?.cobro);
+check("ya pagado: no se puede volver a pagar", (await tienda("pago.iniciar", { token: pp.result.token, volverA: volver(pp.result.token) })).error?.status === "FAILED_PRECONDITION");
+
+const mala = await mpSim("/__simular/pagar", { preferencia: pref.id, resultado: "aprobado", firmaMala: true });
+const avisos = await mpSim("/__simular/avisos");
+check("un aviso con firma falsa se rechaza (401)", avisos.at(-1)?.pago === mala.pago.id && avisos.at(-1)?.respuesta === 401, avisos.at(-1));
+check("y no toca el pedido", !(await pedidoDe(pp.result.id))?.pagosDeMas);
+check("el webhook solo acepta POST", (await fetch(`${FN}/mercadopago`)).status === 405);
+const ipn = await fetch(`${FN}/mercadopago?topic=payment&id=${mala.pago.id}`, { method: "POST" });
+check("un aviso sin firma (formato viejo) se ignora sin error", ipn.status === 200 && !(await pedidoDe(pp.result.id))?.pagosDeMas);
+check("avisos de otro tipo: se responde ok y se ignoran", (await fetch(`${FN}/mercadopago?type=merchant_order&data.id=5`, { method: "POST" })).status === 200);
+await tienda("pago.verificar", { token: pp.result.token, pagoId: String(mala.pago.id) });
+const conDeMas = await pedidoDe(pp.result.id);
+check(
+  "un segundo pago del mismo pedido queda como pago de más",
+  conDeMas?.pagosDeMas?.[mala.pago.id]?.estado === "aprobado" && conDeMas?.cobro?.referencia === String(apr.pago.id),
+  conDeMas?.pagosDeMas,
+);
+const devMas = await panel("pago.devolver", { id: pp.result.id, referencia: String(mala.pago.id) }, admin);
+check("el admin devuelve el pago de más", !devMas.error && (await pedidoDe(pp.result.id))?.pagosDeMas?.[mala.pago.id]?.estado === "devuelto", devMas);
+check("y el cobro del pedido sigue pagado", (await pedidoDe(pp.result.id))?.cobro?.estado === "aprobado");
+
+check("un pago de Mercado Pago no se anula (se devuelve)", (await panel("pago.anular", { id: pp.result.id }, admin)).error?.status === "FAILED_PRECONDITION");
+check("pagado: el envío ya no se cambia", (await panel("pedido.envio", { id: pp.result.id, envio: 100 }, admin)).error?.status === "FAILED_PRECONDITION");
+check("la tienda no puede devolver", (await tienda("pago.devolver", { id: pp.result.id })).error?.status === "NOT_FOUND");
+await panel("pedido.cancelar", { id: pp.result.id, motivo: "No llegó el tono" }, admin);
+const dev = await panel("pago.devolver", { id: pp.result.id }, admin);
+check("cancelado y pagado: el admin devuelve el pago", dev.result?.estado === "devuelto", dev);
+check("el seguimiento muestra la devolución", (await segDe(pp.result.token))?.cobro?.estado === "devuelto");
+check("devolver dos veces: no", (await panel("pago.devolver", { id: pp.result.id }, admin)).error?.status === "FAILED_PRECONDITION");
+
+// Transferencia: la marca el negocio al ver el comprobante.
+const pt = await hacerPedido([{ id: B.id, cant: 1 }], "11 4100-0002");
+await panel("pedido.confirmar", { id: pt.result.id }, admin);
+const env = await panel("pedido.envio", { id: pt.result.id, envio: 1200 }, admin);
+check("cambiar el envío de un confirmado sin pagar", env.result?.aCobrar === pt.result.total + 1200, env);
+check("el seguimiento ve el envío nuevo", (await segDe(pt.result.token))?.aCobrar === pt.result.total + 1200);
+check("medio de pago inventado: no", (await panel("pago.registrar", { id: pt.result.id, medio: "cripto" }, admin)).error?.status === "INVALID_ARGUMENT");
+const rp = await panel("pago.registrar", { id: pt.result.id, medio: "transferencia", nota: "Comprobante 4471" }, admin);
+check("el admin marca pagado por transferencia", rp.result?.estado === "aprobado", rp);
+const cobroT = (await pedidoDe(pt.result.id))?.cobro;
+check("queda quién lo marcó, cuánto y la nota", cobroT?.quien?.rol === "admin" && cobroT?.monto === pt.result.total + 1200 && cobroT?.detalle === "Transferencia · Comprobante 4471", cobroT);
+check("marcarlo dos veces: no", (await panel("pago.registrar", { id: pt.result.id, medio: "efectivo" }, admin)).error?.status === "FAILED_PRECONDITION");
+check("anular un pago marcado por error", (await panel("pago.anular", { id: pt.result.id }, admin)).result?.estado === "sin_pagar");
+check("el seguimiento vuelve a sin pagar", (await segDe(pt.result.token))?.cobro?.estado === "sin_pagar");
+
+// Efectivo en Rapipago: queda pendiente hasta que se acredita.
+const pe = await hacerPedido([{ id: B.id, cant: 3 }], "11 4100-0003");
+await panel("pedido.confirmar", { id: pe.result.id }, admin);
+await tienda("pago.iniciar", { token: pe.result.token, volverA: volver(pe.result.token) });
+const prefE = (await mpSim("/__simular/preferencias")).find((x) => x.external_reference === pe.result.id);
+const ef = await mpSim("/__simular/pagar", { preferencia: prefE.id, resultado: "pendiente", medio: "efectivo" });
+const cobroE = (await pedidoDe(pe.result.id))?.cobro;
+check("efectivo en Rapipago: queda pendiente", cobroE?.estado === "pendiente" && /Efectivo/.test(cobroE?.detalle), cobroE);
+check("con un pago en curso, el envío no se cambia", (await panel("pedido.envio", { id: pe.result.id, envio: 500 }, admin)).error?.status === "FAILED_PRECONDITION");
+await mpSim("/__simular/estado", { id: ef.pago.id, status: "approved" });
+check("cuando se acredita, pasa a pagado solo", (await pedidoDe(pe.result.id))?.cobro?.estado === "aprobado");
+
+// Cambiar el alias llega a los pedidos confirmados que faltan pagar.
+const gc2 = await panel("cobro.guardar", { alias: "aurora.nueva" }, admin);
+check("cambiar el alias: se actualizan los pedidos sin pagar", gc2.result?.actualizados >= 1 && (await segDe(pt.result.token))?.pagar?.transferencia?.alias === "aurora.nueva", gc2);
+check("pero no los ya pagados", (await segDe(pe.result.token))?.pagar?.transferencia?.alias === "aurora.cosmetica");
+await panel("cobro.guardar", { mercadopago: false }, admin);
+check("con Mercado Pago apagado no se puede iniciar un pago", (await tienda("pago.iniciar", { token: pt.result.token, volverA: volver(pt.result.token) })).error?.status === "FAILED_PRECONDITION");
+check("y el seguimiento deja de ofrecerlo", (await segDe(pt.result.token))?.pagar?.mercadopago === false);
+
+const audPagos = new Set((await listar("auditoria")).map((a) => a.accion));
+for (const a of ["cobro.guardar", "pago.mercadopago", "pago.demas", "pago.devolver", "pago.registrar", "pago.anular", "pedido.envio"]) {
+  check(`historial: quedó anotado ${a}`, audPagos.has(a));
+}
+
 // ── Historial de operaciones ────────────────────────────────────────
 const aud = await listar("auditoria");
 const acciones = new Set(aud.map((a) => a.accion));

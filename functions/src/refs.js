@@ -5,6 +5,7 @@ export const refs = {
   catalogo: () => db.collection("publico").doc("catalogo"),
   stock: () => db.collection("interno").doc("stock"),
   tablero: () => db.collection("interno").doc("tablero"),
+  config: () => db.collection("interno").doc("config"),
   contador: () => db.collection("contadores").doc("pedidos"),
   pedido: (id) => db.collection("pedidos").doc(id),
   seguimiento: (token) => db.collection("seguimiento").doc(token),

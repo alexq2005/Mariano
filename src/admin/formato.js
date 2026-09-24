@@ -32,6 +32,15 @@ export const ESTADOS = {
   cancelado: { nom: "Cancelado", plural: "Cancelados" },
 };
 
+export const COBROS = {
+  sin_pagar: "Sin pagar",
+  pendiente: "Pago en proceso",
+  aprobado: "Pagado",
+  rechazado: "Pago rechazado",
+  reclamo: "Reclamo abierto",
+  devuelto: "Pago devuelto",
+};
+
 export const ACCIONES = {
   "producto.pausar": "Pausó o reactivó un producto",
   "producto.guardar": "Guardó un producto",
@@ -43,4 +52,11 @@ export const ACCIONES = {
   "arrepentimiento.resolver": "Resolvió un arrepentimiento",
   "config.guardar": "Cambió la configuración",
   "precios.recalcular": "Recalculó los precios",
+  "pedido.envio": "Cambió el envío de un pedido",
+  "pago.registrar": "Marcó un pedido pagado",
+  "pago.anular": "Anuló un pago marcado a mano",
+  "pago.devolver": "Devolvió un pago de Mercado Pago",
+  "pago.mercadopago": "Mercado Pago avisó un pago",
+  "pago.demas": "Mercado Pago avisó un pago de más",
+  "cobro.guardar": "Cambió los datos para cobrar",
 };

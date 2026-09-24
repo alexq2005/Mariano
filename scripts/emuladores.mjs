@@ -10,9 +10,21 @@
 // npm de forma que ande igual en Windows y en Linux.
 
 import { execFileSync, spawn } from "node:child_process";
+import { existsSync, writeFileSync } from "node:fs";
 
 // Las funciones usan una copia de src/compartido (ver copiar-compartido.mjs).
 execFileSync("node", ["scripts/copiar-compartido.mjs"], { stdio: "inherit" });
+
+// Mercado Pago, en la compu: credenciales de mentira y el simulado
+// (scripts/mercadopago-simulado.mjs). Los dos archivos están en .gitignore y
+// el emulador los lee solo; en producción no se usan.
+if (!existsSync("functions/.secret.local")) {
+  writeFileSync("functions/.secret.local", "MP_ACCESS_TOKEN=TEST-simulado\nMP_WEBHOOK_SECRET=simulado\n");
+}
+if (!existsSync("functions/.env.local")) {
+  writeFileSync("functions/.env.local", "MP_API_URL=http://127.0.0.1:8531\n");
+}
+const simulado = spawn("node", ["scripts/mercadopago-simulado.mjs"], { stdio: "inherit" });
 
 const argumentos = ["firebase", "emulators:start", "--project", "demo-aurora", ...process.argv.slice(2)];
 
@@ -22,4 +34,7 @@ const hijo = spawn("npx", argumentos, {
   env: { ...process.env, FUNCTIONS_DISCOVERY_TIMEOUT: "60" },
 });
 
-hijo.on("exit", (codigo) => process.exit(codigo ?? 0));
+hijo.on("exit", (codigo) => {
+  simulado.kill();
+  process.exit(codigo ?? 0);
+});

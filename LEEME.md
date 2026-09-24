@@ -2,9 +2,10 @@
 
 Tienda web de cosmética, por mayor y por menor. La clienta arma el carrito
 y hace el pedido: el servidor lo registra con un número y le da un link para
-seguirlo, y después se coordina por WhatsApp. El negocio lo ve todo en el
-panel: pedidos en vivo, stock, ventas, clientas, productos y precios. **No
-cobra**: el envío y el pago se cierran conversando.
+seguirlo. Cuando el negocio lo confirma (con el envío), la clienta lo paga
+desde ese link: con **Mercado Pago** (tarjetas, dinero en cuenta, efectivo)
+o por **transferencia** al alias. El negocio lo ve todo en el panel:
+pedidos y cobros en vivo, stock, ventas, clientas, productos y precios.
 
 Hecho con **Vite + React 19 + react-router-dom**, con la misma estructura
 que el proyecto del curso (C26242).
@@ -138,14 +139,14 @@ del servidor rechazan lo que no corresponde.
 
 | Sección | Qué se hace |
 |---|---|
-| **Inicio** | pedidos pendientes, lo vendido en el mes, productos sin stock |
-| **Pedidos** | la lista en vivo (un pedido nuevo aparece solo) por estado; en cada uno: confirmar (descuenta el stock y cuenta como venta), marcar entregado, cancelar con motivo (si estaba confirmado, el stock vuelve), escribirle por WhatsApp a la clienta |
+| **Inicio** | pedidos pendientes, lo vendido en el mes, cuánto falta cobrar, productos sin stock |
+| **Pedidos** | la lista en vivo (un pedido nuevo aparece solo) por estado y con su cobro; en cada uno: confirmar sumando el envío (descuenta el stock, cuenta como venta y la clienta ya puede pagar), marcar entregado, cancelar con motivo (si estaba confirmado, el stock vuelve), escribirle por WhatsApp a la clienta. **Cobro**: ver si pagó y cómo, marcar pagado (transferencia, efectivo), devolver un pago de Mercado Pago, corregir el envío |
 | **Productos** | buscar, filtrar (sin stock, pausados), cargar stock en la misma fila, pausar, dar de alta y editar (nombre, código, rubro, foto, precios) |
 | **Ventas** | por mes: vendido, pedidos, unidades, descuento por mayor, gráfico por día y lo más vendido |
 | **Clientas** | se arma sola con cada pedido (por teléfono): compras, total, sus pedidos; «borrar sus datos» (Ley 25.326) deja los pedidos anónimos |
 | **Arrepentimientos** | las solicitudes del botón de arrepentimiento, para marcar resueltas |
 | **Historial** | quién hizo qué y cuándo; no se puede borrar ni modificar |
-| **Configuración** | nombre, **WhatsApp**, mínimo por mayor, pedido mínimo, fecha de la lista, formas de entrega y de pago, Instagram, email y punto de retiro |
+| **Configuración** | nombre, **WhatsApp**, mínimo por mayor, pedido mínimo, fecha de la lista, formas de entrega y de pago, Instagram, email y punto de retiro; y **cómo cobrar**: Mercado Pago sí o no, alias, CBU/CVU, titular y banco |
 | **Precios** | solo el programador: dólar, factor de importación y márgenes, con vista previa antes de aplicar |
 
 | Rol | Qué ve |
@@ -174,10 +175,16 @@ npm run sembrar    # terminal 2: cuentas, catálogo y datos de ejemplo
 npm run dev        # terminal 2: la tienda y el panel
 ```
 
-`npm run sembrar` deja 5 pedidos de ejemplo (pendientes, confirmado,
-entregado, cancelado), stock en dos productos, un arrepentimiento y costos
-para probar Precios. Los emuladores no guardan nada al cerrarse: hay que
+`npm run sembrar` deja 5 pedidos de ejemplo (pendientes, confirmado sin
+pagar, entregado y pagado por transferencia, cancelado), stock en dos
+productos, un arrepentimiento y costos para probar Precios. Los emuladores no guardan nada al cerrarse: hay que
 sembrar cada vez.
+
+`npm run emu` también levanta un **Mercado Pago simulado** (puerto 8531):
+«Pagar con Mercado Pago» abre una pantalla de pago de mentira con botones
+para aprobar, dejar pendiente (efectivo) o rechazar, y vuelve a la tienda
+igual que el real, con aviso firmado incluido. No cobra nada ni sale de tu
+compu.
 
 Cuentas de prueba (solo en los emuladores): `admin@aurora.test`,
 `programador@aurora.test` y `exempleada@aurora.test` (dada de baja), todas
@@ -208,6 +215,11 @@ npx firebase login
 npx firebase use --add          # elegí el proyecto
 npm run desplegar               # reglas + índices + Cloud Functions
 ```
+
+La primera vez pide dos secretos, `MP_ACCESS_TOKEN` y `MP_WEBHOOK_SECRET`
+(los de Mercado Pago, ver «Cobrar los pedidos»). Si todavía no tenés la
+cuenta, escribí `SIN-CONFIGURAR` en los dos: el cobro por transferencia anda
+igual y Mercado Pago se conecta después.
 
 **4. Conectar la tienda.** En Vercel → Settings → Environment Variables,
 las mismas `VITE_FIREBASE_*` de `.env.example` con los valores del paso 1
@@ -256,7 +268,78 @@ Las reglas de seguridad están en `firestore.rules` y se prueban con
 leer cada uno. El navegador **nunca escribe** en Firestore: todo pasa por
 las Cloud Functions, que validan, recalculan los precios y dejan el cambio
 en el historial en la misma operación. `npm run test:funciones` prueba el
-servidor de punta a punta (83 casos) contra los emuladores.
+servidor de punta a punta (147 casos, cobros con el Mercado Pago simulado
+incluidos) contra los emuladores.
+
+### Cobrar los pedidos
+
+La clienta paga **después** de que confirmás el pedido: el stock ya está
+separado y el envío, sumado. En su link de seguimiento ve «Pagá tu pedido»
+con el total y:
+
+- **Mercado Pago**: tarjeta de crédito (en cuotas) o de débito, dinero en
+  cuenta o efectivo en Rapipago / Pago Fácil. Se marca pagado solo: lo
+  avisa Mercado Pago y además se revisa cuando la clienta vuelve a la
+  tienda. Un pago en efectivo queda «en proceso» hasta que se acredita.
+- **Transferencia** al alias o CBU/CVU, desde cualquier banco o billetera
+  (Mercado Pago, Ualá, Naranja X, Brubank, Cuenta DNI…), con botones para
+  copiar alias, CBU y monto. Te manda el comprobante por WhatsApp y vos lo
+  marcás en el pedido → «Marcar pagado».
+
+En el panel, cada pedido muestra el cobro en vivo (sin pagar, en proceso,
+pagado, rechazado, devuelto). Se puede **devolver** un pago de Mercado Pago
+(la plata vuelve al mismo medio), anular un pago marcado por error y
+corregir el envío mientras no haya un pago en curso. Si la clienta paga dos
+veces, el segundo queda como «pago de más», con su botón para devolverlo.
+
+Cómo está cuidado:
+
+- El monto lo pone el servidor (productos + envío). El navegador no lo
+  puede cambiar.
+- Un pago se da por bueno solo leyéndolo de Mercado Pago con el token del
+  negocio, y tiene que ser de ese pedido. Los avisos se verifican con la
+  firma secreta; uno falso se rechaza.
+- El token vive en Secret Manager de Google: nunca en el código, el
+  repositorio ni la base.
+- Cambiar el alias o el CBU queda en el historial con el antes y el
+  después, a la vista de las dos cuentas.
+
+#### Conectar Mercado Pago (una vez)
+
+1. Con la cuenta de Mercado Pago del negocio, en
+   mercadopago.com.ar/developers → **Tus integraciones** → Crear
+   aplicación (pagos online, **Checkout Pro**).
+2. En la aplicación → **Credenciales de producción** → el **Access Token**
+   (empieza con `APP_USR-`). Es la llave de la cuenta: no lo pegues en
+   ningún chat, mail ni archivo.
+3. En la aplicación → **Webhooks** → modo productivo: URL
+   `https://us-central1-<id-del-proyecto>.cloudfunctions.net/mercadopago`,
+   evento **Pagos**. Guardá y copiá la **clave secreta** que muestra.
+4. En tu compu (cada comando te pide el valor; pegalo ahí):
+
+   ```
+   npx firebase functions:secrets:set MP_ACCESS_TOKEN
+   npx firebase functions:secrets:set MP_WEBHOOK_SECRET
+   npm run desplegar
+   ```
+
+5. Panel → Configuración → tildá **Cobrar con Mercado Pago** y guardá: el
+   servidor prueba el token y te avisa si no anda.
+
+Para probar con Mercado Pago de verdad sin plata real: en Tus integraciones
+→ **Cuentas de prueba**, creá un vendedor y un comprador; cargá el Access
+Token del vendedor de prueba como `MP_ACCESS_TOKEN`, pagá con el comprador
+de prueba y las tarjetas de prueba de su documentación, y al terminar volvé
+a cargar el token real (paso 4).
+
+**Lo que cuesta.** La transferencia no tiene comisión. Mercado Pago cobra un
+porcentaje por venta que depende de cuándo querés la plata disponible (al
+instante, a 14 o a 30 días: cuanto más esperás, menos cobra), y se elige en
+tu cuenta de Mercado Pago. Como referencia, ronda el 6,4 % al instante, el
+3,4 % a 14 días y el 1,8 % a 30 días, más IVA; los valores vigentes están
+en mercadopago.com.ar/costs-section. Las cuotas sin interés, si las
+ofrecés, las pagás vos. Mercado Pago además puede retener impuestos (IIBB,
+IVA, Ganancias) según tu inscripción: consultalo con el contador.
 
 ## Rutas
 
@@ -378,8 +461,8 @@ Necesita `pip install openpyxl Pillow`.
 
 ## Lo que NO hace, a propósito
 
-- **No cobra.** Los pedidos llegan por WhatsApp y el pago se arregla
-  hablando. Así queda fuera la única parte con plata real circulando.
+- **No guarda datos de tarjetas.** La clienta los carga en Mercado Pago;
+  la tienda solo recibe «pagado con tarjeta de crédito visa, 3 cuotas».
 - **No publica el costo en dólares.** Los costos, el dólar y los márgenes
   viven en `datos/`, que no se sube ni se commitea, y (para la sección
   Precios) en `privado/` de Firestore, que las reglas solo le dejan leer al
@@ -396,7 +479,12 @@ Necesita `pip install openpyxl Pillow`.
    con leyendas tipo "QTY: 1728pcs". Para vender por menor confunden;
    fotos propias del producto suelto es la mejora que más va a mover la
    aguja. En el panel, la foto de un producto puede ser un link https.
-3. **Para consultar con un contador o abogado** antes de publicar:
+3. **Facturación electrónica (ARCA).** Todavía no emite facturas. Cada
+   cobro queda registrado (fecha, monto, medio y n.º de operación) para
+   facturarlo. Hacerlo automático depende de la condición fiscal
+   (monotributo o responsable inscripto), el CUIT, un punto de venta
+   electrónico y el certificado de ARCA: se define con el contador.
+4. **Para consultar con un contador o abogado** antes de publicar:
    - La Res. SIC 4/2025 pide mostrar además el precio "sin impuestos
      nacionales" en ciertos casos; depende de la condición fiscal.
    - La Ley 24.240 (art. 7) pide que la oferta tenga fecha de vigencia

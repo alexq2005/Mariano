@@ -16,10 +16,20 @@ export const PERMISOS = {
   "pedido.confirmar": { roles: EQUIPO, nivel: "general" },
   "pedido.entregar": { roles: EQUIPO, nivel: "general" },
   "pedido.cancelar": { roles: EQUIPO, nivel: "general" },
+  "pedido.envio": { roles: EQUIPO, nivel: "general" },
+  "pago.registrar": { roles: EQUIPO, nivel: "general" },
+  "pago.anular": { roles: EQUIPO, nivel: "general" },
+  "pago.devolver": { roles: EQUIPO, nivel: "general" },
+  // Cambiar el alias o el CBU cambia a dónde va la plata: queda en el
+  // historial a la vista de las dos.
+  "cobro.guardar": { roles: EQUIPO, nivel: "general" },
   "clienta.borrar": { roles: EQUIPO, nivel: "general" },
   "arrepentimiento.resolver": { roles: EQUIPO, nivel: "general" },
   "config.guardar": { roles: EQUIPO, nivel: "general" },
   "precios.recalcular": { roles: ["programador"], nivel: "sensible" },
+  // Las anota Mercado Pago (el servidor), no una persona: nadie las pide.
+  "pago.mercadopago": { roles: [], nivel: "general" },
+  "pago.demas": { roles: [], nivel: "general" },
 };
 
 export const ROLES = ["admin", "programador"];
