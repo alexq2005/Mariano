@@ -17,7 +17,9 @@
 
 /* Las fotos del proveedor tienen fondo blanco: se deja blanco también en
    modo oscuro para que no quede un recuadro. */
+.card-foto-marco { position: relative; }
 .card-foto {
+  display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 1 / 1;
@@ -28,74 +30,159 @@
 }
 .card-foto-link { display: block; }
 
+/* Cuánto se ahorra por mayor, sobre la foto: se lee antes que el nombre. */
+.insignia {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 7px 4px;
+  border-radius: 9px;
+  background: var(--mayor);
+  color: var(--surface);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+}
+.insignia small { margin-top: 2px; font-size: 9.5px; font-weight: 600; letter-spacing: .03em; }
+
 .card-cuerpo {
-  padding: 11px 12px 12px;
+  padding: 10px 12px 12px;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 .card-cod {
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: .07em;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .05em;
   color: var(--debil);
 }
+
+/* Tres renglones como máximo en el listado: con más, en el celular deja de
+   verse de un vistazo qué es cada cosa. El detalle lo muestra entero. */
 .card-nombre {
+  margin: 0;
   font-size: 14px;
   font-weight: 600;
   line-height: 1.3;
-  margin: 3px 0 0;
-  text-wrap: balance;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .card-nombre a { color: var(--texto); text-decoration: none; }
 .card-nombre a:hover { color: var(--acento); text-decoration: underline; }
+.card-nombre-extra { font-weight: 400; font-size: .88em; color: var(--debil); }
 .card-desc {
+  margin: 2px 0 0;
   font-size: 12px;
   color: var(--tenue);
-  margin: 3px 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* margin-top:auto empuja precios y botón al pie: quedan alineados en toda
-   la fila aunque los nombres tengan largos distintos. */
-.tarifas {
-  margin-top: auto;
-  padding-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+/* ── Precios del listado ──────────────────────────────────────────
+   margin-top:auto los empuja al pie: quedan alineados en toda la fila
+   aunque los nombres tengan largos distintos. */
+.precios { margin-top: auto; padding-top: 10px; }
+.precio-menor,
+.precio-mayor { position: relative; margin: 0; }
+.precio-menor { font-size: 19px; font-weight: 700; line-height: 1.2; color: var(--texto); }
+.precio-mayor { margin-top: 2px; font-size: 12px; line-height: 1.35; color: var(--mayor); }
+.precio-mayor b { font-size: 14px; }
+.junto { white-space: nowrap; }
+
+/* "Este es tu precio": una marca en el margen de la tarjeta, afuera del
+   texto. Con padding, los precios quedaban corridos respecto del nombre. */
+.precio-menor[data-activa="si"]::before,
+.precio-mayor[data-activa="si"]::before {
+  content: "";
+  position: absolute;
+  left: -9px;
+  top: 2px;
+  bottom: 2px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--acento);
 }
-.tarifa {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 5px 9px;
-  border-radius: 8px;
-  font-size: 12.5px;
-}
-.tarifa.menor { background: var(--acento-suave); }
-.tarifa.mayor { background: var(--mayor-suave); }
-/* nowrap: sin esto "Desde 12 u." se parte en las tarjetas angostas */
-.tarifa .et,
-.tarifa .pr { white-space: nowrap; }
-.tarifa .et { font-weight: 600; letter-spacing: .02em; font-size: 12px; }
-.tarifa.menor .et { color: var(--acento); }
-.tarifa.mayor .et { color: var(--mayor); }
-.tarifa .pr { font-size: 15.5px; font-weight: 700; }
-.tarifa.menor[data-activa="si"] { outline: 2px solid var(--acento); outline-offset: -2px; }
-.tarifa.mayor[data-activa="si"] { outline: 2px solid var(--mayor); outline-offset: -2px; }
+.precio-mayor[data-activa="si"]::before { background: var(--mayor); }
 
 /* ── Detalle ─────────────────────────────────────────────────────── */
 .card-detalle { border-radius: 20px; }
-.card-detalle .card-cuerpo { padding: 18px 20px 20px; }
-.card-detalle .card-nombre { font-family: var(--serif); font-size: 24px; font-weight: 600; }
-.card-detalle .card-desc { font-size: 14px; }
-.card-detalle .tarifa { padding: 9px 12px; font-size: 14px; }
-.card-detalle .tarifa .pr { font-size: 19px; }
+.card-detalle .card-cuerpo { padding: 18px 20px 20px; gap: 4px; }
+.card-detalle .card-nombre {
+  font-family: var(--serif);
+  font-size: 24px;
+  -webkit-line-clamp: unset;
+  display: block;
+}
+.card-detalle .card-desc { font-size: 14px; white-space: normal; }
+
+/* La tabla de tramos: separate + border-spacing para que cada tramo sea una
+   franja propia, como en "precio por cantidad" de Mercado Libre. */
+.tramos {
+  width: 100%;
+  margin-top: 12px;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+}
+.tramos caption {
+  text-align: left;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--tenue);
+}
+.tramos th,
+.tramos td { padding: 11px 13px; }
+.tramos th {
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 11px 0 0 11px;
+}
+.tramos td {
+  text-align: right;
+  font-size: 17px;
+  font-weight: 700;
+  white-space: nowrap;
+  border-radius: 0 11px 11px 0;
+}
+/* --marca por fila y no currentColor: en la fila de mayor la etiqueta es
+   violeta y el precio no, y el recuadro quedaba de dos colores. */
+.tramos tr { --marca: var(--acento); }
+.tramos tr:last-child { --marca: var(--mayor); }
+.tramos tr:first-child > * { background: var(--acento-suave); }
+.tramos tr:last-child > * { background: var(--mayor-suave); }
+.tramos tr:last-child th { color: var(--mayor); }
+.tramos tr[data-activa="si"] th {
+  box-shadow: inset 2px 0 0 var(--marca), inset 0 2px 0 var(--marca), inset 0 -2px 0 var(--marca);
+}
+.tramos tr[data-activa="si"] td {
+  box-shadow: inset -2px 0 0 var(--marca), inset 0 2px 0 var(--marca), inset 0 -2px 0 var(--marca);
+}
+.tramo-ahorro { font-size: 13px; color: var(--mayor); }
+.tramo-tuyo {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  vertical-align: 1px;
+}
+
 @media (min-width: 720px) {
   .card-detalle { flex-direction: row; }
+  .card-detalle .card-foto-marco { width: min(46%, 440px); flex: none; }
   .card-detalle .card-foto {
-    width: min(46%, 440px);
     border-bottom: none;
     border-right: 1px solid var(--line);
   }

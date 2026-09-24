@@ -1,5 +1,25 @@
+.titulo-lista { font-size: 22px; margin: 0 0 10px; }
+
+/* Las condiciones de compra, en una franja de una o dos líneas. Antes eran
+   dos párrafos en recuadro y empujaban el primer producto fuera de la
+   primera pantalla del celular. */
+.condiciones {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 16px;
+  border-radius: 10px;
+  background: var(--mayor-suave);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+.condiciones b { color: var(--mayor); }
+.condiciones .provisorio b { color: var(--alerta); }
+
 .conteo {
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--tenue);
-  margin: 0 0 13px;
+  margin: 0 0 10px;
 }

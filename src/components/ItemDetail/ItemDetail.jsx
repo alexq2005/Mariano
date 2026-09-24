@@ -17,7 +17,7 @@ export const ItemDetail = ({ producto: p, config }) => {
         <Link to={`/category/${p.rubro}`}>{nombreRubro(p.rubro)}</Link>
       </nav>
       <Item producto={p} cant={cantidadDe(p.id)} config={config} detalle>
-        <AddToCart producto={p} />
+        <AddToCart producto={p} etiqueta="Agregar al carrito" />
       </Item>
     </section>
   );

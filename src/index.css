@@ -137,9 +137,6 @@ a { color: var(--acento); }
   padding: 11px 14px; font-size: 13.5px; margin: 0 0 16px;
 }
 .aviso b { color: var(--mayor); }
-/* Precios calculados sobre un costo de importación todavía no confirmado. */
-.aviso-provisorio { background: var(--sunken); border-color: var(--alerta); }
-.aviso-provisorio b { color: var(--alerta); }
 .estado { text-align: center; padding: 48px 16px; color: var(--tenue); }
 .estado h1,
 .estado h2,

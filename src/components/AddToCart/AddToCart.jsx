@@ -6,7 +6,10 @@ import "./AddToCart.css";
 
 // "Agregar al carrito" y, una vez agregado, el contador conectado al
 // carrito: lo que se cambia acá se ve al instante en el carrito y viceversa.
-export const AddToCart = ({ producto: p }) => {
+// `etiqueta`: en el listado alcanza con "Agregar" (en tarjetas angostas
+// "Agregar al carrito" se partía en dos líneas); el detalle, que tiene
+// lugar, lo dice entero.
+export const AddToCart = ({ producto: p, etiqueta = "Agregar" }) => {
   const { cantidadDe, agregar, cambiar, fijar, config } = useCart();
   const cant = cantidadDe(p.id);
   const boton = useRef(null);
@@ -26,8 +29,16 @@ export const AddToCart = ({ producto: p }) => {
 
   if (!cant) {
     return (
-      <button ref={boton} type="button" className="btn bg-primary add-to-cart-boton" onClick={() => agregar(p.id)}>
-        Agregar al carrito
+      <button
+        ref={boton}
+        type="button"
+        className="btn bg-primary add-to-cart-boton"
+        // Con 60 tarjetas, el lector de pantalla escuchaba 60 veces el mismo
+        // "Agregar": así cada botón dice qué producto agrega.
+        aria-label={`Agregar ${p.nom} al carrito`}
+        onClick={() => agregar(p.id)}
+      >
+        {etiqueta}
       </button>
     );
   }

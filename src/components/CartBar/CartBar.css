@@ -33,4 +33,8 @@
 .cart-bar-total { font-size: clamp(17px, 5.4vw, 21px); font-weight: 700; line-height: 1.2; }
 .cart-bar-nota { font-size: 11.5px; margin-top: 2px; font-weight: 600; color: var(--ok); }
 .cart-bar-nota.alerta { color: var(--alerta); }
-.cart-bar .btn { flex: 0 1 auto; max-width: 55%; }
+/* flex-shrink 0: el botón no se achica por debajo de su texto para dejarle
+   lugar a la nota ("Ahorrás $9.600 por comprar por mayor"), que es la que
+   tiene que acomodarse. "Ver carrito" se partía en dos renglones. El tope
+   del 55% sigue cuidando a "Continuar con el pedido" en celulares angostos. */
+.cart-bar .btn { flex: 0 0 auto; max-width: 55%; }
