@@ -120,7 +120,8 @@ por Cloud Functions.
 | `/category/:category`  | un rubro (labios, ojos, rostro…)     |
 | `/product/:id`         | detalle de un producto               |
 | `/cart`                | el carrito                           |
-| `/checkout`            | datos de la clienta y envío por WhatsApp |
+| `/checkout`            | datos de la clienta y confirmación del pedido |
+| `/pedido/:token`       | seguimiento del pedido (el link es la llave, vence a los 90 días) |
 | `/admin/login`         | ingreso al panel                     |
 | `/admin`               | panel: inicio y productos            |
 
@@ -188,11 +189,14 @@ factor_importacion = (mercadería + flete + aduana + impuestos + despachante) / 
   cuánto falta para el precio por mayor (o cuánto ahorra). "Quitar" y
   "Vaciar" se pueden deshacer, y "Vaciar" pide confirmación.
 - **`/checkout`** pide nombre, teléfono, email, retiro o envío (con zona
-  si es envío), forma de pago y comentarios opcionales. Valida con
-  `src/compartido/datos-pedido.js`, el mismo código que va a usar el
-  servidor. Muestra el mensaje tal cual va a
-  llegar y abre WhatsApp con el texto escrito. Si el pedido es muy largo
-  para el link, ofrece "Copiar pedido".
+  si es envío), forma de pago y comentarios opcionales. Al confirmar, el
+  pedido se guarda en el servidor (`pedido.crear`), que recalcula todo con
+  el catálogo vigente y valida con `src/compartido/`. Si los precios
+  cambiaron o un producto se pausó mientras tanto, la página se pone al
+  día y le pide a la clienta que confirme de nuevo.
+- La clienta recibe un **número de pedido** y un **link de seguimiento**
+  (`/pedido/...`) sin datos personales. El email de confirmación queda
+  pendiente en `salida/` hasta que se configure el servicio de email.
 - El carrito **se guarda en el navegador** (`localStorage`, clave
   `aurora.carrito.v1`) y sigue ahí si se cierra la página. Se guardan
   solo códigos y cantidades, **nunca precios**: si cambia el dólar, el

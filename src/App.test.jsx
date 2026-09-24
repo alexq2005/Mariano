@@ -60,7 +60,7 @@ describe("catálogo (y config) que todavía no llegaron", () => {
     catalogo.estado = { productos: [], porId: new Map(), config: null, loading: true, error: null };
   });
 
-  it.each(["/", "/cart", "/checkout", "/product/ZMA-1", "/ruta/que-no-existe"])(
+  it.each(["/", "/cart", "/checkout", "/product/ZMA-1", `/pedido/${"a".repeat(32)}`, "/ruta/que-no-existe"])(
     "%s: se dibuja sin 'undefined' ni 'NaN'",
     (ruta) => {
       const html = dibujar(ruta);

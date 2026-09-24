@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { armarMensaje, DATOS_VACIOS, numeroWhatsAppValido, sanearDatos, urlWhatsApp, validarDatos } from "./pedido";
-import { resumirCarrito } from "./precios";
+import { DATOS_VACIOS, numeroWhatsAppValido, sanearDatos, urlWhatsApp, validarDatos } from "./pedido";
 
 const C = {
   nombre_negocio: "Aurora",
@@ -14,12 +13,6 @@ const C = {
   ],
   formas_pago: ["Transferencia", "Efectivo", "A convenir"],
 };
-// Los productos llegan con los precios ya calculados (0,4 y 1,2 USD).
-const porId = new Map(Object.entries({
-  L1: { id: "L1", cod: "ZMA-20045", nom: "Lápiz labial /48", menor: 3000, mayor: 2200 },
-  S1: { id: "S1", cod: "ZMA-CQK-5002", nom: "Sérum de seda", menor: 9000, mayor: 6600 },
-}));
-const resumen = resumirCarrito([{ id: "L1", cant: 12 }, { id: "S1", cant: 1 }], porId, C);
 const completos = { ...DATOS_VACIOS, nombre: " Ana ", telefono: "11 4567-8901", email: "ana@ejemplo.com", entrega: "envio", direccion: "Caballito", pago: "Transferencia" };
 
 describe("validarDatos", () => {
@@ -56,46 +49,7 @@ describe("la config llega por parámetro", () => {
   // el catálogo: sin ella tiene que fallar, no validar contra una lista vieja.
   it("sin config falla en vez de usar una escrita en el código", () => {
     expect(() => validarDatos(completos)).toThrow();
-    expect(() => armarMensaje(resumen, completos)).toThrow();
     expect(() => sanearDatos(completos)).toThrow();
-  });
-});
-
-describe("armarMensaje", () => {
-  const m = armarMensaje(resumen, { ...completos, comentarios: "Tocar timbre 2B" }, C);
-
-  it("lista numerada con cantidad, nombre, código, precio c/u y subtotal", () => {
-    expect(m).toContain("1) 12 u. x Lápiz labial /48 (ZMA-20045)");
-    expect(m).toContain("$2.200 c/u (por mayor) = $26.400");
-    expect(m).toContain("2) 1 u. x Sérum de seda (ZMA-CQK-5002)");
-  });
-
-  it("total en negrita y aclarando que no incluye envío", () => {
-    expect(m).toContain(`*Total: $${(26400 + resumen.items[1].sub).toLocaleString("es-AR")}* (sin envío)`);
-    expect(m).toContain("Ahorro por mayor: $9.600");
-  });
-
-  it("datos de la clienta sin espacios de más", () => {
-    expect(m).toContain("*Nombre:* Ana\n");
-    expect(m).toContain("*Teléfono:* 11 4567-8901");
-    expect(m).toContain("*Email:* ana@ejemplo.com");
-    expect(m).toContain("*Entrega:* Envío a domicilio - Caballito");
-    expect(m).toContain("*Pago:* Transferencia");
-    expect(m).toContain("*Comentarios:* Tocar timbre 2B");
-  });
-
-  it("retiro no agrega dirección aunque haya quedado escrita", () => {
-    const r = armarMensaje(resumen, { ...completos, entrega: "retiro" }, C);
-    expect(r).toContain("*Entrega:* Retiro en persona\n");
-    expect(r).not.toContain("Caballito");
-  });
-
-  it("nunca incluye costo en dólares, tipo de cambio ni márgenes", () => {
-    expect(m).not.toMatch(/USD|u\$s|1450|costo|margen|factor/i);
-  });
-
-  it("sin viñetas unicode que inflen la URL", () => {
-    expect(m).not.toMatch(/[•—·]/);
   });
 });
 
@@ -119,10 +73,6 @@ describe("sanearDatos (formulario guardado en sessionStorage)", () => {
     expect(sanearDatos(null, C)).toEqual(DATOS_VACIOS);
     expect(sanearDatos("texto", C)).toEqual(DATOS_VACIOS);
   });
-
-  it("una forma de pago que ya no existe no aparece en el mensaje", () => {
-    expect(armarMensaje(resumen, { ...completos, pago: "Cheque" }, C)).not.toContain("Cheque");
-  });
 });
 
 describe("WhatsApp", () => {
@@ -136,10 +86,5 @@ describe("WhatsApp", () => {
   it("codifica el texto (saltos de línea, $, # y &)", () => {
     const url = urlWhatsApp("Hola\n#1 & $2", C);
     expect(url).toBe("https://wa.me/5491145678901?text=Hola%0A%231%20%26%20%242");
-  });
-
-  it("un emoji en los comentarios no rompe la URL", () => {
-    const conEmoji = armarMensaje(resumen, { ...completos, comentarios: "Gracias 💄" }, C);
-    expect(() => urlWhatsApp(conEmoji, C)).not.toThrow();
   });
 });

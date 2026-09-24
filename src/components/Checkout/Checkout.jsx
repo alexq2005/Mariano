@@ -1,19 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { flushSync } from "react-dom";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { plata } from "../../utils/precios";
-import {
-  armarMensaje,
-  DATOS_VACIOS,
-  formaDeEntrega,
-  LARGOS,
-  numeroWhatsAppValido,
-  sanearDatos,
-  URL_LARGA,
-  urlWhatsApp,
-  validarDatos,
-} from "../../utils/pedido";
+import { DATOS_VACIOS, formaDeEntrega, LARGOS, sanearDatos, validarDatos } from "../../utils/pedido";
+import { crearPedido, nuevaSolicitud } from "../../services/pedidos";
+import { recargarProductos } from "../../services/productos";
 import { CatalogError } from "../CatalogError/CatalogError";
 import "./Checkout.css";
 
@@ -32,24 +23,49 @@ const leerGuardados = () => {
   }
 };
 
+// El código de este intento de compra. Se guarda en la pestaña: si se corta
+// la red justo después de confirmar y la clienta reintenta, el servidor
+// reconoce el código y devuelve el pedido que ya había hecho, en vez de
+// crear otro igual.
+const CLAVE_SOLICITUD = "aurora.checkout.solicitud.v1";
+const leerSolicitud = () => {
+  try {
+    const guardada = sessionStorage.getItem(CLAVE_SOLICITUD);
+    if (guardada) return guardada;
+    const nueva = nuevaSolicitud();
+    sessionStorage.setItem(CLAVE_SOLICITUD, nueva);
+    return nueva;
+  } catch {
+    return nuevaSolicitud();
+  }
+};
+const olvidarCheckout = () => {
+  try {
+    sessionStorage.removeItem(CLAVE_DATOS);
+    sessionStorage.removeItem(CLAVE_SOLICITUD);
+  } catch {
+    /* sin almacenamiento: no había nada guardado */
+  }
+};
+
 const ORDEN_CAMPOS = ["nombre", "telefono", "email", "entrega", "direccion", "pago"];
-const ESPACIO_DURO = String.fromCharCode(160);
 
 export const Checkout = () => {
   const { resumen, config, productosListos, errorProductos, vaciar } = useCart();
+  const navigate = useNavigate();
   const [guardados, setDatos] = useState(leerGuardados);
+  const [solicitud] = useState(leerSolicitud);
   const [intentado, setIntentado] = useState(false);
-  const [copiado, setCopiado] = useState("");
-  const [enviado, setEnviado] = useState(false);
-  const [terminado, setTerminado] = useState(false);
+  const [enviando, setEnviando] = useState(false);
+  const [errorEnvio, setErrorEnvio] = useState("");
+  const [erroresServidor, setErroresServidor] = useState({});
   const refNombre = useRef(null);
   const refTelefono = useRef(null);
   const refEmail = useRef(null);
   const refEntrega = useRef(null);
   const refDireccion = useRef(null);
   const refPago = useRef(null);
-  const vistaPrevia = useRef(null);
-  const gracias = useRef(null);
+  const refAviso = useRef(null);
 
   useEffect(() => {
     try {
@@ -66,20 +82,6 @@ export const Checkout = () => {
   const titulo = <title>{`Finalizar pedido | ${config.nombre_negocio}`}</title>;
   const datos = sanearDatos(guardados, config);
 
-  if (terminado) {
-    return (
-      <section className="estado">
-        {titulo}
-        <h1 ref={gracias} tabIndex={-1}>
-          ¡Gracias por tu pedido!
-        </h1>
-        <p>Te respondemos por WhatsApp para confirmar stock, envío y pago.</p>
-        <Link to="/" className="btn bg-primary">
-          Volver al catálogo
-        </Link>
-      </section>
-    );
-  }
   if (!resumen.items.length) {
     return (
       <section className="estado">
@@ -107,13 +109,18 @@ export const Checkout = () => {
     );
   }
 
-  const errores = validarDatos(datos, config);
+  // Los errores del servidor mandan (su validación es la que vale), pero se
+  // borran apenas la clienta toca el campo.
+  const errores = { ...validarDatos(datos, config), ...erroresServidor };
   const valido = Object.keys(errores).length === 0;
-  const mensaje = armarMensaje(resumen, datos, config);
-  const url = urlWhatsApp(mensaje, config);
   const entrega = formaDeEntrega(datos.entrega, config);
   const error = (campo) => (intentado ? errores[campo] : undefined);
-  const cambiar = (campo) => (e) => setDatos({ ...datos, [campo]: e.target.value });
+  const cambiar = (campo) => (e) => {
+    setDatos({ ...datos, [campo]: e.target.value });
+    if (erroresServidor[campo]) {
+      setErroresServidor((previos) => Object.fromEntries(Object.entries(previos).filter(([c]) => c !== campo)));
+    }
+  };
 
   // Si falta algo, se muestran los errores y el foco va al primer campo mal.
   const revisar = () => {
@@ -132,30 +139,46 @@ export const Checkout = () => {
     return false;
   };
 
-  const enviar = (e) => {
-    if (!revisar()) {
-      e.preventDefault();
-      return;
-    }
-    setEnviado(true);
+  const avisar = (texto) => {
+    setErrorEnvio(texto);
+    // Al próximo render el aviso ya está en pantalla: se le lleva el foco.
+    setTimeout(() => refAviso.current?.focus(), 0);
   };
 
-  // Mismo texto dos veces seguidas no se re-anuncia: se alterna un espacio duro.
-  const avisarCopia = (texto) => setCopiado((prev) => (prev === texto ? texto + ESPACIO_DURO : texto));
-
-  const copiar = async () => {
-    if (!revisar()) return;
+  // El pedido se guarda en el servidor, que recalcula todo. Si algo cambió
+  // desde que la clienta cargó la página (precios, un producto pausado), se
+  // recarga el catálogo, el resumen se pone al día solo y se le avisa.
+  const confirmar = async (e) => {
+    e.preventDefault();
+    if (enviando || !revisar()) return;
+    setEnviando(true);
+    setErrorEnvio("");
     try {
-      await navigator.clipboard.writeText(mensaje);
-      avisarCopia("Pedido copiado. Pegalo en el chat de WhatsApp de la tienda.");
-    } catch {
-      // Sin permiso de portapapeles: se deja el texto seleccionado.
-      const rango = document.createRange();
-      rango.selectNodeContents(vistaPrevia.current);
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(rango);
-      avisarCopia("No se pudo copiar solo: el texto quedó seleccionado para que lo copies.");
+      const pedido = await crearPedido({
+        items: resumen.items.map((i) => ({ id: i.p.id, cant: i.cant })),
+        cliente: datos,
+        totalVisto: resumen.total,
+        solicitud,
+      });
+      olvidarCheckout();
+      navigate(`/pedido/${pedido.seguimiento}`, { replace: true, state: { recien: true } });
+      vaciar();
+    } catch (err) {
+      setEnviando(false);
+      if (err.detalles?.errores) {
+        setErroresServidor(err.detalles.errores);
+        setIntentado(true);
+        avisar("Revisá los datos marcados.");
+      } else if (err.detalles?.noDisponibles || err.detalles?.total !== undefined) {
+        await recargarProductos();
+        avisar(
+          err.detalles.noDisponibles
+            ? "Algunos productos se agotaron o ya no están: los sacamos del pedido. Revisá el total y confirmá de nuevo."
+            : "Los precios se actualizaron recién. Revisá el total y confirmá de nuevo.",
+        );
+      } else {
+        avisar(err.message || "No se pudo hacer el pedido. Probá de nuevo.");
+      }
     }
   };
 
@@ -166,16 +189,9 @@ export const Checkout = () => {
       {titulo}
       <h1>Finalizar pedido</h1>
 
-      {!numeroWhatsAppValido(config.whatsapp) && (
-        <p className="checkout-config" role="note">
-          ⚠️ El número de WhatsApp de la tienda todavía es el de ejemplo (en <code>src/config.js</code>): los
-          pedidos no van a llegar a nadie.
-        </p>
-      )}
-
       <div className="checkout-layout">
-        <form className="checkout-form" noValidate onSubmit={(e) => e.preventDefault()}>
-          <p className="checkout-intro">Tus datos van en el mensaje, junto con el pedido.</p>
+        <form id="checkout-form" className="checkout-form" noValidate onSubmit={confirmar}>
+          <p className="checkout-intro">Usamos tus datos solo para este pedido: para confirmarlo y coordinar la entrega.</p>
 
           <div className="campo">
             <label htmlFor="c-nombre">
@@ -269,7 +285,7 @@ export const Checkout = () => {
                 aria-invalid={Boolean(error("direccion"))}
                 aria-describedby={[ayuda("direccion"), "nota-envio"].filter(Boolean).join(" ")}
               />
-              <p id="nota-envio" className="nota-campo">El costo del envío se cotiza por WhatsApp según la zona.</p>
+              <p id="nota-envio" className="nota-campo">El costo del envío se cotiza según la zona, antes de pagar.</p>
               {error("direccion") && <p id="error-direccion" className="error">{errores.direccion}</p>}
             </div>
           )}
@@ -311,48 +327,39 @@ export const Checkout = () => {
         </form>
 
         <div className="checkout-pedido">
-          <h2>Así va a llegar tu pedido</h2>
-          <pre ref={vistaPrevia} className="mensaje num">
-            {mensaje}
-          </pre>
-          {url.length > URL_LARGA && (
-            <p className="nota">
-              Tu pedido es largo: si WhatsApp no muestra el mensaje completo, usá «Copiar pedido» y pegalo en el chat.
+          <h2>Tu pedido</h2>
+          <ul className="checkout-items">
+            {resumen.items.map((i) => (
+              <li key={i.p.id}>
+                <span>
+                  {i.cant} × {i.p.nom}
+                  {i.esMayor && <span className="checkout-mayor"> · por mayor</span>}
+                </span>
+                <span className="num">{plata(i.sub)}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="checkout-total">
+            <span>Total</span>
+            <strong className="num">{plata(resumen.total)}</strong>
+          </p>
+          {resumen.ahorro > 0 && <p className="nota">Ahorrás {plata(resumen.ahorro)} por comprar por mayor.</p>}
+          <p className="nota">No incluye el envío: se cotiza según la zona.</p>
+
+          {errorEnvio && (
+            <p ref={refAviso} tabIndex={-1} className="checkout-aviso" role="alert">
+              {errorEnvio}
             </p>
           )}
           <div className="acciones">
-            <a className="btn bg-success" href={url} target="_blank" rel="noopener noreferrer" onClick={enviar}>
-              Enviar pedido por WhatsApp
-            </a>
-            <button type="button" className="btn bg-outline" onClick={copiar}>
-              Copiar pedido
+            <button type="submit" form="checkout-form" className="btn bg-success" disabled={enviando}>
+              {enviando ? "Enviando pedido…" : "Confirmar pedido"}
             </button>
           </div>
-          <p className="nota-estado" role="status" aria-live="polite">
-            {copiado}
-          </p>
           <p className="nota">
-            Se abre WhatsApp con el mensaje ya escrito: solo tenés que apretar Enviar. El stock, el envío y el pago se
-            confirman en el chat.
+            Te damos un número de pedido y un link para seguirlo. Stock, envío y pago se confirman después, antes de
+            pagar nada.
           </p>
-          {enviado && (
-            <div className="post-envio">
-              <p>¿Ya mandaste el pedido por WhatsApp?</p>
-              <button
-                type="button"
-                className="btn bg-primary"
-                onClick={() => {
-                  flushSync(() => {
-                    vaciar();
-                    setTerminado(true);
-                  });
-                  gracias.current?.focus();
-                }}
-              >
-                Sí, vaciar el carrito
-              </button>
-            </div>
-          )}
           <Link to="/cart" className="volver">
             Volver al carrito
           </Link>

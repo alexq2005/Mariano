@@ -1,0 +1,40 @@
+.seguimiento { max-width: 640px; margin: 0 auto; }
+.seguimiento h1:focus { outline: none; }
+
+.seguimiento-tarjeta {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: var(--sombra);
+}
+.seguimiento-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 14px;
+}
+.seguimiento-estado {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--mayor-suave);
+  color: var(--mayor);
+  font-weight: 700;
+  font-size: 13px;
+}
+.seguimiento-detalle { margin: 10px 0 0; color: var(--tenue); font-size: 14px; }
+.seguimiento-items { list-style: none; margin: 14px 0 12px; padding: 0; font-size: 14px; }
+.seguimiento-items li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line);
+}
+.seguimiento-total { display: flex; justify-content: space-between; margin: 0; font-size: 17px; }
+.seguimiento-guardar { margin: 16px 0; font-size: 14px; }
+.seguimiento .acciones { display: flex; flex-wrap: wrap; gap: 9px; }
+.seguimiento .acciones .btn { flex: 1 1 200px; }
