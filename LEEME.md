@@ -38,6 +38,26 @@ npm run dev        # abre en http://localhost:8518
 el repositorio y que lo hagan solos). `vercel.json` y `public/_redirects`
 ya están configurados para que recargar `/cart` o `/product/...` no dé 404.
 
+#### En GitHub Pages
+
+El workflow `.github/workflows/pages.yml` la publica en
+`https://<usuario>.github.io/<repo>/` cada vez que se sube algo a `main`.
+
+1. **Requisito**: con el repositorio privado, Pages necesita GitHub Pro
+   (gratis para estudiantes con el Student Developer Pack de GitHub
+   Education). Con el repositorio público, no.
+2. En GitHub: **Settings → Pages → Build and deployment → Source: GitHub
+   Actions**. Se hace una sola vez.
+3. Hacer merge del PR a `main`, o correrlo a mano: **Actions → Publicar en
+   GitHub Pages → Run workflow**. En un par de minutos queda la dirección en
+   Settings → Pages.
+
+Sin las variables de Firebase la tienda se ve completa (lee
+`public/data/catalogo.json`), pero el panel `/admin` no funciona. Para
+conectarla con Firestore: **Settings → Secrets and variables → Actions →
+Variables**, las mismas `VITE_FIREBASE_*` de `.env.example` con los valores
+del proyecto real.
+
 ## Qué hay acá
 
 ```

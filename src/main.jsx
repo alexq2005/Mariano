@@ -7,7 +7,8 @@ import { CartProvider } from "./context/CartProvider";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
+    {/* basename: en GitHub Pages la tienda vive en /Mariano/ y no en la raíz. */}
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <CartProvider>
         <App />
       </CartProvider>
