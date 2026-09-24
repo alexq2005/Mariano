@@ -56,4 +56,17 @@ export const CONFIG = {
   // real. Hasta entonces los precios se calculan sobre un costo supuesto, y
   // el propio proveedor aclara que su lista es FOB: sin flete ni aduana.
   precios_confirmados: false,
+
+  // La foto de cada rubro en los círculos de arriba de la tienda: el id del
+  // producto. Elegidas a mano porque la primera de cada rubro suele ser un
+  // exhibidor con texto en chino. Si un id deja de existir (lista nueva del
+  // proveedor), se usa el primer producto con foto de ese rubro.
+  portadas_rubros: {
+    labios: "ZMA-MK370",
+    ojos: "ZMA-Q108-2",
+    rostro: "ZMA-FC608B",
+    cuidado: "ZMA-72796",
+    cabello: "ZMA-SA487-1",
+    accesorios: "ZMA-PKY-FF122",
+  },
 };

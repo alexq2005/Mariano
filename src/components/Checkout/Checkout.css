@@ -48,10 +48,18 @@
   padding: 10px 12px;
   min-height: 44px;
   border: 1px solid var(--line-fuerte);
-  border-radius: 10px;
+  border-radius: 14px;
   background: var(--ground);
 }
 .campo textarea { resize: vertical; }
+/* El foco: borde fucsia de 2px (el de 1px + una sombra de 1px, así el
+   texto no se corre) y un halo suave, como en el buscador. Con error, el
+   borde sigue en el color de alerta (la regla de abajo le gana). */
+.campo :is(input[type="text"], textarea):focus {
+  outline: none;
+  border-color: var(--acento);
+  box-shadow: 0 0 0 1px var(--acento), 0 0 0 5px var(--acento-suave);
+}
 .campo [aria-invalid="true"]:is(input[type="text"], textarea) { border-color: var(--alerta); border-width: 2px; }
 
 .opcion {
@@ -62,7 +70,7 @@
   padding: 6px 12px;
   margin-bottom: 6px;
   border: 1px solid var(--line-fuerte);
-  border-radius: 10px;
+  border-radius: 14px;
   background: var(--ground);
   cursor: pointer;
 }
@@ -72,11 +80,11 @@
 .error { margin: 6px 0 0; color: var(--alerta); font-size: 13px; font-weight: 600; }
 .nota-campo { margin: 6px 0 0; color: var(--tenue); font-size: 12.5px; }
 
-.checkout-pedido h2 { font-family: var(--serif); font-weight: 600; font-size: 19px; margin: 0 0 10px; }
+.checkout-pedido h2 { font-family: var(--display); font-weight: 700; font-size: 20px; letter-spacing: -.01em; margin: 0 0 10px; }
 .mensaje {
   background: var(--sunken);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 14px;
   padding: 13px;
   margin: 0 0 14px;
   font-family: inherit;

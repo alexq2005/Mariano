@@ -13,7 +13,7 @@
   padding: 14px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 20px;
   box-shadow: var(--sombra);
 }
 @media (min-width: 720px) {
@@ -32,7 +32,7 @@
   object-fit: contain;
   background: #fff;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 14px;
   padding: 4px;
 }
 

@@ -1,0 +1,154 @@
+/* Colores fijos y no tokens: el blanco da ≥ 5,7:1 sobre todo el degradé y
+   la portada se ve igual en los dos temas. Las burbujas de adorno son
+   blanco al 10 % como mucho y no se tocan entre sí: el texto que les pasa
+   por encima sigue ≥ 5:1. La etiqueta de arriba, con su fondo propio, 4,7:1. */
+.portada {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  /* Celular: título y fotos lado a lado; lo demás, a todo el ancho. La fila
+     vacía (1fr) se queda con el alto que sobra si las fotos son más altas
+     que el título, en vez de repartirlo entre los renglones de texto. */
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto 1fr auto auto auto;
+  grid-template-areas:
+    "kicker fotos"
+    "titulo fotos"
+    ". fotos"
+    "bajada bajada"
+    "nota nota"
+    "acciones acciones";
+  column-gap: 8px;
+  margin: 0 0 18px;
+  padding: 18px 14px 20px 20px;
+  border-radius: 26px;
+  overflow: hidden;
+  color: #fff;
+  background: linear-gradient(125deg, #C8105C 0%, #9A1A8C 55%, #5B2A9E 100%);
+  box-shadow: 0 14px 34px rgba(138, 31, 158, .25);
+}
+.portada::before,
+.portada::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .10);
+}
+.portada::before { width: 230px; height: 230px; right: -70px; top: -80px; }
+.portada::after { width: 130px; height: 130px; right: 70px; bottom: -70px; background: rgba(255, 255, 255, .07); }
+
+.portada-kicker {
+  grid-area: kicker;
+  justify-self: start;
+  margin: 0 0 9px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .16);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+.portada-titulo {
+  grid-area: titulo;
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(24px, 6.6vw, 48px);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+.portada-bajada { grid-area: bajada; margin: 12px 0 0; font-size: 13.5px; line-height: 1.4; max-width: 34em; }
+.portada-bajada b { font-weight: 800; }
+.portada-nota { grid-area: nota; margin: 3px 0 0; font-size: 12px; line-height: 1.35; }
+.portada-acciones { grid-area: acciones; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+/* Fucsia sobre blanco: 5,7:1. */
+.portada-btn { background: #fff; color: #C8105C; box-shadow: 0 6px 16px rgba(40, 0, 40, .25); }
+.portada-btn-sec { border-color: rgba(255, 255, 255, .75); color: #fff; }
+.portada :focus-visible { outline-color: #fff; }
+
+/* Las fotos: tres productos reales en recuadros blancos, un poco girados,
+   como muestras sobre la mesa. Entran una vez al cargar y se quedan
+   quietas: una animación que no para distrae y no se puede pausar. */
+.portada-fotos {
+  grid-area: fotos;
+  align-self: center;
+  position: relative;
+  width: 112px;
+  height: 118px;
+}
+.portada-fotos img {
+  position: absolute;
+  width: 68px;
+  height: 68px;
+  padding: 6px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 10px 22px rgba(40, 0, 40, .28);
+  transform: rotate(var(--giro));
+  animation: entrar .5s cubic-bezier(.2, .8, .3, 1.2) both;
+}
+.portada-fotos img:nth-child(1) { --giro: -8deg; top: 0; left: 2px; }
+.portada-fotos img:nth-child(2) { --giro: 7deg; top: 24px; right: 0; animation-delay: .08s; }
+.portada-fotos img:nth-child(3) { --giro: -3deg; bottom: 0; left: 14px; animation-delay: .16s; }
+@keyframes entrar {
+  from { opacity: 0; transform: translateY(14px) rotate(var(--giro)) scale(.9); }
+}
+
+/* Celulares angostos (320-379px): fotos más chicas y la etiqueta arriba a
+   todo el ancho, para que el título no quede en una columna de dos
+   palabras. */
+@media (max-width: 379px) {
+  .portada {
+    grid-template-areas:
+      "kicker kicker"
+      "titulo fotos"
+      ". fotos"
+      "bajada bajada"
+      "nota nota"
+      "acciones acciones";
+    grid-template-rows: auto auto 1fr auto auto auto;
+    padding: 16px 12px 18px 16px;
+  }
+  .portada-fotos { width: 88px; height: 100px; }
+  .portada-fotos img { width: 58px; height: 58px; padding: 4px; border-radius: 14px; }
+  .portada-fotos img:nth-child(2) { top: 20px; }
+  .portada-fotos img:nth-child(3) { left: 10px; }
+}
+
+/* Compu: el texto a la izquierda, centrado en alto, y las fotos grandes a
+   la derecha ocupando toda la portada. */
+@media (min-width: 720px) {
+  .portada {
+    grid-template-rows: 1fr auto auto auto auto auto 1fr;
+    grid-template-areas:
+      ". fotos"
+      "kicker fotos"
+      "titulo fotos"
+      "bajada fotos"
+      "nota fotos"
+      "acciones fotos"
+      ". fotos";
+    column-gap: 24px;
+    padding: 36px 36px 36px 44px;
+    margin-bottom: 22px;
+    border-radius: 32px;
+  }
+  .portada::before { width: 380px; height: 380px; right: -90px; top: -150px; }
+  .portada::after { width: 220px; height: 220px; right: 300px; bottom: -130px; }
+  .portada-kicker { font-size: 12px; margin-bottom: 12px; }
+  .portada-bajada { font-size: 16.5px; margin-top: 14px; }
+  .portada-nota { font-size: 13px; }
+  .portada-acciones { margin-top: 20px; gap: 10px; }
+  .portada-btn,
+  .portada-btn-sec { min-height: 48px; padding-inline: 26px; font-size: 16px; }
+  .portada-fotos { width: 340px; height: 220px; }
+  .portada-fotos img { width: 152px; height: 152px; padding: 10px; border-radius: 28px; }
+  .portada-fotos img:nth-child(1) { left: 0; }
+  .portada-fotos img:nth-child(2) { top: 18px; }
+  .portada-fotos img:nth-child(3) { left: 104px; }
+}

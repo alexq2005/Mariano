@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { plata } from "../../utils/precios";
 import { partirNombre, porcentajeAhorro } from "../../utils/presentacion";
 import { rutaImagen } from "../../services/productos";
+import { PistaMayor } from "../AddToCart/AddToCart";
 import "./Item.css";
 
 // El nombre con la cola del proveedor ("/48", "(STRAWBERRY SCRUB)") en
@@ -23,7 +24,9 @@ const Precios = ({ p, minimo, cant }) => {
   const esMayor = cant >= minimo;
   return (
     <div className="precios">
-      <p className="precio-menor num" data-activa={cant > 0 && !esMayor ? "si" : "no"}>
+      {/* Llegando al mínimo, el precio por menor se tacha: la clienta ve
+          bajar el precio en la tarjeta misma. */}
+      <p className="precio-menor num" data-activa={cant > 0 && !esMayor ? "si" : "no"} data-superado={esMayor ? "si" : "no"}>
         {plata(p.menor)}
       </p>
       <p className="precio-mayor num" data-activa={esMayor ? "si" : "no"}>
@@ -67,6 +70,10 @@ const Tramos = ({ p, minimo, cant, ahorro }) => {
 // Tarjeta de producto. Como en el repo del curso, las acciones llegan por
 // `children`: la misma tarjeta sirve en el listado y en el detalle. Es
 // presentacional: la config (mínimo por mayor) se la pasa quien la dibuja.
+//
+// En el listado la acción va última en el HTML, después del precio: así la
+// recorren el teclado y el lector de pantalla (nombre, precio, agregar). El
+// CSS la dibuja sobre la foto, en la misma celda de la grilla.
 export const Item = ({ producto: p, cant = 0, config, detalle = false, children }) => {
   const minimo = config.minimo_mayor;
   const ahorro = porcentajeAhorro(p);
@@ -126,8 +133,10 @@ export const Item = ({ producto: p, cant = 0, config, detalle = false, children 
         ) : (
           <Precios p={p} minimo={minimo} cant={cant} />
         )}
-        {children}
+        {!detalle && cant > 0 && <PistaMayor producto={p} cant={cant} minimo={minimo} />}
+        {detalle && children}
       </div>
+      {!detalle && children && <div className="card-accion">{children}</div>}
     </article>
   );
 };

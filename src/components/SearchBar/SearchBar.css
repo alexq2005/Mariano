@@ -3,23 +3,32 @@
   position: relative;
   min-width: 0;
 }
+/* Relleno suave en vez de borde: se lee como un campo sin parecer un
+   formulario de trámite. El borde aparece al enfocarlo. */
 .buscar input {
   width: 100%;
-  min-height: 44px;
+  min-height: 46px;
   font: inherit;
   font-size: 16px; /* con menos, iOS hace zoom al tocar el campo */
   color: var(--texto);
-  padding: 10px 12px 10px 38px;
-  border: 1px solid var(--line-fuerte);
+  padding: 11px 14px 11px 42px;
+  border: 1.5px solid transparent;
   border-radius: 999px;
-  background: var(--surface);
+  background: var(--sunken);
+  transition: border-color .2s, background-color .2s, box-shadow .2s;
 }
 .buscar input::placeholder { color: var(--debil); }
+.buscar input:focus {
+  outline: none;
+  border-color: var(--acento);
+  background: var(--surface);
+  box-shadow: 0 0 0 4px var(--acento-suave);
+}
 .buscar svg {
   position: absolute;
-  left: 14px;
+  left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--mayor);
+  color: var(--acento);
   pointer-events: none;
 }

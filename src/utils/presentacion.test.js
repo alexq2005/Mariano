@@ -1,5 +1,31 @@
 import { describe, expect, it } from "vitest";
-import { partirNombre, porcentajeAhorro } from "./presentacion";
+import { enumerar, partirNombre, porcentajeAhorro, portadaDeRubro } from "./presentacion";
+
+describe("portadaDeRubro", () => {
+  const productos = [
+    { id: "A", rubro: "labios", img: "A.jpg" },
+    { id: "B", rubro: "labios", img: "B.jpg" },
+    { id: "C", rubro: "ojos", img: null },
+    { id: "D", rubro: "ojos", img: "D.jpg" },
+  ];
+
+  it("usa la foto elegida en la config", () => {
+    expect(portadaDeRubro("labios", productos, { labios: "B" })).toBe("B.jpg");
+  });
+
+  it("si el elegido ya no está (lista nueva), usa el primero con foto", () => {
+    expect(portadaDeRubro("labios", productos, { labios: "YA-NO-EXISTE" })).toBe("A.jpg");
+    expect(portadaDeRubro("ojos", productos, {})).toBe("D.jpg");
+  });
+
+  it("un id de otro rubro no se cuela", () => {
+    expect(portadaDeRubro("ojos", productos, { ojos: "A" })).toBe("D.jpg");
+  });
+
+  it("rubro sin fotos: null, y el círculo muestra su color", () => {
+    expect(portadaDeRubro("cabello", productos, {})).toBeNull();
+  });
+});
 
 describe("porcentajeAhorro", () => {
   it("redondea al entero: $3.000 → $2.200 es 27%", () => {
@@ -44,5 +70,17 @@ describe("partirNombre", () => {
   it("nunca deja el nombre vacío", () => {
     expect(partirNombre("(SOLO INGLÉS)")).toEqual({ principal: "(SOLO INGLÉS)", extra: "" });
     expect(partirNombre("")).toEqual({ principal: "", extra: "" });
+  });
+});
+
+describe("enumerar", () => {
+  it("arma la frase con comas y el conector al final", () => {
+    expect(enumerar(["Transferencia", "Efectivo", "A convenir"], "o")).toBe("Transferencia, Efectivo o A convenir");
+    expect(enumerar(["Retiro en persona", "Envío a domicilio"], "o")).toBe("Retiro en persona o Envío a domicilio");
+  });
+
+  it("con uno solo o ninguno no agrega conector", () => {
+    expect(enumerar(["Efectivo"])).toBe("Efectivo");
+    expect(enumerar([])).toBe("");
   });
 });

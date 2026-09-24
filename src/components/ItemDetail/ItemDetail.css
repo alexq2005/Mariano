@@ -1,5 +1,5 @@
 .detail-wrapper {
-  max-width: 900px;
+  max-width: 980px;
   margin: 0 auto;
 }
 .migas {
@@ -7,7 +7,29 @@
   color: var(--tenue);
   margin: 0 0 12px;
 }
-.migas a { color: var(--mayor); }
+.migas a { color: var(--mayor); font-weight: 600; }
 .detail-wrapper .add-to-cart,
 .detail-wrapper .add-to-cart-boton { margin-top: 16px; }
 .detail-wrapper .pista { font-size: 13px; }
+
+/* El contador del detalle, más grande y en píldora como el resto. */
+.detail-wrapper .add-to-cart .item-count button,
+.detail-wrapper .add-to-cart .item-count input { height: 50px; border-radius: 999px; }
+.detail-wrapper .add-to-cart .item-count button { width: 50px; }
+
+.consulta { width: 100%; margin-top: 10px; min-height: 48px; }
+.consulta svg { color: var(--ok); }
+
+.detalle-info {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 13px 14px;
+  border-radius: 16px;
+  background: var(--sunken);
+  font-size: 13.5px;
+  color: var(--tenue);
+}
+.detalle-info li { display: flex; align-items: flex-start; gap: 10px; }
+.detalle-info svg { flex: none; margin-top: 1px; color: var(--acento); }
+.detalle-info b { color: var(--texto); font-weight: 700; }

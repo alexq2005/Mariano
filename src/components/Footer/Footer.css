@@ -1,14 +1,95 @@
+/* Pie oscuro en los dos temas, redondeado arriba como una hoja que cierra
+   la página. Colores fijos: son los del tema oscuro, ya verificados
+   ≥ 4,5:1 (texto tenue y fucsia claro sobre ciruela). */
 .footer {
-  border-top: 1px solid var(--line);
-  background: var(--degradado);
-  padding: 22px var(--borde-der) calc(22px + env(safe-area-inset-bottom, 0px)) var(--borde-izq);
-  font-size: 12.5px;
-  color: var(--tenue);
+  --pie-fondo: #22111C;
+  --pie-texto: #FBEFF5;
+  --pie-tenue: #D4BCC9;
+  --pie-acento: #FF6BA3;
+  --pie-linea: #3A2331;
+  margin-top: 28px;
+  border-radius: 28px 28px 0 0;
+  background: var(--pie-fondo);
+  color: var(--pie-tenue);
+  padding: 32px var(--borde-der) calc(24px + env(safe-area-inset-bottom, 0px)) var(--borde-izq);
+  /* La barra del carrito tapa el final de la página (el body deja ese
+     lugar con padding): el pie se estira por debajo de ella, así no queda
+     una franja clara entre el pie oscuro y la barra. */
+  margin-bottom: calc(-1 * var(--alto-barra, 0px));
+  padding-bottom: calc(24px + var(--alto-barra, 0px) + env(safe-area-inset-bottom, 0px));
+  font-size: 13.5px;
+  line-height: 1.5;
 }
-.footer p,
-.footer a {
+.footer:empty { display: none; }
+.footer a { color: var(--pie-acento); }
+.footer :focus-visible { outline-color: var(--pie-acento); }
+
+.footer-int {
   max-width: 1180px;
   margin: 0 auto;
-  display: block;
+  display: grid;
+  gap: 26px;
 }
-.footer a { margin-top: 8px; font-weight: 600; }
+@media (min-width: 720px) {
+  .footer-int { grid-template-columns: 1.2fr 1fr 1fr; gap: 40px; }
+}
+
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--display);
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1;
+  text-decoration: none;
+}
+.footer .footer-logo { color: var(--pie-texto); }
+.footer-marca p { margin: 10px 0 0; max-width: 26em; }
+.footer .footer-wa { margin-top: 16px; color: var(--sobre-ok); }
+
+.footer h2 {
+  margin: 0 0 10px;
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--pie-texto);
+}
+.footer h2:not(:first-child) { margin-top: 18px; }
+.footer ul li { margin-bottom: 3px; }
+
+/* Los pasos numerados en círculos fucsia (blanco encima: 5,7:1). */
+.footer-pasos { counter-reset: paso; list-style: none; margin: 0; padding: 0; }
+.footer-pasos li {
+  counter-increment: paso;
+  position: relative;
+  min-height: 22px;
+  padding-left: 32px;
+  margin-bottom: 9px;
+}
+.footer-pasos li::before {
+  content: counter(paso);
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #C8105C;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.footer-legal {
+  max-width: 1180px;
+  margin: 26px auto 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--pie-linea);
+  font-size: 12px;
+}

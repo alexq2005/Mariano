@@ -46,7 +46,7 @@ export const ItemList = ({ productos, total, config }) => {
         {visibles.map((p) => (
           <li key={p.id}>
             <Item producto={p} cant={cantidadDe(p.id)} config={config}>
-              <AddToCart producto={p} />
+              <AddToCart producto={p} compacto />
             </Item>
           </li>
         ))}

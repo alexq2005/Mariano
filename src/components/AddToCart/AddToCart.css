@@ -1,12 +1,71 @@
 .add-to-cart,
-.add-to-cart-boton { margin-top: 11px; }
-/* En tarjetas de 165px el padding normal partía el texto en dos líneas. */
-.add-to-cart-boton { width: 100%; padding-inline: 8px; font-size: 14px; }
+.add-to-cart-boton { margin-top: 14px; }
+.add-to-cart-boton { width: 100%; font-size: 15.5px; min-height: 50px; }
 
 .pista {
-  margin: 7px 0 0;
-  font-size: 11.5px;
+  margin: 8px 0 0;
+  font-size: 12px;
   color: var(--tenue);
-  text-align: center;
 }
-.pista.ok { color: var(--ok); font-weight: 600; }
+.pista.ok { color: var(--ok); font-weight: 700; }
+
+/* ── Listado: "+" flotante y contador sobre la foto ──────────────────
+   Todo en fucsia con blanco encima (5,4:1). El anillo de foco global es
+   fucsia y sobre fucsia no se vería: acá va blanco. */
+.agregar-rapido {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--boton);
+  color: var(--sobre-boton);
+  box-shadow: 0 6px 16px rgba(200, 16, 92, .38);
+  transition: transform .15s;
+}
+.agregar-rapido:hover { transform: scale(1.08); }
+.agregar-rapido:active { transform: scale(.9); }
+
+.add-to-cart.compacto { margin: 0; }
+.add-to-cart.compacto .item-count {
+  gap: 0;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--boton);
+  box-shadow: 0 6px 16px rgba(200, 16, 92, .38);
+  /* Crece desde la derecha, que es donde estaba el "+". */
+  transform-origin: right center;
+  animation: abrir .2s ease-out;
+}
+.add-to-cart.compacto .item-count button {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--sobre-boton);
+  font-size: 20px;
+  font-weight: 700;
+}
+.add-to-cart.compacto .item-count button:hover:not(:disabled) { background: rgba(255, 255, 255, .18); }
+.add-to-cart.compacto .item-count button:disabled { color: var(--sobre-boton); opacity: .45; }
+.add-to-cart.compacto .item-count input {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--sobre-boton);
+  font-weight: 800;
+}
+.agregar-rapido:focus-visible,
+.add-to-cart.compacto :focus-visible { outline-color: #fff; outline-offset: -3px; }
+.agregar-rapido:focus-visible { outline-offset: 3px; outline-color: var(--acento); }
+
+@keyframes abrir {
+  from { transform: scale(.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
