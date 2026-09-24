@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { enumerar, partirNombre, porcentajeAhorro, portadaDeRubro, relacionados } from "./presentacion";
+import { enumerar, enumerarFrase, partirNombre, porcentajeAhorro, portadaDeRubro, relacionados } from "./presentacion";
 
 describe("portadaDeRubro", () => {
   const productos = [
@@ -70,6 +70,13 @@ describe("partirNombre", () => {
   it("nunca deja el nombre vacío", () => {
     expect(partirNombre("(SOLO INGLÉS)")).toEqual({ principal: "(SOLO INGLÉS)", extra: "" });
     expect(partirNombre("")).toEqual({ principal: "", extra: "" });
+  });
+});
+
+describe("enumerarFrase", () => {
+  it("solo la primera con mayúscula", () => {
+    expect(enumerarFrase(["Retiro en persona", "Envío a domicilio"], "o")).toBe("Retiro en persona o envío a domicilio");
+    expect(enumerarFrase(["Transferencia", "Efectivo", "A convenir"], "o")).toBe("Transferencia, efectivo o a convenir");
   });
 });
 

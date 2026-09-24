@@ -1,3 +1,6 @@
+// GENERADO desde src/compartido/lineas.js por scripts/copiar-compartido.mjs.
+// No editar acá: se pisa en cada `npm run emu` y en cada despliegue.
+
 // Las cuentas del carrito y del pedido.
 //
 // Vive en compartido/ porque las usan los dos lados: el navegador para

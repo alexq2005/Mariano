@@ -1,0 +1,23 @@
+/* Verde oscuro y no el verde claro de la marca: el ícono blanco sobre el
+   verde claro no se distingue bien (menos de 3:1). Por encima de la barra
+   del carrito, cuando está. */
+.wa-flotante {
+  position: fixed;
+  right: var(--borde-der);
+  bottom: calc(var(--alto-barra, 0px) + 16px + env(safe-area-inset-bottom, 0px));
+  z-index: 35;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--boton-ok);
+  color: var(--sobre-ok);
+  box-shadow: 0 8px 22px rgba(14, 122, 66, .35);
+  transition: transform .15s;
+}
+.wa-flotante:hover { transform: scale(1.06); }
+.wa-flotante:focus-visible { outline-offset: 3px; }
+@media (max-height: 500px) {
+  .wa-flotante { bottom: 12px; }
+}

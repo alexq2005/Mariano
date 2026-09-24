@@ -1,3 +1,6 @@
+// GENERADO desde src/compartido/datos-pedido.js por scripts/copiar-compartido.mjs.
+// No editar acá: se pisa en cada `npm run emu` y en cada despliegue.
+
 // Los datos que deja la clienta al hacer el pedido: qué se pide, qué es
 // obligatorio y cómo se limpia lo que llega.
 //

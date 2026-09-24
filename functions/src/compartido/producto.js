@@ -1,3 +1,6 @@
+// GENERADO desde src/compartido/producto.js por scripts/copiar-compartido.mjs.
+// No editar acá: se pisa en cada `npm run emu` y en cada despliegue.
+
 // Cuándo un producto está completo como para mostrarse en la tienda.
 //
 // Vive en compartido/ porque se usa en dos lados: el navegador, para no

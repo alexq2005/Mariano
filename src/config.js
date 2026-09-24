@@ -46,6 +46,12 @@ export const CONFIG = {
 
   formas_pago: ["Transferencia", "Efectivo", "A convenir"],
 
+  // Contacto que se muestra en el pie. Vacío = no se muestra. Se cargan
+  // también desde el panel (Configuración), sin tocar el código.
+  instagram: "", // sin @, ej.: "aurora.cosmetica"
+  email_contacto: "",
+  direccion_retiro: "", // ej.: "Punto de retiro en Boedo"
+
   // Se muestra al pie y va en el mensaje. Actualizar cuando se cambian
   // precios: es lo que le dice a la clienta que la lista está vigente.
   actualizado: "septiembre 2026",

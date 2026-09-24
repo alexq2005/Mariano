@@ -97,7 +97,11 @@ export const Item = ({ producto: p, cant = 0, config, detalle = false, nivel = "
   );
 
   return (
-    <article className={`card${detalle ? " card-detalle" : ""}`} data-elegido={cant > 0 ? "si" : "no"}>
+    <article
+      className={`card${detalle ? " card-detalle" : ""}`}
+      data-elegido={cant > 0 ? "si" : "no"}
+      data-agotado={p.agotado ? "si" : "no"}
+    >
       <div className="card-foto-marco">
         {detalle ? (
           foto
@@ -119,6 +123,7 @@ export const Item = ({ producto: p, cant = 0, config, detalle = false, nivel = "
       </div>
       <div className="card-cuerpo">
         {detalle && <p className="card-cod">Código {p.cod}</p>}
+        {detalle && p.agotado && <p className="card-agotado">Sin stock por ahora</p>}
         <Titulo className="card-nombre">
           {detalle ? (
             p.nom

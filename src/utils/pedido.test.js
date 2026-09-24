@@ -20,11 +20,22 @@ const porId = new Map(Object.entries({
   S1: { id: "S1", cod: "ZMA-CQK-5002", nom: "Sérum de seda", menor: 9000, mayor: 6600 },
 }));
 const resumen = resumirCarrito([{ id: "L1", cant: 12 }, { id: "S1", cant: 1 }], porId, C);
-const completos = { ...DATOS_VACIOS, nombre: " Ana ", entrega: "envio", direccion: "Caballito", pago: "Transferencia" };
+const completos = { ...DATOS_VACIOS, nombre: " Ana ", telefono: "11 4567-8901", entrega: "envio", direccion: "Caballito", pago: "Transferencia" };
 
 describe("validarDatos", () => {
-  it("todo vacío: pide nombre, entrega y pago", () => {
-    expect(Object.keys(validarDatos(DATOS_VACIOS, C)).sort()).toEqual(["entrega", "nombre", "pago"]);
+  it("todo vacío: pide nombre, teléfono, entrega y pago", () => {
+    expect(Object.keys(validarDatos(DATOS_VACIOS, C)).sort()).toEqual(["entrega", "nombre", "pago", "telefono"]);
+  });
+
+  it("el email es opcional, pero si está tiene que tener forma de email", () => {
+    expect(validarDatos({ ...completos, email: "" }, C)).toEqual({});
+    expect(validarDatos({ ...completos, email: "ana@correo.com" }, C)).toEqual({});
+    expect(validarDatos({ ...completos, email: "ana arroba correo" }, C)).toHaveProperty("email");
+  });
+
+  it("el teléfono tiene que parecer un teléfono", () => {
+    expect(validarDatos({ ...completos, telefono: "abc" }, C)).toHaveProperty("telefono");
+    expect(validarDatos({ ...completos, telefono: "+54 9 11 4567-8901" }, C)).toEqual({});
   });
 
   it("nombre con solo espacios no cuenta", () => {
@@ -104,7 +115,7 @@ describe("armarMensaje", () => {
 describe("sanearDatos (formulario guardado en sessionStorage)", () => {
   it("campos que no son texto no rompen: quedan vacíos", () => {
     const d = sanearDatos({ nombre: 123, comentarios: {}, direccion: null, entrega: "envio", pago: "Efectivo" }, C);
-    expect(d).toEqual({ nombre: "", entrega: "envio", direccion: "", pago: "Efectivo", comentarios: "" });
+    expect(d).toEqual({ ...DATOS_VACIOS, entrega: "envio", pago: "Efectivo" });
     expect(() => validarDatos(d, C)).not.toThrow();
   });
 

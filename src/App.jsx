@@ -5,6 +5,8 @@ import { ItemListContainer } from "./components/ItemListContainer/ItemListContai
 import { ItemDetailContainer } from "./components/ItemDetailContainer/ItemDetailContainer";
 import { Cart } from "./components/Cart/Cart";
 import { Checkout } from "./components/Checkout/Checkout";
+import { Seguimiento } from "./components/Seguimiento/Seguimiento";
+import { Arrepentimiento } from "./components/Arrepentimiento/Arrepentimiento";
 import { ScrollToTop } from "./components/ScrollToTop/ScrollToTop";
 import { useProductos } from "./hooks/useProductos";
 
@@ -36,6 +38,8 @@ function App() {
           <Route path="/product/:id" element={<ItemDetailContainer />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/pedido/:token" element={<Seguimiento />} />
+          <Route path="/arrepentimiento" element={<Arrepentimiento />} />
           <Route
             path="*"
             element={

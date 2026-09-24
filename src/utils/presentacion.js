@@ -38,6 +38,12 @@ export const partirNombre = (nom) => {
 export const enumerar = (items, conector = "y") =>
   items.length < 2 ? items.join("") : `${items.slice(0, -1).join(", ")} ${conector} ${items.at(-1)}`;
 
+// La misma lista como frase: "Retiro en persona o envío a domicilio".
+export const enumerarFrase = (items, conector = "y") => {
+  const t = enumerar(items, conector).toLowerCase();
+  return t.charAt(0).toUpperCase() + t.slice(1);
+};
+
 // "Más de Labios" en el detalle: los que siguen en la lista del proveedor,
 // que suele poner juntas las variantes de una misma línea. Da la vuelta al
 // final del rubro y nunca incluye al producto mismo ni a los pausados.

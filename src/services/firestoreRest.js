@@ -45,8 +45,13 @@ export const leerDocumentoPublico = async (ruta, { signal } = {}) => {
   if (!enEmuladores && env.VITE_FIREBASE_API_KEY) url.searchParams.set("key", env.VITE_FIREBASE_API_KEY);
 
   const res = await fetch(url, { signal });
-  if (res.status === 404) throw new Error(`todavía no se publicó ${ruta}`);
-  if (!res.ok) throw new Error(`Firestore respondió HTTP ${res.status}`);
+  // status en el error: el seguimiento distingue "no existe" (404) de
+  // "venció" (403: las reglas ya no lo dejan leer).
+  if (!res.ok) {
+    const error = new Error(res.status === 404 ? `todavía no se publicó ${ruta}` : `Firestore respondió HTTP ${res.status}`);
+    error.status = res.status;
+    throw error;
+  }
 
   const datos = await res.json();
   return camposAPlano(datos.fields);

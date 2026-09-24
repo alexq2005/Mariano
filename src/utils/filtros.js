@@ -1,6 +1,8 @@
 // Rubros y búsqueda del catálogo.
 
-export const ORDEN_RUBROS = ["labios", "ojos", "rostro", "cuidado", "uñas", "cabello", "accesorios", "otros"];
+// La lista vive en compartido/: el servidor valida contra la misma.
+export { RUBROS as ORDEN_RUBROS } from "../compartido/producto";
+import { RUBROS as ORDEN_RUBROS } from "../compartido/producto";
 
 export const nombreRubro = (id) => id.charAt(0).toUpperCase() + id.slice(1);
 

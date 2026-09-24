@@ -42,6 +42,18 @@ export const AddToCart = ({ producto: p, etiqueta = "Agregar al carrito", compac
     previa.current = cant;
   }, [cant]);
 
+  // Agotado (stock en 0, lo carga el panel): no se puede agregar. Si ya
+  // estaba en el carrito, el carrito lo muestra aparte y no lo cobra.
+  if (p.agotado && !cant) {
+    return compacto ? (
+      <span className="sin-stock-chip">Sin stock</span>
+    ) : (
+      <button type="button" className="btn add-to-cart-boton" disabled>
+        Sin stock
+      </button>
+    );
+  }
+
   if (!cant && compacto) {
     return (
       <button
@@ -63,7 +75,7 @@ export const AddToCart = ({ producto: p, etiqueta = "Agregar al carrito", compac
   // un toque, en vez de apretar "+" once veces. Solo si el precio por mayor
   // es más barato, y hasta llegar al mínimo.
   const minimo = config.minimo_mayor;
-  const atajo = porcentajeAhorro(p) > 0 && cant < minimo && (
+  const atajo = porcentajeAhorro(p) > 0 && cant < minimo && !p.agotado && (
     <button type="button" className="btn atajo-mayor num" onClick={() => fijar(p.id, minimo)}>
       {cant ? `Completar ${minimo} u.` : `Llevar ${minimo} u.`} a {plata(p.mayor)} c/u
     </button>

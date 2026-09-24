@@ -9,6 +9,19 @@
 }
 .pista.ok { color: var(--ok); font-weight: 700; }
 
+/* En el listado, en lugar del "+". */
+.sin-stock-chip {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line-fuerte);
+  color: var(--tenue);
+  font-size: 12.5px;
+  font-weight: 700;
+  box-shadow: var(--sombra);
+}
+
 /* "Llevar 12 u. a $2.200 c/u": en violeta, el color del precio por mayor. */
 .atajo-mayor {
   width: 100%;
