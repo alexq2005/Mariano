@@ -1,3 +1,13 @@
+.lista-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin: 0 0 12px;
+}
+.lista-barra .conteo { margin: 0; }
+
 .products-container {
   display: grid;
   gap: 12px;

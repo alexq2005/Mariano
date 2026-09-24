@@ -12,8 +12,13 @@ export const SearchBar = () => {
   const texto = params.get("q") ?? "";
 
   const buscar = (valor) => {
+    // En el listado se conserva el orden elegido; desde otra página, no hay.
+    const siguiente = new URLSearchParams(enInicio || enRubro ? params : undefined);
+    if (valor) siguiente.set("q", valor);
+    else siguiente.delete("q");
+    const search = siguiente.toString();
     navigate(
-      { pathname: enRubro ? enRubro.pathname : "/", search: valor ? `?q=${encodeURIComponent(valor)}` : "" },
+      { pathname: enRubro ? enRubro.pathname : "/", search: search ? `?${search}` : "" },
       // Mientras tipea no se llena el historial con una entrada por letra.
       { replace: Boolean(enInicio || enRubro) },
     );

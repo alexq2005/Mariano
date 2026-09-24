@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { contarRubros, filtrarProductos, sinAcentos } from "./filtros";
+import { ORDENES, contarRubros, filtrarProductos, ordenarProductos, sinAcentos } from "./filtros";
 
 const productos = [
   { id: "1", cod: "ZMA-20045", nom: "Lápiz labial /48", desc: "", rubro: "labios" },
@@ -39,5 +39,42 @@ describe("filtros", () => {
 
   it("sinAcentos conserva la ñ como n (búsqueda tolerante)", () => {
     expect(sinAcentos("Uñas")).toBe("unas");
+  });
+});
+
+describe("ordenarProductos", () => {
+  const lista = [
+    { id: "a", menor: 3000, mayor: 2200 }, // 26,7 %
+    { id: "b", menor: 1000, mayor: 900 }, // 10 %
+    { id: "c", menor: 5000, mayor: 3500 }, // 30 %
+    { id: "d", menor: 1000, mayor: 1000 }, // sin ahorro
+  ];
+  const ids = (l) => l.map((p) => p.id);
+
+  it("por precio, de menor a mayor y al revés", () => {
+    expect(ids(ordenarProductos(lista, "precio"))).toEqual(["b", "d", "a", "c"]);
+    expect(ids(ordenarProductos(lista, "-precio"))).toEqual(["c", "a", "b", "d"]);
+  });
+
+  it("por ahorro por mayor, el más grande primero", () => {
+    expect(ids(ordenarProductos(lista, "ahorro"))).toEqual(["c", "a", "b", "d"]);
+  });
+
+  it("a igual precio respeta el orden del catálogo", () => {
+    expect(ids(ordenarProductos(lista, "precio")).slice(0, 2)).toEqual(["b", "d"]);
+  });
+
+  it("sin orden o con uno desconocido deja el catálogo como está", () => {
+    expect(ordenarProductos(lista, "")).toBe(lista);
+    expect(ordenarProductos(lista, "inventado")).toBe(lista);
+  });
+
+  it("no cambia la lista original", () => {
+    ordenarProductos(lista, "precio");
+    expect(ids(lista)).toEqual(["a", "b", "c", "d"]);
+  });
+
+  it("cada orden ofrecido existe", () => {
+    for (const { id } of ORDENES.filter((o) => o.id)) expect(ordenarProductos(lista, id)).not.toBe(lista);
   });
 });

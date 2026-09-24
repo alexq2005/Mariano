@@ -3,6 +3,7 @@ import { flushSync } from "react-dom";
 import { Item } from "../Item/Item";
 import { AddToCart } from "../AddToCart/AddToCart";
 import { useCart } from "../../context/CartContext";
+import { Orden } from "../Orden/Orden";
 import "./ItemList.css";
 
 // Se muestran de a tandas: 266 tarjetas con foto de una sola vez es
@@ -41,7 +42,10 @@ export const ItemList = ({ productos, total, config }) => {
 
   return (
     <>
-      <p className="conteo">{conteo}</p>
+      <div className="lista-barra">
+        <p className="conteo">{conteo}</p>
+        <Orden />
+      </div>
       <ul ref={lista} className="products-container">
         {visibles.map((p) => (
           <li key={p.id}>
