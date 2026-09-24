@@ -17,8 +17,50 @@
 .detail-wrapper .add-to-cart .item-count input { height: 50px; border-radius: 999px; }
 .detail-wrapper .add-to-cart .item-count button { width: 50px; }
 
-.consulta { width: 100%; margin-top: 10px; min-height: 48px; }
-.consulta svg { color: var(--ok); }
+/* Compartir y consultar: dos botones secundarios lado a lado; con uno solo,
+   ocupa todo el ancho. */
+.acciones-detalle { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.accion-secundaria { flex: 1 1 150px; min-height: 48px; }
+.accion-secundaria svg { color: var(--acento); }
+.accion-secundaria[href*="wa.me"] svg { color: var(--ok); }
+.detalle-aviso { flex-basis: 100%; margin: 0; font-size: 13px; font-weight: 600; color: var(--ok); }
+.detalle-aviso:empty { display: none; }
+
+/* ── Más del rubro ─────────────────────────────────────────────────
+   Una tira que se desliza con el dedo, como las de las tiendas de marca.
+   El margen negativo la lleva hasta el borde de la pantalla en el celular,
+   así se nota que sigue. */
+.relacionados { margin-top: 28px; }
+.relacionados-cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.relacionados h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+.relacionados-cabecera a { font-size: 14px; font-weight: 700; }
+.relacionados-lista {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 168px;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--borde-izq);
+  margin-inline: calc(-1 * var(--borde-izq)) calc(-1 * var(--borde-der));
+  padding: 4px var(--borde-der) 14px var(--borde-izq);
+}
+.relacionados-lista > li { display: flex; scroll-snap-align: start; }
+@media (min-width: 720px) {
+  .relacionados-lista { grid-auto-columns: 184px; margin-inline: 0; padding-inline: 0; scroll-padding-inline: 0; }
+}
 
 .detalle-info {
   display: grid;

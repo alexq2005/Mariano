@@ -74,7 +74,7 @@ const Tramos = ({ p, minimo, cant, ahorro }) => {
 // En el listado la acción va última en el HTML, después del precio: así la
 // recorren el teclado y el lector de pantalla (nombre, precio, agregar). El
 // CSS la dibuja sobre la foto, en la misma celda de la grilla.
-export const Item = ({ producto: p, cant = 0, config, detalle = false, children }) => {
+export const Item = ({ producto: p, cant = 0, config, detalle = false, nivel = "h2", children }) => {
   const minimo = config.minimo_mayor;
   const ahorro = porcentajeAhorro(p);
   // Muchas descripciones del Excel repiten el nombre sin la cola
@@ -82,7 +82,8 @@ export const Item = ({ producto: p, cant = 0, config, detalle = false, children 
   const desc = p.desc?.trim();
   const repite = desc && desc.toLowerCase() === partirNombre(p.nom).principal.toLowerCase();
   const ruta = `/product/${p.id}`;
-  const Titulo = detalle ? "h1" : "h2";
+  // nivel: h2 en el listado, h3 bajo "Más de Labios" en el detalle.
+  const Titulo = detalle ? "h1" : nivel;
   const foto = (
     <img
       className="card-foto"

@@ -38,5 +38,7 @@ export const ItemDetailContainer = () => {
     );
   }
 
-  return <ItemDetail producto={producto} config={config} />;
+  // key: al pasar a otro producto (desde "Más de Labios") todo arranca de
+  // cero, también el contador y su manejo del foco.
+  return <ItemDetail key={producto.id} producto={producto} config={config} />;
 };

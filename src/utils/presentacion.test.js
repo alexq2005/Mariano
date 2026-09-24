@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { enumerar, partirNombre, porcentajeAhorro, portadaDeRubro } from "./presentacion";
+import { enumerar, partirNombre, porcentajeAhorro, portadaDeRubro, relacionados } from "./presentacion";
 
 describe("portadaDeRubro", () => {
   const productos = [
@@ -82,5 +82,34 @@ describe("enumerar", () => {
   it("con uno solo o ninguno no agrega conector", () => {
     expect(enumerar(["Efectivo"])).toBe("Efectivo");
     expect(enumerar([])).toBe("");
+  });
+});
+
+describe("relacionados", () => {
+  const lista = [
+    { id: "l1", rubro: "labios" },
+    { id: "o1", rubro: "ojos" },
+    { id: "l2", rubro: "labios" },
+    { id: "l3", rubro: "labios", activo: false },
+    { id: "l4", rubro: "labios" },
+    { id: "l5", rubro: "labios" },
+  ];
+  const ids = (l) => l.map((p) => p.id);
+
+  it("los que siguen en el mismo rubro, dando la vuelta al final", () => {
+    expect(ids(relacionados(lista, { id: "l4", rubro: "labios" }))).toEqual(["l5", "l1", "l2"]);
+  });
+
+  it("sin el producto mismo, sin otros rubros y sin pausados", () => {
+    const r = ids(relacionados(lista, { id: "l1", rubro: "labios" }));
+    expect(r).toEqual(["l2", "l4", "l5"]);
+  });
+
+  it("respeta el máximo pedido", () => {
+    expect(relacionados(lista, { id: "l1", rubro: "labios" }, 2)).toHaveLength(2);
+  });
+
+  it("solo en su rubro: lista vacía", () => {
+    expect(relacionados(lista, { id: "o1", rubro: "ojos" })).toEqual([]);
   });
 });
