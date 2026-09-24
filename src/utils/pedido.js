@@ -1,3 +1,4 @@
+import { DATOS_VACIOS, formaDeEntrega, LARGOS } from "../compartido/datos-pedido";
 import { plata } from "./precios";
 
 // El número de ejemplo que viene en config.js: si sigue puesto, los
@@ -11,32 +12,25 @@ export const numeroWhatsAppValido = (n) => /^549\d{10}$/.test(n) && n !== NUMERO
 // celulares viejos lo cortan, así que se sugiere "Copiar pedido".
 export const URL_LARGA = 2000;
 
-export const DATOS_VACIOS = { nombre: "", entrega: "", direccion: "", pago: "", comentarios: "" };
-
-export const formaDeEntrega = (id, C) => C.formas_entrega.find((f) => f.id === id);
+// Qué datos se piden y cómo se validan vive en compartido/datos-pedido.js:
+// el servidor va a validar con ESA misma función, y la del servidor manda.
+export { DATOS_VACIOS, formaDeEntrega, LARGOS } from "../compartido/datos-pedido";
+export { validarDatosPedido as validarDatos } from "../compartido/datos-pedido";
 
 // Datos del formulario que vienen guardados (sessionStorage): solo las
 // claves conocidas, solo texto, y sin opciones que ya no están en config
 // (si se quitó una forma de pago, no puede seguir apareciendo elegida).
+// A diferencia de sanearDatosPedido (compartido), NO recorta espacios: esto
+// es el estado del formulario mientras se escribe, y recortar se comería el
+// espacio entre nombre y apellido. El recorte se hace al validar y al armar
+// el mensaje.
 export const sanearDatos = (g, C) => {
   const d = Object.fromEntries(
-    Object.keys(DATOS_VACIOS).map((k) => [k, typeof g?.[k] === "string" ? g[k] : ""]),
+    Object.keys(DATOS_VACIOS).map((k) => [k, typeof g?.[k] === "string" ? g[k].slice(0, LARGOS[k] ?? 200) : ""]),
   );
   if (!formaDeEntrega(d.entrega, C)) d.entrega = "";
   if (!C.formas_pago.includes(d.pago)) d.pago = "";
   return d;
-};
-
-// Devuelve {campo: mensaje} con los errores; vacío si está todo bien.
-export const validarDatos = (d, C) => {
-  const e = {};
-  if (!d.nombre.trim()) e.nombre = "Escribí tu nombre.";
-  const entrega = formaDeEntrega(d.entrega, C);
-  if (!entrega) e.entrega = "Elegí cómo querés recibir el pedido.";
-  else if (entrega.pide_direccion && !d.direccion.trim())
-    e.direccion = "Escribí la zona o la dirección para el envío.";
-  if (!C.formas_pago.includes(d.pago)) e.pago = "Elegí cómo vas a pagar.";
-  return e;
 };
 
 // Mensaje que le llega al comercio. Separadores ASCII a propósito: "•" o
@@ -55,6 +49,8 @@ export const armarMensaje = (resumen, d, C) => {
 
   const entrega = formaDeEntrega(d.entrega, C);
   l.push("", `*Nombre:* ${d.nombre.trim()}`);
+  if (d.telefono.trim()) l.push(`*Teléfono:* ${d.telefono.trim()}`);
+  if (d.email.trim()) l.push(`*Email:* ${d.email.trim()}`);
   if (entrega) {
     const donde = entrega.pide_direccion && d.direccion.trim() ? ` - ${d.direccion.trim()}` : "";
     l.push(`*Entrega:* ${entrega.nombre}${donde}`);

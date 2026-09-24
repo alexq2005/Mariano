@@ -20,11 +20,16 @@ const porId = new Map(Object.entries({
   S1: { id: "S1", cod: "ZMA-CQK-5002", nom: "Sérum de seda", menor: 9000, mayor: 6600 },
 }));
 const resumen = resumirCarrito([{ id: "L1", cant: 12 }, { id: "S1", cant: 1 }], porId, C);
-const completos = { ...DATOS_VACIOS, nombre: " Ana ", entrega: "envio", direccion: "Caballito", pago: "Transferencia" };
+const completos = { ...DATOS_VACIOS, nombre: " Ana ", telefono: "11 4567-8901", email: "ana@ejemplo.com", entrega: "envio", direccion: "Caballito", pago: "Transferencia" };
 
 describe("validarDatos", () => {
-  it("todo vacío: pide nombre, entrega y pago", () => {
-    expect(Object.keys(validarDatos(DATOS_VACIOS, C)).sort()).toEqual(["entrega", "nombre", "pago"]);
+  it("todo vacío: pide nombre, teléfono, email, entrega y pago", () => {
+    expect(Object.keys(validarDatos(DATOS_VACIOS, C)).sort()).toEqual(["email", "entrega", "nombre", "pago", "telefono"]);
+  });
+
+  it("teléfono y email con formato inválido", () => {
+    expect(validarDatos({ ...completos, telefono: "abc" }, C)).toHaveProperty("telefono");
+    expect(validarDatos({ ...completos, email: "ana@" }, C)).toHaveProperty("email");
   });
 
   it("nombre con solo espacios no cuenta", () => {
@@ -72,6 +77,8 @@ describe("armarMensaje", () => {
 
   it("datos de la clienta sin espacios de más", () => {
     expect(m).toContain("*Nombre:* Ana\n");
+    expect(m).toContain("*Teléfono:* 11 4567-8901");
+    expect(m).toContain("*Email:* ana@ejemplo.com");
     expect(m).toContain("*Entrega:* Envío a domicilio - Caballito");
     expect(m).toContain("*Pago:* Transferencia");
     expect(m).toContain("*Comentarios:* Tocar timbre 2B");
@@ -95,13 +102,17 @@ describe("armarMensaje", () => {
 describe("sanearDatos (formulario guardado en sessionStorage)", () => {
   it("campos que no son texto no rompen: quedan vacíos", () => {
     const d = sanearDatos({ nombre: 123, comentarios: {}, direccion: null, entrega: "envio", pago: "Efectivo" }, C);
-    expect(d).toEqual({ nombre: "", entrega: "envio", direccion: "", pago: "Efectivo", comentarios: "" });
+    expect(d).toEqual({ ...DATOS_VACIOS, entrega: "envio", pago: "Efectivo" });
     expect(() => validarDatos(d, C)).not.toThrow();
   });
 
   it("descarta claves desconocidas y opciones que ya no están en config", () => {
     const d = sanearDatos({ nombre: "Ana", entrega: "drone", pago: "Bitcoin", hack: "x" }, C);
     expect(d).toEqual({ ...DATOS_VACIOS, nombre: "Ana" });
+  });
+
+  it("no recorta espacios mientras se escribe (nombre y apellido)", () => {
+    expect(sanearDatos({ nombre: "Ana " }, C).nombre).toBe("Ana ");
   });
 
   it("null o basura: formulario vacío", () => {

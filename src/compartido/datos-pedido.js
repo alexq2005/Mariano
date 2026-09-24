@@ -26,7 +26,7 @@ export const validarDatosPedido = (d, config) => {
   if (!d.telefono?.trim()) e.telefono = "Escribí un teléfono para coordinar.";
   else if (!TELEFONO.test(d.telefono.trim())) e.telefono = "Ese teléfono no parece válido.";
 
-  if (!d.email?.trim()) e.email = "Escribí tu email: ahí te llega el pedido.";
+  if (!d.email?.trim()) e.email = "Escribí tu email para poder contactarte.";
   else if (!EMAIL.test(d.email.trim())) e.email = "Ese email no parece válido.";
 
   const entrega = formaDeEntrega(d.entrega, config);

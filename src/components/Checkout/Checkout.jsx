@@ -7,6 +7,7 @@ import {
   armarMensaje,
   DATOS_VACIOS,
   formaDeEntrega,
+  LARGOS,
   numeroWhatsAppValido,
   sanearDatos,
   URL_LARGA,
@@ -31,7 +32,7 @@ const leerGuardados = () => {
   }
 };
 
-const ORDEN_CAMPOS = ["nombre", "entrega", "direccion", "pago"];
+const ORDEN_CAMPOS = ["nombre", "telefono", "email", "entrega", "direccion", "pago"];
 const ESPACIO_DURO = String.fromCharCode(160);
 
 export const Checkout = () => {
@@ -42,6 +43,8 @@ export const Checkout = () => {
   const [enviado, setEnviado] = useState(false);
   const [terminado, setTerminado] = useState(false);
   const refNombre = useRef(null);
+  const refTelefono = useRef(null);
+  const refEmail = useRef(null);
   const refEntrega = useRef(null);
   const refDireccion = useRef(null);
   const refPago = useRef(null);
@@ -116,7 +119,14 @@ export const Checkout = () => {
   const revisar = () => {
     if (valido) return true;
     setIntentado(true);
-    const campos = { nombre: refNombre, entrega: refEntrega, direccion: refDireccion, pago: refPago };
+    const campos = {
+      nombre: refNombre,
+      telefono: refTelefono,
+      email: refEmail,
+      entrega: refEntrega,
+      direccion: refDireccion,
+      pago: refPago,
+    };
     const primero = ORDEN_CAMPOS.find((c) => errores[c]);
     campos[primero]?.current?.focus();
     return false;
@@ -176,12 +186,50 @@ export const Checkout = () => {
               id="c-nombre"
               type="text"
               autoComplete="name"
+              maxLength={LARGOS.nombre}
               value={datos.nombre}
               onChange={cambiar("nombre")}
               aria-invalid={Boolean(error("nombre"))}
               aria-describedby={ayuda("nombre")}
             />
             {error("nombre") && <p id="error-nombre" className="error">{errores.nombre}</p>}
+          </div>
+
+          <div className="campo">
+            <label htmlFor="c-telefono">
+              Teléfono <span className="req">(obligatorio)</span>
+            </label>
+            <input
+              ref={refTelefono}
+              id="c-telefono"
+              type="tel"
+              autoComplete="tel"
+              inputMode="tel"
+              maxLength={LARGOS.telefono}
+              value={datos.telefono}
+              onChange={cambiar("telefono")}
+              aria-invalid={Boolean(error("telefono"))}
+              aria-describedby={ayuda("telefono")}
+            />
+            {error("telefono") && <p id="error-telefono" className="error">{errores.telefono}</p>}
+          </div>
+
+          <div className="campo">
+            <label htmlFor="c-email">
+              Email <span className="req">(obligatorio)</span>
+            </label>
+            <input
+              ref={refEmail}
+              id="c-email"
+              type="email"
+              autoComplete="email"
+              maxLength={LARGOS.email}
+              value={datos.email}
+              onChange={cambiar("email")}
+              aria-invalid={Boolean(error("email"))}
+              aria-describedby={ayuda("email")}
+            />
+            {error("email") && <p id="error-email" className="error">{errores.email}</p>}
           </div>
 
           <fieldset className="campo" aria-describedby={ayuda("entrega")}>
@@ -215,6 +263,7 @@ export const Checkout = () => {
                 id="c-direccion"
                 type="text"
                 autoComplete="street-address"
+                maxLength={LARGOS.direccion}
                 value={datos.direccion}
                 onChange={cambiar("direccion")}
                 aria-invalid={Boolean(error("direccion"))}
@@ -253,7 +302,7 @@ export const Checkout = () => {
             <textarea
               id="c-comentarios"
               rows={3}
-              maxLength={500}
+              maxLength={LARGOS.comentarios}
               value={datos.comentarios}
               onChange={cambiar("comentarios")}
               placeholder="Horario para retirar, tonos que preferís, etc."
