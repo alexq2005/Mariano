@@ -415,7 +415,7 @@
       "cod": "ZMA-H034-1",
       "nom": "SADOER crema iluminadora e hidratante con vitamina C (versión en idioma extranjero) 100 g",
       "desc": "NO.SD40480",
-      "rubro": "rostro",
+      "rubro": "cuidado",
       "img": "ZMA-H034-1.jpg",
       "menor": 13600,
       "mayor": 9800
@@ -445,7 +445,7 @@
       "cod": "ZMA-H035-6",
       "nom": "SADOER tónico antiacné y aclarante con ácido salicílico, niacinamida y árbol de té (versión en idioma extranjero) 130 ml",
       "desc": "NO.SD84101",
-      "rubro": "otros",
+      "rubro": "cuidado",
       "img": "ZMA-H035-6.jpg",
       "menor": 11300,
       "mayor": 8200
@@ -655,7 +655,7 @@
       "cod": "ZMA-MM97-90",
       "nom": "KORMESIC mascarilla iluminadora de rosa (versión en idioma extranjero) 25 ml /50",
       "desc": "NO.KMC64165",
-      "rubro": "rostro",
+      "rubro": "cuidado",
       "img": "ZMA-MM97-90.jpg",
       "menor": 4100,
       "mayor": 3000
@@ -665,7 +665,7 @@
       "cod": "ZMA-MM97-91",
       "nom": "KORMESIC mascarilla blanqueadora e iluminadora (versión en idioma extranjero) 25 ml /50",
       "desc": "NO.KMC28808",
-      "rubro": "rostro",
+      "rubro": "cuidado",
       "img": "ZMA-MM97-91.jpg",
       "menor": 2000,
       "mayor": 1400
@@ -725,7 +725,7 @@
       "cod": "ZMA-1003-1",
       "nom": "Gel fijador, color rosa",
       "desc": "3",
-      "rubro": "otros",
+      "rubro": "ojos",
       "img": "ZMA-1003-1.jpg",
       "menor": 5300,
       "mayor": 3800
@@ -1085,7 +1085,7 @@
       "cod": "ZMA-B50024",
       "nom": "Spray fijador de maquillaje (MAKEUP SETTING SPRAY)",
       "desc": "Spray fijador",
-      "rubro": "accesorios",
+      "rubro": "rostro",
       "img": "ZMA-B50024.jpg",
       "menor": 11300,
       "mayor": 8200
@@ -1095,7 +1095,7 @@
       "cod": "ZMA-B60012-A",
       "nom": "Glitter roll-on (Rolling Glitter)",
       "desc": "10 g",
-      "rubro": "otros",
+      "rubro": "rostro",
       "img": "ZMA-B60012-A.jpg",
       "menor": 7500,
       "mayor": 5500
@@ -1315,7 +1315,7 @@
       "cod": "ZMA-CQK-00640",
       "nom": "Parches para ojos bicolor de vitamina C y frutilla",
       "desc": "30 unid. por estuche; 72 estuches por bulto",
-      "rubro": "otros",
+      "rubro": "cuidado",
       "img": "ZMA-CQK-00640.jpg",
       "menor": 1700,
       "mayor": 1200
@@ -1325,7 +1325,7 @@
       "cod": "ZMA-CQK-00664",
       "nom": "Parches para ojos bicolor de rosa y palta",
       "desc": "30 unid. por estuche; 72 estuches por bulto",
-      "rubro": "otros",
+      "rubro": "cuidado",
       "img": "ZMA-CQK-00664.jpg",
       "menor": 1700,
       "mayor": 1200
@@ -1585,7 +1585,7 @@
       "cod": "ZMA-HODAF- 202602",
       "nom": "Antifaz térmico de vapor (precio por caja de 12 unid.)",
       "desc": "",
-      "rubro": "otros",
+      "rubro": "cuidado",
       "img": "ZMA-HODAF--202602.jpg",
       "menor": 49000,
       "mayor": 35500
@@ -1855,7 +1855,7 @@
       "cod": "ZMA-M850",
       "nom": "Toallitas desmaquillantes 30 unid. – frutos secos",
       "desc": "",
-      "rubro": "otros",
+      "rubro": "cuidado",
       "img": "ZMA-M850.jpg",
       "menor": 22600,
       "mayor": 16400
@@ -1865,7 +1865,7 @@
       "cod": "ZMA-M850B",
       "nom": "Toallitas desmaquillantes 30 unid. – coco",
       "desc": "",
-      "rubro": "otros",
+      "rubro": "cuidado",
       "img": "ZMA-M850B.jpg",
       "menor": 22600,
       "mayor": 16400
@@ -1875,7 +1875,7 @@
       "cod": "ZMA-M850D",
       "nom": "Toallitas desmaquillantes 30 unid. – rosa",
       "desc": "",
-      "rubro": "otros",
+      "rubro": "cuidado",
       "img": "ZMA-M850D.jpg",
       "menor": 22600,
       "mayor": 16400
@@ -1885,7 +1885,7 @@
       "cod": "ZMA-M850E",
       "nom": "Toallitas desmaquillantes 30 unid. – vitamina C",
       "desc": "",
-      "rubro": "otros",
+      "rubro": "cuidado",
       "img": "ZMA-M850E.jpg",
       "menor": 22600,
       "mayor": 16400
@@ -1895,7 +1895,7 @@
       "cod": "ZMA-M850F",
       "nom": "Toallitas desmaquillantes 30 unid. – vitamina E",
       "desc": "",
-      "rubro": "otros",
+      "rubro": "cuidado",
       "img": "ZMA-M850F.jpg",
       "menor": 22600,
       "mayor": 16400
@@ -2335,7 +2335,7 @@
       "cod": "ZMA-R1789",
       "nom": "Lápiz de maquillaje multiuso",
       "desc": "4 colores",
-      "rubro": "otros",
+      "rubro": "rostro",
       "img": "ZMA-R1789.jpg",
       "menor": 13600,
       "mayor": 9800
@@ -2495,7 +2495,7 @@
       "cod": "ZMA-SA487-1",
       "nom": "Barra cubre canas",
       "desc": "Color n.º 1",
-      "rubro": "otros",
+      "rubro": "cabello",
       "img": "ZMA-SA487-1.jpg",
       "menor": 9000,
       "mayor": 6600
@@ -2505,7 +2505,7 @@
       "cod": "ZMA-SA487-2",
       "nom": "Barra cubre canas",
       "desc": "Color n.º 2",
-      "rubro": "otros",
+      "rubro": "cabello",
       "img": "ZMA-SA487-2.jpg",
       "menor": 9000,
       "mayor": 6600
