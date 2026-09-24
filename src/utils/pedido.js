@@ -1,11 +1,8 @@
 import { plata } from "./precios";
 
-// El número de ejemplo que viene en config.js: si sigue puesto, los
-// pedidos no le llegan a nadie. El checkout avisa en vez de fallar callado.
-export const NUMERO_EJEMPLO = "5491100000000";
-
-// 54 + 9 + 10 dígitos (característica sin 0 + número sin 15).
-export const numeroWhatsAppValido = (n) => /^549\d{10}$/.test(n) && n !== NUMERO_EJEMPLO;
+// Viven en compartido/ porque también las usa scripts/publicar-catalogo.mjs.
+// Se reexportan para que el resto de la app las siga importando de acá.
+export { NUMERO_EJEMPLO, numeroWhatsAppValido } from "../compartido/whatsapp";
 
 // No hay límite oficial para el texto de wa.me; pasando este largo algunos
 // celulares viejos lo cortan, así que se sugiere "Copiar pedido".
