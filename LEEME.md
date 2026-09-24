@@ -107,6 +107,64 @@ Cuentas de prueba (solo en los emuladores): `admin@aurora.test`,
 `programador@aurora.test` y `exempleada@aurora.test` (dada de baja), todas
 con la contraseña `aurora123`.
 
+### En producción: la primera vez
+
+Las cuentas de arriba **existen solo en los emuladores**. En el sitio real
+no hay ninguna, y no se pueden crear desde el navegador: las fichas
+`staff/{uid}` no tienen regla de escritura para nadie, a propósito. Tampoco
+existe `publico/catalogo` hasta que alguien lo publica, y sin él el panel no
+puede pausar nada ("Todavía no se publicó el catálogo").
+
+Para las dos cosas hay scripts que corren con permisos de administrador
+desde la computadora del programador. Necesitan tus credenciales de Google,
+una sola vez:
+
+```
+gcloud auth application-default login
+```
+
+(o `GOOGLE_APPLICATION_CREDENTIALS` apuntando a un service account; ese
+archivo nunca va al repositorio, `.gitignore` ya lo excluye). El proyecto se
+pasa con `--proyecto <id>` o en `FIREBASE_PROJECT_ID`.
+
+**1. Publicar el catálogo**
+
+```
+npm run catalogo                               # recalcula precios
+npm run publicar -- --proyecto <id>
+```
+
+Se niega si el WhatsApp de `src/config.js` sigue siendo el de ejemplo, si
+hay productos incompletos o ids repetidos. Al republicar **respeta lo que se
+pausó desde el panel**: `catalogo.json` no sabe qué está pausado, y sin ese
+cuidado todo volvería a la tienda.
+
+**2. Dar de alta las cuentas**
+
+```
+npm run cuenta -- --proyecto <id> --email vos@gmail.com --nombre "Alex" --rol programador
+npm run cuenta -- --proyecto <id> --email mariano@gmail.com --nombre "Mariano" --rol admin
+```
+
+La contraseña **nunca pasa por la terminal**: el script crea la cuenta con
+una clave al azar que nadie conoce e imprime un link para que la persona
+elija la suya. Mandalo por un canal privado. Si vence:
+
+```
+npm run cuenta -- --proyecto <id> --email mariano@gmail.com --nueva-clave
+```
+
+Para dar de baja (se cierra la sesión en el momento; la ficha queda para
+el historial):
+
+```
+npm run cuenta -- --proyecto <id> --email ex@gmail.com --baja
+```
+
+Los dos scripts piden confirmar tipeando el id del proyecto antes de
+escribir en la base real. Con `--si` se saltea la pregunta. Contra los
+emuladores funcionan igual y sin preguntar.
+
 Las reglas de seguridad están en `firestore.rules` y se prueban con
 `npm run test:reglas`: 1182 casos que verifican, actor por actor, qué puede
 leer cada uno. El navegador **nunca escribe** en Firestore; eso va a pasar
