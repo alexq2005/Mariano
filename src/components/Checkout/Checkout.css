@@ -39,7 +39,8 @@
 .req,
 .opc { font-weight: 400; color: var(--tenue); font-size: 12.5px; }
 
-.campo input[type="text"],
+/* Todos los campos de escribir: texto, teléfono, email (no las opciones). */
+.campo input:is([type="text"], [type="tel"], [type="email"]),
 .campo select,
 .campo textarea {
   width: 100%;
@@ -56,12 +57,12 @@
 /* El foco: borde fucsia de 2px (el de 1px + una sombra de 1px, así el
    texto no se corre) y un halo suave, como en el buscador. Con error, el
    borde sigue en el color de alerta (la regla de abajo le gana). */
-.campo :is(input[type="text"], textarea):focus {
+.campo :is(input:is([type="text"], [type="tel"], [type="email"]), select, textarea):focus {
   outline: none;
   border-color: var(--acento);
   box-shadow: 0 0 0 1px var(--acento), 0 0 0 5px var(--acento-suave);
 }
-.campo [aria-invalid="true"]:is(input[type="text"], textarea) { border-color: var(--alerta); border-width: 2px; }
+.campo [aria-invalid="true"]:is(input:is([type="text"], [type="tel"], [type="email"]), textarea) { border-color: var(--alerta); border-width: 2px; }
 
 .opcion {
   display: flex;

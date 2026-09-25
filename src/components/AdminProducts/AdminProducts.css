@@ -26,6 +26,9 @@
   border-radius: 16px;
   box-shadow: var(--sombra);
 }
+/* El marco toma el foco (tabIndex) para desplazar la tabla con el teclado
+   cuando no entra en el celular. */
+.admin-tabla-marco:focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
 .admin-tabla {
   width: 100%;
   border-collapse: collapse;

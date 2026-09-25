@@ -19,6 +19,7 @@
 //   POST /__simular/estado  { id, status }   (ej.: el efectivo se acreditó)
 //   POST /__simular/avisar  { id }           repite el aviso (llega tarde o dos veces)
 //   GET  /__simular/avisos                   los avisos que mandó y qué le respondieron
+//   GET  /__simular                          (en el navegador) los pagos, con "Acreditar"
 
 import { createServer } from "node:http";
 import { createHmac, randomUUID } from "node:crypto";
@@ -235,6 +236,37 @@ const servidor = createServer(async (req, res) => {
     return json(res, 200, { pago });
   }
   if (req.method === "GET" && url.pathname === "/__simular/avisos") return json(res, 200, avisos);
+  // Para probar a mano: los pagos, con un botón para acreditar los
+  // pendientes (el efectivo que se paga en Rapipago horas después).
+  if (req.method === "GET" && url.pathname === "/__simular") {
+    const filas = [...pagos.values()]
+      .reverse()
+      .map(
+        (p) =>
+          `<tr><td>${p.id}</td><td>${esc(p.description)}</td><td>$ ${Number(p.transaction_amount).toLocaleString("es-AR")}</td><td>${p.status}</td><td>` +
+          (p.status === "pending"
+            ? `<form method="post" action="/__simular/acreditar"><input type="hidden" name="id" value="${p.id}"><button>Acreditar</button></form>`
+            : "") +
+          `</td></tr>`,
+      )
+      .join("");
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+    return res.end(
+      `<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mercado Pago simulado</title>` +
+        `<body style="font-family:system-ui;padding:16px"><h1>Mercado Pago simulado: pagos</h1><p>Solo en la compu. «Acreditar» hace de cuenta que se pagó en Rapipago / Pago Fácil.</p>` +
+        `<table border="1" cellpadding="6" style="border-collapse:collapse"><tr><th>N.º</th><th>Pedido</th><th>Monto</th><th>Estado</th><th></th></tr>${filas || '<tr><td colspan="5">Todavía no hay pagos.</td></tr>'}</table></body></html>`,
+    );
+  }
+  if (req.method === "POST" && url.pathname === "/__simular/acreditar") {
+    const { id } = await leerCuerpo(req);
+    const pago = pagos.get(Number(id));
+    if (pago?.status === "pending") {
+      Object.assign(pago, { status: "approved", status_detail: "accredited", date_last_updated: ahoraIso(), date_approved: ahoraIso() });
+      await avisar(pago);
+    }
+    res.writeHead(303, { Location: "/__simular" });
+    return res.end();
+  }
   if (req.method === "GET" && url.pathname === "/__simular/preferencias") return json(res, 200, [...preferencias.values()]);
 
   if (url.pathname === "/favicon.ico") {

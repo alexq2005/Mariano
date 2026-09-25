@@ -162,7 +162,7 @@ export const AdminProducts = () => {
         {aviso.texto}
       </p>
 
-      <div className="admin-tabla-marco">
+      <div className="admin-tabla-marco" tabIndex={0} role="region" aria-label="Productos">
         <table className="admin-tabla">
           <caption className="solo-lector">Productos del catálogo con sus precios y stock</caption>
           <thead>

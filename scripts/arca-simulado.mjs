@@ -20,6 +20,7 @@
 //                                 "cortar" (registra el próximo pero corta la
 //                                 respuesta) | "caido" (503 hasta volver a normal)
 //   GET  /__simular/comprobantes  lo emitido
+//   GET  /__simular               (en el navegador) lo emitido y botones para que falle
 //   POST /__simular/olvidar-ta    como si hubieran pasado 12 horas
 //   POST /__simular/reiniciar     ARCA vacío (sin comprobantes ni tickets)
 
@@ -253,5 +254,27 @@ createServer(async (req, res) => {
     return json(res, 200, { ok: true });
   }
   if (req.method === "GET" && url.pathname === "/__simular/comprobantes") return json(res, 200, Object.fromEntries(comprobantes));
+  // Para probar a mano: lo emitido y botones para que ARCA falle.
+  if (req.method === "GET" && url.pathname === "/__simular") {
+    const filas = [...comprobantes.entries()]
+      .flatMap(([k, lista]) => lista.map((c) => `<tr><td>${esc(k)}</td><td>${c.numero}</td><td>${c.fecha}</td><td>$ ${c.total}</td><td>${c.cae}</td></tr>`))
+      .join("");
+    const boton = (m, t) => `<form method="post" action="/__simular/modo-form" style="display:inline"><input type="hidden" name="modo" value="${m}"><button>${t}</button></form> `;
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+    return res.end(
+      `<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ARCA simulado</title>` +
+        `<body style="font-family:system-ui;padding:16px"><h1>ARCA simulado</h1><p>Solo en la compu. Ahora: <b>${modo}</b></p><p>` +
+        boton("rechazar", "Rechazar la próxima") +
+        boton("cortar", "Cortar la respuesta de la próxima") +
+        boton("caido", "ARCA caído") +
+        boton("normal", "Normal") +
+        `</p><table border="1" cellpadding="6" style="border-collapse:collapse"><tr><th>CUIT-pto-tipo</th><th>N.º</th><th>Fecha</th><th>Total</th><th>CAE</th></tr>${filas || '<tr><td colspan="5">Nada emitido todavía.</td></tr>'}</table></body></html>`,
+    );
+  }
+  if (req.method === "POST" && url.pathname === "/__simular/modo-form") {
+    modo = new URLSearchParams(await leerCuerpo(req)).get("modo") ?? "normal";
+    res.writeHead(303, { Location: "/__simular" });
+    return res.end();
+  }
   json(res, 404, { message: "not found" });
 }).listen(PUERTO, "127.0.0.1", () => console.log(`ARCA simulado en http://127.0.0.1:${PUERTO}`));

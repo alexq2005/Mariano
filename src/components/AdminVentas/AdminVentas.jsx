@@ -201,7 +201,7 @@ export const AdminVentas = () => {
       {productos.length === 0 ? (
         <p className="admin-conteo">Sin productos vendidos este mes.</p>
       ) : (
-        <div className="admin-tabla-marco">
+        <div className="admin-tabla-marco" tabIndex={0} role="region" aria-label="Lo más vendido">
           <table className="admin-tabla">
             <caption className="solo-lector">Productos más vendidos de {nombreMes(actual.id)}</caption>
             <thead>

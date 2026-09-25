@@ -173,7 +173,7 @@ export const AdminFacturas = () => {
           {lista.length === 0 ? (
             <p className="admin-conteo">No hay comprobantes en {nombreMes(mes)}.</p>
           ) : (
-            <div className="admin-tabla-marco">
+            <div className="admin-tabla-marco" tabIndex={0} role="region" aria-label="Comprobantes del mes">
               <table className="admin-tabla">
                 <caption className="solo-lector">Comprobantes de {nombreMes(mes)}</caption>
                 <thead>

@@ -70,7 +70,7 @@ const Formulario = ({ parametros }) => {
             {vista.sinCosto > 1 && ` ${vista.sinCosto} productos no tienen costo y conservan su precio.`}
           </p>
           {vista.ejemplos.length > 0 && (
-            <div className="admin-tabla-marco">
+            <div className="admin-tabla-marco" tabIndex={0} role="region" aria-label="Vista previa de los precios">
               <table className="admin-tabla">
                 <thead>
                   <tr>

@@ -83,7 +83,7 @@ export const AdminHistorial = () => {
           <h2>Todavía no hay operaciones</h2>
         </div>
       ) : (
-        <div className="admin-tabla-marco">
+        <div className="admin-tabla-marco" tabIndex={0} role="region" aria-label="Historial de operaciones">
           <table className="admin-tabla">
             <caption className="solo-lector">Historial de operaciones</caption>
             <thead>
