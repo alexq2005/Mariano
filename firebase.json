@@ -44,7 +44,11 @@
         "node_modules",
         ".git",
         "*.log",
+        "*.local",
         "test"
+      ],
+      "predeploy": [
+        "node scripts/copiar-compartido.mjs"
       ]
     }
   ]

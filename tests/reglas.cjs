@@ -59,6 +59,8 @@ const {
     await s("seguimiento/tokOK", { numero: 1001, uid: "cli1", expira: futuro });
     await s("seguimiento/tokViejo", { numero: 900, uid: null, expira: pasado });
     await s("seguimiento/tokOtra", { numero: 1002, uid: "cli2", expira: futuro });
+    await s("comprobantes/tokF", { numero: 12, letra: "C", total: 45300 });
+    await s("sistema/arca-ta-produccion", { token: "t", sign: "s" });
     await s("clientas/c1", { nombre: "María" });
     await s("stats/2026-09", { totales: { pedidos: 3 } });
     await s("arrepentimientos/a1", { numero: 1001 });
@@ -92,6 +94,9 @@ const {
     "seguimiento/tokOK": Object.keys(actores),
     "seguimiento/tokViejo": [],
     "seguimiento/noExiste": [],
+    "comprobantes/tokF": Object.keys(actores),
+    "comprobantes/noExiste": Object.keys(actores),
+    "sistema/arca-ta-produccion": [],
     "clientas/c1": STAFF,
     "stats/2026-09": STAFF,
     "arrepentimientos/a1": STAFF,
@@ -114,7 +119,7 @@ const {
   }
 
   // Nadie escribe nada desde un cliente (set / update / delete), ni siquiera el programador.
-  const rutasEscritura = Object.keys(matriz).filter((r) => r !== "seguimiento/noExiste")
+  const rutasEscritura = Object.keys(matriz).filter((r) => !r.endsWith("/noExiste"))
     .concat(["pedidos/nuevo", "staff/cli1", "auditoria/nueva", "salida/nueva"]);
   for (const ruta of rutasEscritura) {
     for (const [actor, db] of Object.entries(actores)) {
@@ -159,6 +164,11 @@ const {
   await caso("clienta lista SUS seguimientos", true, () => Q(actores.clienta(), "seguimiento", where("uid", "==", "cli1"), limit(10)));
   await caso("clienta lista seguimientos de otra", false, () => Q(actores.clienta(), "seguimiento", where("uid", "==", "cli2"), limit(10)));
   await caso("clienta lista SUS seguimientos sin limit", false, () => Q(actores.clienta(), "seguimiento", where("uid", "==", "cli1")));
+  await caso("admin lista comprobantes limit 100", true, () => Q(actores.admin(), "comprobantes", limit(100)));
+  await caso("admin lista comprobantes SIN limit", false, () => Q(actores.admin(), "comprobantes"));
+  await caso("anon lista comprobantes", false, () => Q(actores.anon(), "comprobantes", limit(10)));
+  await caso("clienta lista comprobantes", false, () => Q(actores.clienta(), "comprobantes", limit(10)));
+  await caso("admin lista sistema", false, () => Q(actores.admin(), "sistema", limit(5)));
   await caso("programador lista staff", true, () => Q(actores.programador(), "staff", limit(50)));
   await caso("admin lista staff", false, () => Q(actores.admin(), "staff", limit(50)));
   await caso("anon lista publico", false, () => Q(actores.anon(), "publico", limit(5)));

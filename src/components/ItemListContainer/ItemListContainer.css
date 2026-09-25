@@ -34,3 +34,23 @@
   color: var(--tenue);
   margin: 0 0 10px;
 }
+
+/* ── Tarjetas de muestra mientras carga ───────────────────────────
+   Un brillo que pasa de izquierda a derecha; con movimiento reducido, la
+   regla global lo apaga y quedan las formas quietas. */
+.esqueleto { pointer-events: none; }
+.esqueleto-titulo,
+.esqueleto-foto,
+.esqueleto-linea {
+  background: linear-gradient(100deg, var(--sunken) 30%, var(--surface) 50%, var(--sunken) 70%) 0 0 / 300% 100%;
+  animation: brillo 1.4s linear infinite;
+}
+.esqueleto-titulo { width: 160px; height: 26px; margin: 8px 0 16px; border-radius: 8px; }
+.esqueleto-foto { aspect-ratio: 1 / 1; }
+.esqueleto-linea { height: 13px; margin: 12px 13px 0; border-radius: 6px; }
+.esqueleto-linea.corta { width: 55%; margin-top: 8px; }
+.esqueleto-linea.precio { width: 45%; height: 20px; margin: 16px 13px 16px; }
+@keyframes brillo {
+  from { background-position: 100% 0; }
+  to { background-position: 0 0; }
+}

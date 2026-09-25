@@ -43,9 +43,11 @@ export const Rubros = () => {
 
   if (!activos.length) return null;
 
-  // Al cambiar de rubro se conserva lo que estaba buscando.
-  const q = params.get("q");
-  const search = q ? `?q=${encodeURIComponent(q)}` : "";
+  // Al cambiar de rubro se conservan la búsqueda y el orden.
+  const conservar = new URLSearchParams();
+  for (const clave of ["q", "orden"]) if (params.get(clave)) conservar.set(clave, params.get(clave));
+  // toString() y no .size: .size no existe en Safari 16 (iPhone con iOS 16).
+  const search = conservar.toString() ? `?${conservar}` : "";
 
   // "Todo": un mosaico con las portadas de los primeros cuatro rubros.
   const mosaico = rubros.map((r) => portadas[r.id]).filter(Boolean).slice(0, 4);

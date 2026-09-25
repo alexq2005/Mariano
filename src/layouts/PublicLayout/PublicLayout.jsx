@@ -2,6 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Header } from "../../components/Header/Header";
 import { Footer } from "../../components/Footer/Footer";
 import { CartBar } from "../../components/CartBar/CartBar";
+import { WhatsAppFlotante } from "../../components/WhatsAppFlotante/WhatsAppFlotante";
 import { ErrorBoundary } from "../../components/ErrorBoundary/ErrorBoundary";
 
 // Lo que rodea a todas las páginas de la tienda: el encabezado (con el menú
@@ -22,6 +23,7 @@ export const PublicLayout = () => {
         </ErrorBoundary>
       </main>
       <Footer />
+      <WhatsAppFlotante />
       <CartBar />
     </>
   );

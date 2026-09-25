@@ -5,11 +5,33 @@ import { ItemListContainer } from "./components/ItemListContainer/ItemListContai
 import { ItemDetailContainer } from "./components/ItemDetailContainer/ItemDetailContainer";
 import { Cart } from "./components/Cart/Cart";
 import { Checkout } from "./components/Checkout/Checkout";
+import { Seguimiento } from "./components/Seguimiento/Seguimiento";
+import { Arrepentimiento } from "./components/Arrepentimiento/Arrepentimiento";
 import { ScrollToTop } from "./components/ScrollToTop/ScrollToTop";
 import { useProductos } from "./hooks/useProductos";
 
 // El panel se descarga aparte, solo cuando alguien entra a /admin.
 const AdminArea = lazy(() => import("./admin/AdminArea"));
+// La factura también: lleva el generador del QR, que el resto no necesita.
+const Factura = lazy(() => import("./components/Factura/Factura").then((m) => ({ default: m.Factura })));
+
+// Sin las variables de Firebase (por ejemplo, recién publicado en Vercel) el
+// panel no tiene a dónde conectarse: Firebase Auth ni siquiera arranca sin
+// apiKey. En vez de una pantalla rota, se explica qué falta.
+const panelConectado = Boolean(import.meta.env.VITE_FIREBASE_PROJECT_ID && import.meta.env.VITE_FIREBASE_API_KEY);
+
+const PanelSinConectar = () => (
+  <main className="estado">
+    <title>Panel sin conectar</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <h1>El panel todavía no está conectado</h1>
+    <p>Faltan los datos del proyecto de Firebase (las variables VITE_FIREBASE_* del sitio).</p>
+    <p>Los pasos están en el LEEME del proyecto, en «En producción: la primera vez».</p>
+    <Link to="/" className="btn bg-primary">
+      Ir a la tienda
+    </Link>
+  </main>
+);
 
 function App() {
   // El nombre del negocio para el <title> del 404 sale de la config, que
@@ -25,9 +47,13 @@ function App() {
         <Route
           path="/admin/*"
           element={
-            <Suspense fallback={<p className="estado">Cargando el panel…</p>}>
-              <AdminArea />
-            </Suspense>
+            panelConectado ? (
+              <Suspense fallback={<p className="estado">Cargando el panel…</p>}>
+                <AdminArea />
+              </Suspense>
+            ) : (
+              <PanelSinConectar />
+            )
           }
         />
         <Route element={<PublicLayout />}>
@@ -36,6 +62,16 @@ function App() {
           <Route path="/product/:id" element={<ItemDetailContainer />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/pedido/:token" element={<Seguimiento />} />
+          <Route
+            path="/factura/:token"
+            element={
+              <Suspense fallback={<p className="estado">Buscando la factura…</p>}>
+                <Factura />
+              </Suspense>
+            }
+          />
+          <Route path="/arrepentimiento" element={<Arrepentimiento />} />
           <Route
             path="*"
             element={

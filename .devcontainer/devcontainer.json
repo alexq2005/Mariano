@@ -1,0 +1,19 @@
+{
+  // GitHub Codespaces: el proyecto entero en una compu en la nube, para
+  // probarlo desde el navegador sin instalar nada. Al abrirlo arranca solo
+  // (npm run todo) y la tienda se abre en el puerto 8518.
+  "name": "Aurora: tienda, panel, cobros y facturas",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "features": {
+    // Los emuladores de Firebase necesitan Java 21 o más nuevo.
+    "ghcr.io/devcontainers/features/java:1": { "version": "21" }
+  },
+  "postCreateCommand": "npm ci && npm ci --prefix functions && cp -n .env.example .env.local",
+  "postAttachCommand": { "aurora": "npm run todo" },
+  "forwardPorts": [8518],
+  "portsAttributes": {
+    "8518": { "label": "Tienda y panel", "onAutoForward": "openBrowser" }
+  },
+  "otherPortsAttributes": { "onAutoForward": "silent" },
+  "hostRequirements": { "cpus": 2, "memory": "4gb" }
+}

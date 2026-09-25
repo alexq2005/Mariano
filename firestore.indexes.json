@@ -4,16 +4,42 @@
       "collectionGroup": "pedidos",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "estado", "order": "ASCENDING" },
-        { "fieldPath": "creado", "order": "DESCENDING" }
+        {
+          "fieldPath": "estado",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "creado",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "pedidos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "clientaId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "creado",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
       "collectionGroup": "auditoria",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "nivel", "order": "ASCENDING" },
-        { "fieldPath": "cuando", "order": "DESCENDING" }
+        {
+          "fieldPath": "nivel",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "cuando",
+          "order": "DESCENDING"
+        }
       ]
     }
   ],

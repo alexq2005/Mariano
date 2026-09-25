@@ -1,0 +1,13 @@
+.arrepentimiento {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px 20px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: var(--sombra);
+}
+.arrepentimiento h1:focus { outline: none; }
+.arrepentimiento > p { color: var(--tenue); }
+.arrepentimiento-codigo { color: var(--texto); font-size: 18px; }
+.arrepentimiento-form .btn { width: 100%; margin-top: 6px; }

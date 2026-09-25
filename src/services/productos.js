@@ -132,5 +132,7 @@ export const cargarProductos = async ({ forzar = false } = {}) => {
 
 export const recargarProductos = () => cargarProductos({ forzar: true });
 
+// Un archivo de public/img, o un link https (productos cargados en el panel).
 export const rutaImagen = (archivo) =>
+  /^https:\/\//i.test(archivo ?? "") ? archivo :
   archivo ? `${import.meta.env.BASE_URL}img/${archivo}` : `${import.meta.env.BASE_URL}img/sin-foto.svg`;

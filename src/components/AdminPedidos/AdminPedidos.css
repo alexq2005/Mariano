@@ -1,0 +1,212 @@
+/* Pestañas por estado, con cuántos hay en cada una. */
+.admin-pestanas {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  margin: 0 0 14px;
+  padding-bottom: 4px;
+}
+.admin-pestana {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 14px;
+  border: 1px solid var(--line-fuerte);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--texto);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.admin-pestana[aria-selected="true"] { background: var(--texto); border-color: var(--texto); color: var(--surface); }
+.admin-cuenta {
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--sunken);
+  color: var(--texto);
+  font-size: 12px;
+  text-align: center;
+}
+
+.pedidos-lista { display: grid; gap: 8px; }
+.pedido-fila {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "num quien total" "num quien estado";
+  align-items: center;
+  gap: 2px 14px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--sombra);
+  color: var(--texto);
+  text-decoration: none;
+}
+.pedido-fila:hover { border-color: var(--acento); }
+.pedido-num { grid-area: num; font-family: var(--display); font-size: 20px; font-weight: 800; }
+.pedido-quien { grid-area: quien; min-width: 0; }
+.pedido-quien b, .pedido-quien small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pedido-quien small { color: var(--tenue); font-size: 12.5px; }
+.pedido-total { grid-area: total; justify-self: end; font-weight: 800; }
+.pedido-pastillas { grid-area: estado; justify-self: end; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
+
+/* Colores de estado: siempre con texto, nunca solo el color. */
+.estado-pastilla {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.estado-pendiente { background: var(--acento-suave); color: var(--acento); }
+.estado-confirmado { background: var(--mayor-suave); color: var(--mayor); }
+.estado-entregado { background: var(--sunken); color: var(--ok); }
+.estado-cancelado { background: var(--sunken); color: var(--tenue); }
+
+/* ── Detalle ─────────────────────────────────────────────────── */
+.admin-volver { display: inline-block; margin-bottom: 10px; font-size: 14px; font-weight: 600; }
+.pedido-cabecera { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.pedido-cabecera h1 { margin: 0; }
+.pedido-acciones { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
+.pedido-cancelar {
+  margin: 8px 0;
+  padding: 14px;
+  border: 1px solid var(--alerta);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.pedido-cancelar label { display: block; font-weight: 700; margin-bottom: 6px; }
+.pedido-cancelar textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 16px;
+  padding: 10px 12px;
+  border: 1px solid var(--line-fuerte);
+  border-radius: 12px;
+  background: var(--ground);
+  color: var(--texto);
+}
+.admin-aviso-accion.es-error { color: var(--alerta); }
+
+.pedido-grilla { display: grid; gap: 12px; margin: 10px 0 12px; }
+@media (min-width: 820px) {
+  .pedido-grilla { grid-template-columns: 1fr 1.5fr; }
+}
+.pedido-detalle .admin-tarjeta h2 {
+  margin: 14px 0 4px;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--tenue);
+}
+.pedido-detalle .admin-tarjeta h2:first-child { margin-top: 0; }
+.pedido-detalle .admin-tarjeta p { margin: 0; }
+.pedido-comentario { white-space: pre-wrap; }
+
+.pedido-items li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.pedido-items img {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+.pedido-items span:nth-child(2) { flex: 1; min-width: 0; }
+.pedido-items small { display: block; color: var(--tenue); font-size: 12px; }
+.pedido-detalle .admin-tarjeta .pedido-total-linea { margin: 10px 0 2px; text-align: right; }
+.pedido-total-linea b { font-family: var(--display); font-size: 22px; }
+.pedido-historial { margin: 0; padding-left: 18px; font-size: 14px; }
+.pedido-historial li { margin-bottom: 4px; }
+.pedido-motivo { color: var(--tenue); }
+
+/* ── Clientas ─────────────────────────────────────────────────── */
+.clienta-fila { width: 100%; font: inherit; text-align: left; cursor: pointer; grid-template-areas: "quien total" "quien cuenta"; grid-template-columns: minmax(0, 1fr) auto; }
+.clienta-cuenta { grid-area: cuenta; justify-self: end; font-size: 12.5px; color: var(--tenue); }
+.clienta-ficha { margin: 6px 4px 4px; padding: 12px 14px; border-left: 3px solid var(--acento); font-size: 14px; }
+.clienta-ficha p { margin: 0 0 8px; }
+.clienta-pedidos { margin: 0 0 10px; }
+.clienta-pedidos li { margin-bottom: 4px; }
+.clienta-ficha .btn-link { padding: 0; min-height: 32px; color: var(--alerta); }
+.arrepentimiento-item p { margin: 0 0 6px; font-size: 14px; }
+
+/* ── Cobro ───────────────────────────────────────────────────── */
+.cobro-sin_pagar { background: var(--sunken); color: var(--alerta); }
+.cobro-pendiente, .cobro-reclamo { background: var(--sunken); color: var(--alerta); }
+.cobro-aprobado { background: var(--sunken); color: var(--ok); }
+.cobro-rechazado { background: var(--acento-suave); color: var(--acento); }
+.cobro-devuelto { background: var(--sunken); color: var(--tenue); }
+.cobro,
+.tarjeta-factura { margin: 10px 0 0; }
+.cobro-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.pedido-detalle .cobro-cabecera h2 { margin: 0; }
+.cobro-cuenta { margin: 10px 0; max-width: 360px; }
+.cobro-cuenta div { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
+.cobro-cuenta dd { margin: 0; }
+.cobro-total { margin-top: 4px; padding-top: 6px; border-top: 1px solid var(--line); font-weight: 800; }
+.cobro-total dd { font-family: var(--display); font-size: 19px; }
+.pedido-detalle .cobro-detalle { margin: 0 0 8px; font-size: 14px; font-weight: 600; }
+.cobro-detalle small { display: block; font-weight: 400; color: var(--tenue); }
+.cobro-alerta {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--alerta);
+  border-radius: 12px;
+  font-size: 14px;
+}
+.pedido-detalle .cobro-alerta p { margin: 0; }
+.cobro-alerta ul { margin: 6px 0 0; padding-left: 18px; }
+.cobro-alerta .btn-link { margin-left: 8px; }
+.cobro-form { margin: 8px 0 0; padding: 12px 14px; border: 1px solid var(--line-fuerte); border-radius: 14px; }
+.cobro-form fieldset { margin: 0 0 10px; padding: 0; border: 0; }
+.cobro-form legend { font-weight: 700; margin-bottom: 6px; }
+.cobro-opcion { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; margin-right: 14px; font-size: 15px; }
+.cobro-form > label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+.cobro-form input:not([type="radio"]),
+.campo-envio input {
+  width: 100%;
+  max-width: 320px;
+  font: inherit;
+  font-size: 16px;
+  padding: 9px 12px;
+  border: 1px solid var(--line-fuerte);
+  border-radius: 12px;
+  background: var(--ground);
+  color: var(--texto);
+}
+.campo-envio { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+.campo-envio input { width: 120px; }
+
+/* ── Factura ─────────────────────────────────────────────────── */
+.factura-lista { margin: 6px 0 4px; padding: 0; list-style: none; }
+.factura-lista li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.factura-lista a { font-weight: 700; }
+.factura-lista small { flex-basis: 100%; color: var(--tenue); }
+.cobro-detalle .btn-link { margin-left: 8px; }
+.cobro-form select {
+  width: 100%;
+  max-width: 320px;
+  font: inherit;
+  font-size: 16px;
+  padding: 9px 12px;
+  border: 1px solid var(--line-fuerte);
+  border-radius: 12px;
+  background: var(--ground);
+  color: var(--texto);
+  margin-bottom: 8px;
+}
+.cobro-form > label { margin-top: 6px; }

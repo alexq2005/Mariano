@@ -1,0 +1,27 @@
+.orden {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tenue);
+}
+/* Píldora como el buscador, con la flecha dibujada (appearance: none saca
+   la del sistema). 16px de letra: con menos, iOS hace zoom al tocarlo. */
+.orden select {
+  appearance: none;
+  min-height: 40px;
+  padding: 6px 34px 6px 14px;
+  border: 1px solid var(--line-fuerte);
+  border-radius: 999px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23C8105C' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+      no-repeat right 13px center,
+    var(--surface);
+  color: var(--texto);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.orden select:hover { border-color: var(--acento); }

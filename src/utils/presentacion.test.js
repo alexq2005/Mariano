@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { enumerar, partirNombre, porcentajeAhorro, portadaDeRubro } from "./presentacion";
+import { enumerar, enumerarFrase, partirNombre, porcentajeAhorro, portadaDeRubro, relacionados } from "./presentacion";
 
 describe("portadaDeRubro", () => {
   const productos = [
@@ -73,6 +73,13 @@ describe("partirNombre", () => {
   });
 });
 
+describe("enumerarFrase", () => {
+  it("solo la primera con mayúscula", () => {
+    expect(enumerarFrase(["Retiro en persona", "Envío a domicilio"], "o")).toBe("Retiro en persona o envío a domicilio");
+    expect(enumerarFrase(["Transferencia", "Efectivo", "A convenir"], "o")).toBe("Transferencia, efectivo o a convenir");
+  });
+});
+
 describe("enumerar", () => {
   it("arma la frase con comas y el conector al final", () => {
     expect(enumerar(["Transferencia", "Efectivo", "A convenir"], "o")).toBe("Transferencia, Efectivo o A convenir");
@@ -82,5 +89,34 @@ describe("enumerar", () => {
   it("con uno solo o ninguno no agrega conector", () => {
     expect(enumerar(["Efectivo"])).toBe("Efectivo");
     expect(enumerar([])).toBe("");
+  });
+});
+
+describe("relacionados", () => {
+  const lista = [
+    { id: "l1", rubro: "labios" },
+    { id: "o1", rubro: "ojos" },
+    { id: "l2", rubro: "labios" },
+    { id: "l3", rubro: "labios", activo: false },
+    { id: "l4", rubro: "labios" },
+    { id: "l5", rubro: "labios" },
+  ];
+  const ids = (l) => l.map((p) => p.id);
+
+  it("los que siguen en el mismo rubro, dando la vuelta al final", () => {
+    expect(ids(relacionados(lista, { id: "l4", rubro: "labios" }))).toEqual(["l5", "l1", "l2"]);
+  });
+
+  it("sin el producto mismo, sin otros rubros y sin pausados", () => {
+    const r = ids(relacionados(lista, { id: "l1", rubro: "labios" }));
+    expect(r).toEqual(["l2", "l4", "l5"]);
+  });
+
+  it("respeta el máximo pedido", () => {
+    expect(relacionados(lista, { id: "l1", rubro: "labios" }, 2)).toHaveLength(2);
+  });
+
+  it("solo en su rubro: lista vacía", () => {
+    expect(relacionados(lista, { id: "o1", rubro: "ojos" })).toEqual([]);
   });
 });

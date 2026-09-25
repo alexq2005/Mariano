@@ -37,3 +37,19 @@ export const partirNombre = (nom) => {
 // "a, b o c": para decir en una frase las formas de entrega o de pago.
 export const enumerar = (items, conector = "y") =>
   items.length < 2 ? items.join("") : `${items.slice(0, -1).join(", ")} ${conector} ${items.at(-1)}`;
+
+// La misma lista como frase: "Retiro en persona o envío a domicilio".
+export const enumerarFrase = (items, conector = "y") => {
+  const t = enumerar(items, conector).toLowerCase();
+  return t.charAt(0).toUpperCase() + t.slice(1);
+};
+
+// "Más de Labios" en el detalle: los que siguen en la lista del proveedor,
+// que suele poner juntas las variantes de una misma línea. Da la vuelta al
+// final del rubro y nunca incluye al producto mismo ni a los pausados.
+export const relacionados = (productos, p, n = 8) => {
+  const delRubro = productos.filter((x) => x.rubro === p.rubro && x.activo !== false);
+  const i = delRubro.findIndex((x) => x.id === p.id);
+  const siguientes = i < 0 ? delRubro : [...delRubro.slice(i + 1), ...delRubro.slice(0, i)];
+  return siguientes.filter((x) => x.id !== p.id).slice(0, n);
+};

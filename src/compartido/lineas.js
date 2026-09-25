@@ -40,14 +40,14 @@ export const lineaDeCarrito = (p, cant, config) => {
 
 // Todo el carrito resumido. `lista` es [{id, cant}] en el orden en que se
 // fueron agregando; los ids que ya no existen en el catálogo (lista nueva
-// del proveedor) se ignoran, y los pausados se informan aparte.
+// del proveedor) se ignoran, y los pausados o agotados se informan aparte.
 export const resumirCarrito = (lista, porId, config) => {
   const items = [];
   const noDisponibles = [];
   for (const { id, cant } of lista) {
     const p = typeof porId.get === "function" ? porId.get(id) : porId[id];
     if (!p || cant <= 0) continue;
-    if (p.activo === false) noDisponibles.push({ p, cant });
+    if (p.activo === false || p.agotado) noDisponibles.push({ p, cant });
     else items.push(lineaDeCarrito(p, cant, config));
   }
   const total = items.reduce((a, i) => a + i.sub, 0);

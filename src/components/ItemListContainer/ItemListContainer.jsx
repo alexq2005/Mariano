@@ -1,12 +1,37 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useProductos } from "../../hooks/useProductos";
-import { filtrarProductos, nombreRubro } from "../../utils/filtros";
+import { filtrarProductos, nombreRubro, ordenarProductos } from "../../utils/filtros";
 import { ItemList } from "../ItemList/ItemList";
 import { CatalogError } from "../CatalogError/CatalogError";
 import { Rubros } from "../Rubros/Rubros";
 import { Portada } from "../Portada/Portada";
+import "../ItemList/ItemList.css";
 import "./ItemListContainer.css";
+
+// Mientras llega el catálogo: la forma de las tarjetas, sin datos. La
+// página ya tiene su lugar y no "salta" cuando aparecen los productos. El
+// lector de pantalla escucha el texto, no las formas.
+const Esqueleto = () => (
+  <section aria-busy="true">
+    <p className="solo-lector" role="status">
+      Cargando productos…
+    </p>
+    <div className="esqueleto-titulo" aria-hidden="true" />
+    <ul className="products-container" aria-hidden="true">
+      {Array.from({ length: 8 }, (_, i) => (
+        <li key={i}>
+          <div className="card esqueleto">
+            <div className="esqueleto-foto" />
+            <div className="esqueleto-linea" />
+            <div className="esqueleto-linea corta" />
+            <div className="esqueleto-linea precio" />
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>
+);
 
 const describirResultado = (n) =>
   n === 0 ? "Sin resultados" : `${n} ${n === 1 ? "producto encontrado" : "productos encontrados"}`;
@@ -35,13 +60,14 @@ export const ItemListContainer = () => {
   const { category } = useParams();
   const [params] = useSearchParams();
   const texto = params.get("q") ?? "";
+  const orden = params.get("orden") ?? "";
   const { productos, config, loading, error } = useProductos();
 
   // Los productos pausados desde el panel no se muestran en la tienda.
   const activos = useMemo(() => productos.filter((p) => p.activo !== false), [productos]);
   const filtrados = useMemo(
-    () => filtrarProductos(activos, { rubro: category, texto }),
-    [activos, category, texto],
+    () => ordenarProductos(filtrarProductos(activos, { rubro: category, texto }), orden),
+    [activos, category, texto, orden],
   );
 
   // Aviso para lectores de pantalla: vive siempre montado (una región que
@@ -60,7 +86,7 @@ export const ItemListContainer = () => {
     </p>
   );
 
-  if (loading) return <p className="estado">Cargando productos…</p>;
+  if (loading) return <Esqueleto />;
   if (error) return <CatalogError mensaje={error} />;
 
   const titulo = category ? nombreRubro(category) : "Catálogo";
@@ -78,8 +104,8 @@ export const ItemListContainer = () => {
       </h1>
       {!inicio && <Promo config={config} />}
       {region}
-      {/* key: al cambiar rubro o búsqueda, la paginación vuelve a empezar */}
-      <ItemList key={`${category}|${texto}`} productos={filtrados} total={productos.length} config={config} />
+      {/* key: al cambiar rubro, búsqueda u orden, la paginación vuelve a empezar */}
+      <ItemList key={`${category}|${texto}|${orden}`} productos={filtrados} total={productos.length} config={config} />
     </section>
   );
 };

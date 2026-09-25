@@ -37,6 +37,19 @@
   .card-foto-link:hover .card-foto { transform: scale(1.05); }
 }
 
+/* Sin stock: la foto apagada; el precio se sigue viendo. */
+.card[data-agotado="si"] .card-foto { opacity: .45; filter: grayscale(.6); }
+.card-agotado {
+  align-self: flex-start;
+  margin: 4px 0 2px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--sunken);
+  color: var(--alerta);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
 /* Las fotos del proveedor tienen fondo blanco: se deja blanco también en
    modo oscuro para que no quede un recuadro. */
 .card-foto-marco {

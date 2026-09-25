@@ -1,14 +1,43 @@
 // Quién puede hacer qué. Una sola tabla, en un solo archivo: para saber si
 // alguien puede una acción no hay que leer el código de la acción.
 //
-//   admin        el negocio: productos, stock y pedidos
-//   programador  todo lo anterior + costos, dólar, márgenes y datos de cobro
+//   admin        el negocio: productos, stock, pedidos, clientas y datos
+//   programador  todo lo anterior + costos, dólar y márgenes
 //
 // `nivel` es para el historial de operaciones: las entradas "sensibles"
-// (precios, costos, datos de cobro) las ve solo el programador.
+// (dólar, factor, márgenes, costos) las ve solo el programador.
+
+const EQUIPO = ["admin", "programador"];
 
 export const PERMISOS = {
-  "producto.pausar": { roles: ["admin", "programador"], nivel: "general" },
+  "producto.pausar": { roles: EQUIPO, nivel: "general" },
+  "producto.guardar": { roles: EQUIPO, nivel: "general" },
+  "stock.ajustar": { roles: EQUIPO, nivel: "general" },
+  "pedido.confirmar": { roles: EQUIPO, nivel: "general" },
+  "pedido.entregar": { roles: EQUIPO, nivel: "general" },
+  "pedido.cancelar": { roles: EQUIPO, nivel: "general" },
+  "pedido.envio": { roles: EQUIPO, nivel: "general" },
+  "pago.registrar": { roles: EQUIPO, nivel: "general" },
+  "pago.anular": { roles: EQUIPO, nivel: "general" },
+  "pago.devolver": { roles: EQUIPO, nivel: "general" },
+  // Cambiar el alias o el CBU cambia a dónde va la plata: queda en el
+  // historial a la vista de las dos.
+  "cobro.guardar": { roles: EQUIPO, nivel: "general" },
+  // Facturación electrónica: los datos del negocio para ARCA, y cada pedido.
+  "facturacion.guardar": { roles: EQUIPO, nivel: "general" },
+  "factura.probar": { roles: EQUIPO, nivel: "general" },
+  "factura.emitir": { roles: EQUIPO, nivel: "general" },
+  "factura.reintentar": { roles: EQUIPO, nivel: "general" },
+  "pedido.fiscal": { roles: EQUIPO, nivel: "general" },
+  "clienta.borrar": { roles: EQUIPO, nivel: "general" },
+  "arrepentimiento.resolver": { roles: EQUIPO, nivel: "general" },
+  "config.guardar": { roles: EQUIPO, nivel: "general" },
+  "precios.recalcular": { roles: ["programador"], nivel: "sensible" },
+  // Las anota Mercado Pago (el servidor), no una persona: nadie las pide.
+  "pago.mercadopago": { roles: [], nivel: "general" },
+  "pago.demas": { roles: [], nivel: "general" },
+  "factura.emitida": { roles: [], nivel: "general" },
+  "factura.anulada": { roles: [], nivel: "general" },
 };
 
 export const ROLES = ["admin", "programador"];

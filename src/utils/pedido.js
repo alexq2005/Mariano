@@ -8,9 +8,10 @@ export { NUMERO_EJEMPLO, numeroWhatsAppValido } from "../compartido/whatsapp";
 // celulares viejos lo cortan, así que se sugiere "Copiar pedido".
 export const URL_LARGA = 2000;
 
-export const DATOS_VACIOS = { nombre: "", entrega: "", direccion: "", pago: "", comentarios: "" };
-
-export const formaDeEntrega = (id, C) => C.formas_entrega.find((f) => f.id === id);
+// Qué datos se piden y cómo se validan: lo mismo que revisa el servidor
+// antes de guardar el pedido (compartido/datos-pedido.js).
+export { DATOS_VACIOS, formaDeEntrega, LARGOS } from "../compartido/datos-pedido";
+import { DATOS_VACIOS, formaDeEntrega, validarDatosPedido } from "../compartido/datos-pedido";
 
 // Datos del formulario que vienen guardados (sessionStorage): solo las
 // claves conocidas, solo texto, y sin opciones que ya no están en config
@@ -25,22 +26,20 @@ export const sanearDatos = (g, C) => {
 };
 
 // Devuelve {campo: mensaje} con los errores; vacío si está todo bien.
-export const validarDatos = (d, C) => {
-  const e = {};
-  if (!d.nombre.trim()) e.nombre = "Escribí tu nombre.";
-  const entrega = formaDeEntrega(d.entrega, C);
-  if (!entrega) e.entrega = "Elegí cómo querés recibir el pedido.";
-  else if (entrega.pide_direccion && !d.direccion.trim())
-    e.direccion = "Escribí la zona o la dirección para el envío.";
-  if (!C.formas_pago.includes(d.pago)) e.pago = "Elegí cómo vas a pagar.";
-  return e;
-};
+export const validarDatos = (d, C) => validarDatosPedido(d, C);
 
 // Mensaje que le llega al comercio. Separadores ASCII a propósito: "•" o
 // "—" ocupan 9 caracteres cada uno dentro de la URL y la alargan de más.
 // *texto* es negrita en WhatsApp.
-export const armarMensaje = (resumen, d, C) => {
-  const l = [`Hola ${C.nombre_negocio}! Te hago este pedido:`, ""];
+// `registro` es lo que devuelve el servidor al guardar el pedido: su número
+// y el link de seguimiento. Sin servidor (o si falló), el mensaje sale igual.
+export const armarMensaje = (resumen, d, C, registro = null) => {
+  const l = [
+    registro
+      ? `Hola ${C.nombre_negocio}! Te mando mi pedido *#${registro.numero}*:`
+      : `Hola ${C.nombre_negocio}! Te hago este pedido:`,
+    "",
+  ];
 
   resumen.items.forEach((i, n) => {
     l.push(`${n + 1}) ${i.cant} u. x ${i.p.nom} (${i.p.cod})`);
@@ -52,6 +51,7 @@ export const armarMensaje = (resumen, d, C) => {
 
   const entrega = formaDeEntrega(d.entrega, C);
   l.push("", `*Nombre:* ${d.nombre.trim()}`);
+  if (d.telefono?.trim()) l.push(`*Teléfono:* ${d.telefono.trim()}`);
   if (entrega) {
     const donde = entrega.pide_direccion && d.direccion.trim() ? ` - ${d.direccion.trim()}` : "";
     l.push(`*Entrega:* ${entrega.nombre}${donde}`);
@@ -63,6 +63,7 @@ export const armarMensaje = (resumen, d, C) => {
   // Sin esto, un pedido armado con precios provisorios se lee como un
   // presupuesto cerrado, y la diferencia se discute después.
   if (!C.precios_confirmados) l.push("Precios orientativos, a confirmar.");
+  if (registro?.seguimiento) l.push("", `Seguimiento del pedido: ${registro.seguimiento}`);
   return l.join("\n");
 };
 

@@ -93,3 +93,51 @@
   border-top: 1px solid var(--pie-linea);
   font-size: 12px;
 }
+.footer-legal p { margin: 0 0 8px; }
+.footer-ley { display: flex; flex-wrap: wrap; gap: 6px 18px; font-weight: 700; }
+
+.footer-instagram {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.footer-instagram small { display: block; font-size: 11px; font-weight: 600; color: var(--pie-tenue); letter-spacing: .06em; text-transform: uppercase; }
+.footer-contacto li { margin-bottom: 4px; overflow-wrap: anywhere; }
+
+/* ── Franja de beneficios, arriba del pie ───────────────────────── */
+.beneficios {
+  width: 100%;
+  max-width: 1180px;
+  margin: 32px auto 0;
+  padding: 0 var(--borde-der) 0 var(--borde-izq);
+  display: grid;
+  gap: 14px;
+}
+.beneficios li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--sombra);
+  font-size: 13.5px;
+  color: var(--tenue);
+}
+.beneficios svg { flex: none; color: var(--acento); }
+.beneficios b {
+  display: block;
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--texto);
+}
+@media (min-width: 720px) {
+  .beneficios { grid-template-columns: repeat(3, 1fr); }
+}
+/* Pegada a la franja, el pie ya no necesita margen arriba. */
+.beneficios + .footer { margin-top: 28px; }

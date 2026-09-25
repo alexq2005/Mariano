@@ -26,8 +26,10 @@ export const validarDatosPedido = (d, config) => {
   if (!d.telefono?.trim()) e.telefono = "Escribí un teléfono para coordinar.";
   else if (!TELEFONO.test(d.telefono.trim())) e.telefono = "Ese teléfono no parece válido.";
 
-  if (!d.email?.trim()) e.email = "Escribí tu email: ahí te llega el pedido.";
-  else if (!EMAIL.test(d.email.trim())) e.email = "Ese email no parece válido.";
+  // El email es opcional: el pedido se coordina por WhatsApp. Si lo escribe,
+  // que al menos tenga forma de email.
+  if (d.email?.trim() && !EMAIL.test(d.email.trim())) e.email = "Ese email no parece válido.";
+  else if (d.email && d.email.trim().length > LARGOS.email) e.email = "Ese email es demasiado largo.";
 
   const entrega = formaDeEntrega(d.entrega, config);
   if (!entrega) e.entrega = "Elegí cómo querés recibir el pedido.";

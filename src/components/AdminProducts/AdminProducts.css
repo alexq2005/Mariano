@@ -26,6 +26,9 @@
   border-radius: 16px;
   box-shadow: var(--sombra);
 }
+/* El marco toma el foco (tabIndex) para desplazar la tabla con el teclado
+   cuando no entra en el celular. */
+.admin-tabla-marco:focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
 .admin-tabla {
   width: 100%;
   border-collapse: collapse;
@@ -76,3 +79,38 @@
 .admin-boton-chico { min-height: 36px; padding: 6px 12px; font-size: 13px; }
 .admin-aviso-accion { margin: 0 0 12px; min-height: 20px; font-size: 13.5px; font-weight: 600; color: var(--ok); }
 .admin-aviso-accion:empty { margin: 0; }
+
+.admin-titulo { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.admin-titulo h1 { margin: 0; }
+.admin-prod-nom { color: var(--texto); text-decoration: none; }
+.admin-prod-nom:hover { color: var(--acento); text-decoration: underline; }
+.admin-pastilla.agotado { background: var(--sunken); color: var(--alerta); }
+.admin-pestana[aria-pressed="true"] { background: var(--texto); border-color: var(--texto); color: var(--surface); }
+
+/* Stock: un botón con la cantidad; al tocarlo, un campo en la misma fila. */
+.admin-stock {
+  min-width: 64px;
+  min-height: 36px;
+  padding: 4px 12px;
+  border: 1px dashed var(--line-fuerte);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--texto);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.admin-stock:hover { border-style: solid; border-color: var(--acento); }
+.admin-stock.agotado { border-style: solid; border-color: var(--alerta); color: var(--alerta); }
+.admin-stock-form { display: flex; align-items: center; gap: 6px; }
+.admin-stock-form input {
+  width: 70px;
+  min-height: 36px;
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 16px;
+  text-align: center;
+  border: 1px solid var(--acento);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--texto);
+}
