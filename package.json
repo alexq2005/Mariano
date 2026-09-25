@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "emu": "node scripts/emuladores.mjs",
+    "todo": "node scripts/todo.mjs",
     "emu:cerrar": "node scripts/cerrar-emulador.mjs",
     "test:reglas": "firebase emulators:exec --only firestore --project demo-aurora \"node tests/reglas.cjs\"",
     "sembrar": "node scripts/sembrar-emulador.mjs",

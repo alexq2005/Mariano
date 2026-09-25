@@ -26,6 +26,18 @@ export const app = initializeApp({
   appId: env.VITE_FIREBASE_APP_ID,
 });
 
-// Los puertos son los de firebase.json.
 export const usandoEmuladores = env.DEV && env.VITE_FIREBASE_EMULADORES !== "no";
-export const EMULADOR = { host: "127.0.0.1", firestore: 8519, auth: 8520, functions: 8522 };
+
+// Con los emuladores, el navegador les habla a través del mismo servidor
+// de la tienda (vite.config.js los reenvía a sus puertos de firebase.json).
+// Así anda igual en la compu que en una compu en la nube (GitHub
+// Codespaces), donde el navegador no llega a 127.0.0.1.
+const origen = typeof location === "undefined" ? "" : location.origin;
+export const EMULADOR = {
+  origen,
+  // Firestore toma host y protocolo, sin ruta: el servidor reenvía
+  // /google.firestore.v1.Firestore/… y /v1/projects/…
+  host: typeof location === "undefined" ? "" : location.host,
+  ssl: typeof location !== "undefined" && location.protocol === "https:",
+  funciones: `${origen}/__fn/${env.VITE_FIREBASE_PROJECT_ID}/us-central1`,
+};

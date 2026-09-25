@@ -1,3 +1,4 @@
+import process from "node:process";
 import { HttpsError } from "firebase-functions/https";
 import { db, FieldPath } from "../firebase.js";
 import { refs } from "../refs.js";
@@ -48,10 +49,14 @@ const pedidoPorToken = async (token) => {
 
 // A dónde vuelve la clienta después de pagar: su propio link de seguimiento.
 // https en producción; http solo en la compu (desarrollo).
+// En producción, https (o la compu, en http). En los emuladores también
+// cualquier http: la tienda de prueba puede abrirse por la IP de la red o
+// desde una compu en la nube.
+const enEmulador = process.env.FUNCTIONS_EMULATOR === "true";
 const volverValido = (url, token) => {
   try {
     const u = new URL(url);
-    const local = u.protocol === "http:" && ["localhost", "127.0.0.1"].includes(u.hostname);
+    const local = u.protocol === "http:" && (enEmulador || ["localhost", "127.0.0.1"].includes(u.hostname));
     return (u.protocol === "https:" || local) && u.pathname.endsWith(`/pedido/${token}`) && !u.search && !u.hash;
   } catch {
     return false;

@@ -22,12 +22,37 @@ const completarUrlSitio = () => ({
   transformIndexHtml: (html) => html.replaceAll('__URL_SITIO__', urlSitio),
 })
 
+// En desarrollo, el navegador les habla a los emuladores y a los simulados
+// a través de este mismo servidor: así anda igual en la compu que en una
+// compu en la nube (GitHub Codespaces), donde el navegador no llega a
+// 127.0.0.1. Los puertos son los de firebase.json y los de los simulados.
+const hacia = (puerto, prefijo) => ({
+  target: `http://127.0.0.1:${puerto}`,
+  changeOrigin: true,
+  ...(prefijo ? { rewrite: (ruta) => ruta.slice(prefijo.length) } : {}),
+})
+const emuladores = {
+  '/google.firestore.v1.Firestore': hacia(8519),
+  '/v1/projects': hacia(8519),
+  '/identitytoolkit.googleapis.com': hacia(8520),
+  '/securetoken.googleapis.com': hacia(8520),
+  '/__fn': hacia(8522, '/__fn'),
+  '/__mp': hacia(8531, '/__mp'),
+  '/__arca': hacia(8532, '/__arca'),
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), completarUrlSitio()],
   base,
   // 8518: puerto propio del proyecto, para no chocar con otros servidores
   // locales. Si está ocupado, Vite toma el siguiente libre.
-  server: { port: 8518 },
+  server: {
+    port: 8518,
+    proxy: emuladores,
+    // GitHub Codespaces publica el puerto en *.app.github.dev, por https.
+    allowedHosts: ['.app.github.dev'],
+    ...(process.env.CODESPACES === 'true' ? { hmr: { clientPort: 443 } } : {}),
+  },
   preview: { port: 8518 },
 })

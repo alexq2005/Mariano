@@ -160,6 +160,24 @@ del servidor rechazan lo que no corresponde.
 Si a alguien le dan de baja (`activo: false`), se le cierra la sesión en el
 momento y el login le explica por qué.
 
+#### Probarlo en la nube, sin instalar nada (GitHub Codespaces)
+
+Todo (tienda, panel, emuladores y los simulados de Mercado Pago y ARCA) corre
+en una compu en la nube de GitHub y se usa desde el navegador:
+
+1. En GitHub, en el PR o en el repositorio: botón verde **Code** → pestaña
+   **Codespaces** → **Create codespace on** la rama.
+2. La primera vez tarda unos minutos (instala todo). Se abre un editor en el
+   navegador y, en su terminal, arranca solo `npm run todo`.
+3. Cuando diga **Listo**, se abre la tienda (si no: pestaña **Puertos** →
+   8518 → el globo). El panel está en `/admin`.
+4. Al terminar, el codespace se apaga solo a los 30 minutos sin uso (o desde
+   github.com/codespaces → Stop). Con la cuenta gratis de GitHub alcanza de
+   sobra para probar.
+
+Como en la compu, los datos son de prueba y se vuelven a cargar cada vez que
+arranca.
+
 #### Probarlo en tu compu (emuladores)
 
 Hace falta **Java 21 o más nuevo** (los emuladores de Firebase lo usan; por
@@ -170,13 +188,23 @@ copy .env.example .env.local        (en Mac/Linux: cp)
 cd functions && npm install && cd ..
 ```
 
-Y cada vez:
+Y cada vez, todo junto:
+
+```
+npm run todo       # emuladores, simulados, datos de ejemplo y la tienda
+```
+
+o por partes:
 
 ```
 npm run emu        # terminal 1: Firestore, Auth y Functions locales
 npm run sembrar    # terminal 2: cuentas, catálogo y datos de ejemplo
 npm run dev        # terminal 2: la tienda y el panel
 ```
+
+El navegador les habla a los emuladores y a los simulados a través del
+servidor de la tienda (`vite.config.js` los reenvía): por eso anda igual en
+la compu que en la nube.
 
 `npm run sembrar` deja 5 pedidos de ejemplo (pendientes, uno con CUIT,
 confirmado sin pagar, entregado y pagado por transferencia con su factura C,
@@ -191,9 +219,10 @@ igual que el real, con aviso firmado incluido. Y un **ARCA simulado**
 (puerto 8532), con un certificado de prueba que se genera solo: autoriza las
 facturas con las mismas validaciones que ARCA (número correlativo, condición
 IVA del receptor, IVA, tope de consumidor final). Nada sale de tu compu.
-Cada simulado tiene una página para probar a mano: http://127.0.0.1:8531/__simular
-(los pagos, con «Acreditar» para el efectivo) y http://127.0.0.1:8532/__simular
-(lo emitido, y botones para que ARCA rechace, corte la respuesta o se caiga).
+Cada simulado tiene una página para probar a mano, en la misma dirección de
+la tienda: `/__mp/__simular` (los pagos, con «Acreditar» para el efectivo) y
+`/__arca/__simular` (lo emitido, y botones para que ARCA rechace, corte la
+respuesta o se caiga).
 
 Cuentas de prueba (solo en los emuladores): `admin@aurora.test`,
 `programador@aurora.test` y `exempleada@aurora.test` (dada de baja), todas

@@ -139,7 +139,7 @@ const pantallaDePago = (pref) => {
   const item = pref.items?.[0] ?? {};
   const monto = Number(item.unit_price).toLocaleString("es-AR");
   const boton = (resultado, medio, texto) =>
-    `<form method="post" action="/checkout/${pref.id}/pagar"><input type="hidden" name="resultado" value="${resultado}"><input type="hidden" name="medio" value="${medio}"><button data-resultado="${resultado}" data-medio="${medio}">${esc(texto)}</button></form>`;
+    `<form method="post" action="${pref.id}/pagar"><input type="hidden" name="resultado" value="${resultado}"><input type="hidden" name="medio" value="${medio}"><button data-resultado="${resultado}" data-medio="${medio}">${esc(texto)}</button></form>`;
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pago simulado</title>
 <style>
@@ -176,7 +176,16 @@ const servidor = createServer(async (req, res) => {
     if (!item || !(Number(item.unit_price) > 0)) return json(res, 400, { message: "unit_price invalid", status: 400 });
     if (cuerpo.auto_return && !cuerpo.back_urls?.success) return json(res, 400, { message: "auto_return invalid. back_url.success must be defined", status: 400 });
     const id = `123456789-${randomUUID()}`;
-    const pref = { ...cuerpo, id, init_point: `${BASE}/checkout/${id}`, sandbox_init_point: `${BASE}/checkout/${id}`, date_created: ahoraIso() };
+    // El link de pago, por el mismo servidor de la tienda (el que manda en
+    // back_urls: vite.config.js reenvía /__mp a este simulado). Así lo abre
+    // el navegador también en una compu en la nube, donde 127.0.0.1 no llega.
+    let pagina = `${BASE}/checkout/${id}`;
+    try {
+      pagina = `${new URL(cuerpo.back_urls.success).origin}/__mp/checkout/${id}`;
+    } catch {
+      /* sin back_urls: directo al simulado */
+    }
+    const pref = { ...cuerpo, id, init_point: pagina, sandbox_init_point: pagina, date_created: ahoraIso() };
     preferencias.set(id, pref);
     return json(res, 201, pref);
   }
@@ -245,7 +254,7 @@ const servidor = createServer(async (req, res) => {
         (p) =>
           `<tr><td>${p.id}</td><td>${esc(p.description)}</td><td>$ ${Number(p.transaction_amount).toLocaleString("es-AR")}</td><td>${p.status}</td><td>` +
           (p.status === "pending"
-            ? `<form method="post" action="/__simular/acreditar"><input type="hidden" name="id" value="${p.id}"><button>Acreditar</button></form>`
+            ? `<form method="post" action="__simular/acreditar"><input type="hidden" name="id" value="${p.id}"><button>Acreditar</button></form>`
             : "") +
           `</td></tr>`,
       )
@@ -264,7 +273,8 @@ const servidor = createServer(async (req, res) => {
       Object.assign(pago, { status: "approved", status_detail: "accredited", date_last_updated: ahoraIso(), date_approved: ahoraIso() });
       await avisar(pago);
     }
-    res.writeHead(303, { Location: "/__simular" });
+    // Relativo: anda igual directo (127.0.0.1:8531) que por la tienda (/__mp).
+    res.writeHead(303, { Location: "../__simular" });
     return res.end();
   }
   if (req.method === "GET" && url.pathname === "/__simular/preferencias") return json(res, 200, [...preferencias.values()]);

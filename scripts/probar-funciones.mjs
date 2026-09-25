@@ -296,7 +296,7 @@ check("las ventas del mes no cuentan el envío", (await leer(`stats/${mes}`))?.t
 check("volver a otro sitio después de pagar: no", (await tienda("pago.iniciar", { token: pp.result.token, volverA: "https://otro.com/pedido/x" })).error?.status === "INVALID_ARGUMENT");
 check("link de pedido inventado: no", (await tienda("pago.iniciar", { token: "0".repeat(32), volverA: volver("0".repeat(32)) })).error?.status === "NOT_FOUND");
 const ini = await tienda("pago.iniciar", { token: pp.result.token, volverA: volver(pp.result.token) });
-check("pagar con Mercado Pago: devuelve el link de pago", (ini.result?.url ?? "").startsWith(`${MP}/checkout/`), ini);
+check("pagar con Mercado Pago: devuelve el link de pago (por el servidor de la tienda)", (ini.result?.url ?? "").startsWith("http://localhost:8518/__mp/checkout/"), ini);
 const pref = (await mpSim("/__simular/preferencias")).find((x) => x.external_reference === pp.result.id);
 check("el monto lo pone el servidor (productos + envío) y el aviso va al webhook", pref?.items?.[0]?.unit_price === aCobrar && pref?.notification_url?.endsWith("/us-central1/mercadopago"), pref);
 check("pedir el link dos veces reusa el mismo pago", (await tienda("pago.iniciar", { token: pp.result.token, volverA: volver(pp.result.token) })).result?.url === ini.result.url);

@@ -1,4 +1,4 @@
-import { getFunctions, httpsCallable, connectFunctionsEmulator } from "firebase/functions";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import { app, EMULADOR, usandoEmuladores } from "../firebase/app";
 import { recargarProductos } from "./productos";
 
@@ -6,8 +6,8 @@ import { recargarProductos } from "./productos";
 // acción por nombre y Cloud Functions decide si puede, valida los datos y
 // escribe. Las reglas de Firestore no dejan escribir desde el navegador.
 
-const funciones = getFunctions(app, "us-central1");
-if (usandoEmuladores) connectFunctionsEmulator(funciones, EMULADOR.host, EMULADOR.functions);
+// Con los emuladores, por el servidor de la tienda (ver EMULADOR en app.js).
+const funciones = getFunctions(app, usandoEmuladores ? EMULADOR.funciones : "us-central1");
 
 const panel = httpsCallable(funciones, "panel");
 

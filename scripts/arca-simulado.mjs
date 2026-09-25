@@ -259,7 +259,7 @@ createServer(async (req, res) => {
     const filas = [...comprobantes.entries()]
       .flatMap(([k, lista]) => lista.map((c) => `<tr><td>${esc(k)}</td><td>${c.numero}</td><td>${c.fecha}</td><td>$ ${c.total}</td><td>${c.cae}</td></tr>`))
       .join("");
-    const boton = (m, t) => `<form method="post" action="/__simular/modo-form" style="display:inline"><input type="hidden" name="modo" value="${m}"><button>${t}</button></form> `;
+    const boton = (m, t) => `<form method="post" action="__simular/modo-form" style="display:inline"><input type="hidden" name="modo" value="${m}"><button>${t}</button></form> `;
     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
     return res.end(
       `<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ARCA simulado</title>` +
@@ -273,7 +273,8 @@ createServer(async (req, res) => {
   }
   if (req.method === "POST" && url.pathname === "/__simular/modo-form") {
     modo = new URLSearchParams(await leerCuerpo(req)).get("modo") ?? "normal";
-    res.writeHead(303, { Location: "/__simular" });
+    // Relativo: anda igual directo (127.0.0.1:8532) que por la tienda (/__arca).
+    res.writeHead(303, { Location: "../__simular" });
     return res.end();
   }
   json(res, 404, { message: "not found" });

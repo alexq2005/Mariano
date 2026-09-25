@@ -11,8 +11,10 @@
 const env = import.meta.env;
 const enEmuladores = env.DEV && env.VITE_FIREBASE_EMULADORES !== "no";
 
+// Con los emuladores, por el mismo servidor de la tienda (vite.config.js lo
+// reenvía al 8519): anda también en una compu en la nube.
 const base = enEmuladores
-  ? `http://127.0.0.1:8519/v1/projects/${env.VITE_FIREBASE_PROJECT_ID}/databases/(default)/documents`
+  ? `${typeof location === "undefined" ? "" : location.origin}/v1/projects/${env.VITE_FIREBASE_PROJECT_ID}/databases/(default)/documents`
   : `https://firestore.googleapis.com/v1/projects/${env.VITE_FIREBASE_PROJECT_ID}/databases/(default)/documents`;
 
 // Firestore devuelve los valores con su tipo adentro: {"stringValue": "x"},

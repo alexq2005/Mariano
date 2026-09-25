@@ -14,8 +14,10 @@ const proyecto = env.VITE_FIREBASE_PROJECT_ID;
 // variables), el pedido va solo por WhatsApp, como antes.
 export const hayServidor = Boolean(proyecto);
 
+// Con los emuladores, por el mismo servidor de la tienda (vite.config.js lo
+// reenvía al 8522): anda también en una compu en la nube.
 const URL_TIENDA = enEmuladores
-  ? `http://127.0.0.1:8522/${proyecto}/us-central1/tienda`
+  ? `${typeof location === "undefined" ? "" : location.origin}/__fn/${proyecto}/us-central1/tienda`
   : `https://us-central1-${proyecto}.cloudfunctions.net/tienda`;
 
 export class ErrorTienda extends Error {
