@@ -191,6 +191,9 @@ igual que el real, con aviso firmado incluido. Y un **ARCA simulado**
 (puerto 8532), con un certificado de prueba que se genera solo: autoriza las
 facturas con las mismas validaciones que ARCA (número correlativo, condición
 IVA del receptor, IVA, tope de consumidor final). Nada sale de tu compu.
+Cada simulado tiene una página para probar a mano: http://127.0.0.1:8531/__simular
+(los pagos, con «Acreditar» para el efectivo) y http://127.0.0.1:8532/__simular
+(lo emitido, y botones para que ARCA rechace, corte la respuesta o se caiga).
 
 Cuentas de prueba (solo en los emuladores): `admin@aurora.test`,
 `programador@aurora.test` y `exempleada@aurora.test` (dada de baja), todas
